@@ -1,7 +1,6 @@
 # COM S 309 SS_4 Repo
 
 ## This is the repository for Group SS_4's COMS 309 group project
------
 ### Group Members:
 * **Schedule Lead** - Morgan Smith
 * **Repo Lead** - Axel Zumwalt
