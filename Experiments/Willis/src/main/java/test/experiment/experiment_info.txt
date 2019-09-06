@@ -1,0 +1,6 @@
+I used the following link as a base to set up this Spring Boot application.
+<https://spring.io/guides/gs/rest-service/>
+
+Instead of making a Greeter I decided to make an extremely basic User class.
+If the server is running, you view the JSON by typing "http://http://localhost:8080/welcome"
+into the URL.
