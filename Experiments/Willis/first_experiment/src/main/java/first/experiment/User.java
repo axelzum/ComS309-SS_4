@@ -1,4 +1,4 @@
-package test.experiment;
+package first.experiment;
 
 public class User
 {
@@ -42,3 +42,4 @@ public class User
   }
 
 }
+
