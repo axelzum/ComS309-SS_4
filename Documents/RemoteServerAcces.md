@@ -1,5 +1,4 @@
 # How to Access Remote Server and Open MySQL on it
-____
 
 ## Remote Server
 
@@ -34,7 +33,7 @@ exit the current screen and return you to the main terminal without shutting off
 If you want to go back to the screen, type `screen -r` and it will take you back. You can then shutdown the server if you want.
 
 If you want to exit out of the *ssh* session, type `exit` and press enter.
-____
+
 ## MySQL
 To access the MySQL server you need to know the UserName and password of the user I created. These are:
 - username: **team_ss4**
@@ -51,4 +50,4 @@ You will then be asked for the password and then just enter it. After you log in
 
 The database that I have created for Demo2 is called "db_example"
 
-If you want to quit out of mysql, simply type either `quit;` or `exit`
+If you want to quit out of mysql, simply type either `quit;` or `exit;`
