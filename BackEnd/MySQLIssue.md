@@ -1,4 +1,17 @@
-## Error Description
+# Update - 09/20/2019
+
+This error has been resolved as of **10:51 a.m. September 20th**. The problem was I did not have the remote server timezone in the *application.properties* file. After
+figuring this out, that file now looks like:
+```
+spring.jpa.hibernate.ddl-auto=update
+spring.datasource.url=jdbc:mysql://coms-309-ss-4.misc.iastate.edu:3306/db_example?serverTimezone=CST
+spring.datasource.username=team_ss4
+spring.datasource.password=309!F19ss4
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+```
+Now the server and database seem to be running on **coms-309-ss-4.misc.iastate.edu**. Hopefully, this error is completely resolved, but I doubt it :)
+___
+#### Error Description
 
 In the **src/resources** folder, there is a file called *application.properties*. In this file, I have wrote this line of code:
 
