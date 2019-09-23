@@ -63,6 +63,19 @@ public class StudentController
   {
     return studentRepository.findAll();
   }
+  
+  // NOTE: WHEN MAKING MORE OFFICIAL CONTROLLER WE WILL PROBABLY USE @PathVariable
+  // FOR SPECIFIC NAMES INSTEAD OF @RequestParam
+  // Example:   
+  
+  // @GetMapping(path = "/search/firstName/{firstName}")
+  // public @ResponseBody Iterable<Student> getStudentByFirstName(@PathVariable("firstName") String firstName
+  // {
+  // return studentRepository.findAllByFirstName(firstName);      
+  // }
+  
+  // URL will look like this: coms-309-ss-4.misc.iastate.edu:8080/students/search/firstName/Willis
+  // This will return all Students with firstName: Willis
 
   /**
    * Returns all Students in the database with the given firstName
