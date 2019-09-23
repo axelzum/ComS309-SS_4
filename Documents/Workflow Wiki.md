@@ -2,26 +2,32 @@
 
 ## Story Point Guidelines
 
+
+
 1 point:
-● Should take less than a day to implement.
-● Very minimal testing changes, similar examples for code already exist.
+* Should take less than a day to implement.
+* Very minimal testing changes, similar examples for code already exist
+
 2 points:
-● 1-3 Days to implement.
-● A little exploration required, some parts of the story have existing code/examples.
-● Not very much testing required.
-● Simple frontend or backend changes.
+* 1-3 Days to implement.
+* A little exploration required, some parts of the story have existing code/examples.
+* Not very much testing required.
+* Simple frontend or backend changes.
+
 3 points:
-● About 1 week of work.
-● Simple fullstack changes, or lengthy frontend/backend change.
-● Small test changes, maybe a new test file.
+* About 1 week of work.
+* Simple fullstack changes, or lengthy frontend/backend change.
+* Small test changes, maybe a new test file.
+
 4 points:
-● 1.5 weeks
-● Complex fullstack change requiring a little bit of exploration. Not many existing examples.
-● Several new files in code/new tests
+* 1.5 weeks
+* Complex fullstack change requiring a little bit of exploration. Not many existing examples.
+* Several new files in code/new tests
+
 5 points:
-● Will take the entire sprint.
-● Don’t know how to implement will take a lot of exploration to complete.
-● Should try to split into smaller stories
+* Will take the entire sprint.
+* Don’t know how to implement will take a lot of exploration to complete.
+* Should try to split into smaller stories
 
 
 ## Git Branching Guide
