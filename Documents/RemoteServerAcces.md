@@ -19,8 +19,16 @@ netid password you use for other ISU related things.
 
 After entering that, you should be on the remote server! If you type `pwd` you can see the directory you are in. I am pretty sure it will create your own directory for you.
 For example, my directory is **/home/wpknox**.
+___
+To place a **.jar** file in your directory, you need to copy from the directory on your computer to the remote server. It will look something like this:
+```
+scp "path_to_jar_file" <netid>@coms-309-ss-4.misc.iastate.edu:~/
+```
+This will copy the file from your computer to your home directory on the remote server.
 
-I have a couple different **.jar** files in my directory that you can run if you want. You will need to navigate to them and then type:
+
+If you want to start the **.jar** file, you need to have it in YOUR directory. Axel and I tried earlier today (09/22) and you cannot `cd` into someone else's directory. If you have a
+a **.jar** in your directory you simply need to run the command:
 ```
 java -jar ".jar file name no quotes"
 ```
@@ -44,10 +52,14 @@ To using these info, type into the terminal:
 ```
 mysql -u team_ss4 -p
 ```
-You will then be asked for the password and then just enter it. After you log in, you can view the databases you have access to by typing `show databases;`
 
 **NOTE: All mysql commands end in a semicolon.**
 
-The database that I have created for Demo2 is called "db_example"
+
+You will then be asked for the password and then just enter it. After you log in, you can view the databases you have access to by typing `show databases;` To view 
+the different tables you first need to go into the database by typing: `use <database_name>;`. Next, you will then type: `describe <table_name>;`. If you don't know
+what tables exist in the database and you want to see them simply type `show tables;`
+
+The database that I have created for this Tuesday is called "db_example". I plan on making a more official database after this meeting when I ask Saimon some questions.
 
 If you want to quit out of mysql, simply type either `quit;` or `exit;`
