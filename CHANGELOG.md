@@ -10,21 +10,21 @@ This document will record the changes to this project over the course of the sem
 
 ## Demo One - September 9, 2019
 ### Requirements
-Setup: git usage, client side (front end) experiments, server side (back end) experiments.
+Setup - git usage, client side (front end) experiments, server side (back end) experiments.
 ### Added
 - Experiments in Front End or Back End tools were created to gain experience for the project and were put in each group member's Experiments folder.
 
 ## Demo Two - September 30, 2019
 ### Requirements
-Baseline: Use of merge requests, communication between Server / Client / Database.
+Baseline - Use of merge requests, communication between Server / Client / Database.
 ### Added
 - Front End implementation of login screen 
 
 ## Demo Three - October 21, 2019
-Major use cases, use of CI/CD, use of Mockito
+Major use cases - use of CI/CD, use of Mockito.
 
 ## Demo Four - November 11, 2019
-Major use cases, use of websockets
+Major use cases - use of websockets.
 
 ## Demo Five (Final Demo) - December 9, 2019
 Final demo of completed project.
