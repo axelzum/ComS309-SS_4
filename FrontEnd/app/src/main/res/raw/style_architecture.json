@@ -1,0 +1,39 @@
+[
+  {
+    featureType: "administrative",
+    elementType: "all",
+    stylers: [
+      { visibility: "off" }
+    ]
+  },{
+  featureType: "landscape.natural",
+  elementType: "all",
+  stylers: [
+    { visibility: "off" }
+  ]
+},{
+  featureType: "poi",
+  elementType: "all",
+  stylers: [
+    { visibility: "off" }
+  ]
+},{
+  featureType: "road",
+  elementType: "all",
+  stylers: [
+    { visibility: "off" }
+  ]
+},{
+  featureType: "transit",
+  elementType: "all",
+  stylers: [
+    { visibility: "off" }
+  ]
+},{
+  featureType: "water",
+  elementType: "labels",
+  stylers: [
+    { visibility: "off" }
+  ]
+}
+]
