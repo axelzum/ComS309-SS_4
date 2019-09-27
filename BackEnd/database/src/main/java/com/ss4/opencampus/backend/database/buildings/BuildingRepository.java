@@ -22,8 +22,5 @@ public interface BuildingRepository extends JpaRepository<Building, Integer>
 
   Iterable<Building> findAllByAbbreviationStartingWith(String start);
 
-
-  // TODO: Implement this search
-//  @Query(value = "SELECT b FROM Buildings b WHERE b.Latitude = :latit AND b.Longitude = :longit")
-//  Building findByLatitAndLongit(@Param("latit") Double latit, @Param("longit") Double longit);
+  Building findByLatitAndLongit(@Param("latit") Double latit, @Param("longit") Double longit);
 }

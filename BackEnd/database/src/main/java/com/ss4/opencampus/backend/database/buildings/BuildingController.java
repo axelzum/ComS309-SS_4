@@ -179,12 +179,20 @@ public class BuildingController
     return buildingRepository.findById(id);
   }
 
-
-  //TODO: Get this method working
-
-  //  @GetMapping(path = "/search/location")
-//  public @ResponseBody Building getBuildingByLocation(@RequestParam Double latit, @RequestParam Double longit)
-//  {
-//    return buildingRepository.findByLatitAndLongit(latit, longit);
-//  }
+  /**
+   * Return a Building's information if given it's exact latitude and longitude
+   *
+   * @param latit
+   *         latitude of building
+   * @param longit
+   *         longitude of building
+   *
+   * @return data in JSON format about Building at given coordinates
+   */
+  @GetMapping(path = "/search/location")
+  public @ResponseBody
+  Building getBuildingByLocation(@RequestParam Double latit, @RequestParam Double longit)
+  {
+    return buildingRepository.findByLatitAndLongit(latit, longit);
+  }
 }

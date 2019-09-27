@@ -10,8 +10,11 @@ import javax.persistence.*;
 @Table(name = "Buildings")
 public class Building
 {
+  /**
+   * Needs to be IDENTITY otherwise the IDs from other Tables will increment off of each other
+   */
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
   @Column(name = "Building_Name")
