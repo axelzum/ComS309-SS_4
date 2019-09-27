@@ -2,6 +2,10 @@ package com.ss4.opencampus.backend.database.buildings;
 
 import javax.persistence.*;
 
+/**
+ * @author Willis Knox
+ * <p>This is a class for the Buildings table in the open_campus database</p>
+ */
 @Entity
 @Table(name = "Buildings")
 public class Building
