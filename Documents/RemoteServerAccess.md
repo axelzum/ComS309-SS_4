@@ -60,6 +60,4 @@ You will then be asked for the password and then just enter it. After you log in
 the different tables you first need to go into the database by typing: `use <database_name>;`. Next, you will then type: `describe <table_name>;`. If you don't know
 what tables exist in the database and you want to see them simply type `show tables;`
 
-The database that I have created for this Tuesday is called "db_example". I plan on making a more official database after this meeting when I ask Saimon some questions.
-
-If you want to quit out of mysql, simply type either `quit;` or `exit;`
+The database for the project is: **open_campus**. I have made a Buildings table and a Students table. The Buildings table has all of the buildings Morgan found in it.
