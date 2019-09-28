@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">TestVolley</string>
+    <string name="get">Get Students</string>
+    <string name="post">Send Students</string>
+</resources>
