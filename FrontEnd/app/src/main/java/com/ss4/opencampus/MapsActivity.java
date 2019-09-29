@@ -1,7 +1,9 @@
 package com.ss4.opencampus;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -74,22 +76,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 // Display filter screen
 
-                    FilterDialog dialog = new FilterDialog();
-                    dialog.show(getFragmentManager(), "FragmentDialog");
+                FilterDialog dialog = new FilterDialog();
+                dialog.show(getFragmentManager(), "FragmentDialog");
 
-
-            }
-        });
-
-        final Button dashboardButton = findViewById(R.id.dashboardButton);
-        dashboardButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Code here executes on main thread after user presses button
             }
         });
 
     }
-
 
     /**
      * Manipulates the map once available.
@@ -164,101 +157,88 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onPolylineClick(Polyline polyline) {
-        if(polyline.getColor()!=0xff00ffff)
+        if (polyline.getColor() != 0xff00ffff)
             polyline.setColor(0xff00ffff);
         else
             polyline.setColor(0xff000000);
     }
 
     @Override
-    public void onMarkerDragStart(Marker m)
-    {
-        String tag = (String)m.getTag();
-        if(tag.equals("Scribble"))
-        {
+    public void onMarkerDragStart(Marker m) {
+        String tag = (String) m.getTag();
+        if (tag.equals("Scribble")) {
             m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble_highlighted));
             m.setAlpha((float) 0.5);
             m.setSnippet("Moving Marker...");
         }
-        if(tag.equals("Custom"))
-        {
+        if (tag.equals("Custom")) {
 
         }
     }
 
 
     @Override
-    public void onMarkerDragEnd(Marker m)
-    {
-        String tag = (String)m.getTag();
-        if(tag.equals("Scribble"))
-        {
+    public void onMarkerDragEnd(Marker m) {
+        String tag = (String) m.getTag();
+        if (tag.equals("Scribble")) {
             m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble));
             m.setSnippet("");
-            m.setAlpha((float)1.0);
+            m.setAlpha((float) 1.0);
         }
-        if(tag.equals("Custom"))
-        {
+        if (tag.equals("Custom")) {
 
         }
     }
 
     @Override
-    public void onMarkerDrag(Marker m)
-    {
-        String tag = (String)m.getTag();
-        if(tag.equals("Scribble"))
-        {
+    public void onMarkerDrag(Marker m) {
+        String tag = (String) m.getTag();
+        if (tag.equals("Scribble")) {
             markerRotation += 6;
             m.setRotation(markerRotation);
         }
-        if(tag.equals("Custom"))
-        {
+        if (tag.equals("Custom")) {
 
         }
     }
 
     @Override
-    public boolean onMarkerClick(Marker m)
-    {
-        String tag = (String)m.getTag();
-        if(tag.equals("Scribble"))
-        {
+    public boolean onMarkerClick(Marker m) {
+        String tag = (String) m.getTag();
+        if (tag.equals("Scribble")) {
 
         }
-        if(tag.equals("Custom"))
-        {
+        if (tag.equals("Custom")) {
             currentMarkerIndex = customMarkers.indexOf(m);
             updateInfo(m);
             markerShowingInfoWindow = m;
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Set Marker Title: " + m.getTitle());
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Set Marker Title: " + m.getTitle());
 
-                // Set up the input
-                final EditText input = new EditText(this);
-                // Specify the type of input expected
-                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-                builder.setView(input);
+            // Set up the input
+            final EditText input = new EditText(this);
+            // Specify the type of input expected
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+            builder.setView(input);
 
 
+            // Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_Text.set(currentMarkerIndex, input.getText().toString());
+                    markerShowingInfoWindow.setTitle(m_Text.get(currentMarkerIndex));
+                    updateInfo(markerShowingInfoWindow);
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
 
-                // Set up the buttons
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        m_Text.set(currentMarkerIndex, input.getText().toString());
-                        markerShowingInfoWindow.setTitle(m_Text.get(currentMarkerIndex));
-                        updateInfo(markerShowingInfoWindow);
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
+            builder.show();
 
             updateInfo(m);
         }
@@ -266,52 +246,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return false;
     }
 
-    public void updateInfo(Marker m)
-    {
+    public void updateInfo(Marker m) {
         currentMarkerIndex = customMarkers.indexOf(m);
         m.setTitle(m_Text.get(currentMarkerIndex));
         m.hideInfoWindow();
         m.showInfoWindow();
     }
 
-    public void setFilters(boolean[] f)
-    {
+    public void setFilters(boolean[] f) {
         buildingFilter = f[0];
         featureFilter = f[1];
         uspotFilter = f[2];
         customFilter = f[3];
 
-        for(Marker m: buildingMarkers)
+        for (Marker m : buildingMarkers)
             m.setVisible(f[0]);
 
-        for(Marker m: featureMarkers)
+        for (Marker m : featureMarkers)
             m.setVisible(f[1]);
 
-        for(Marker m: uspotMarkers)
+        for (Marker m : uspotMarkers)
             m.setVisible(f[2]);
 
-        for(Marker m: customMarkers)
+        for (Marker m : customMarkers)
             m.setVisible(f[3]);
     }
 
-    public boolean getBuildingFilter()
-    {
+    public boolean getBuildingFilter() {
         return buildingFilter;
     }
 
-    public boolean getFeatureFilter()
-    {
+    public boolean getFeatureFilter() {
         return featureFilter;
     }
 
-    public boolean getUSpotFilter()
-    {
+    public boolean getUSpotFilter() {
         return uspotFilter;
     }
 
-    public boolean getCustomFilter()
-    {
+    public boolean getCustomFilter() {
         return customFilter;
+    }
+
+    public void viewMainActivity(View view)
+    {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
 }
