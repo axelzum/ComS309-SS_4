@@ -309,9 +309,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return customFilter;
     }
 
-    public void viewMainActivity(View view)
+    public void viewDashboard(View view)
     {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, Dashboard.class);
         startActivity(intent);
     }
 

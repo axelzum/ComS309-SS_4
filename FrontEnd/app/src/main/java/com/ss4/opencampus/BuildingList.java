@@ -14,9 +14,9 @@ public class BuildingList extends AppCompatActivity {
         setContentView(R.layout.activity_building_list);
     }
 
-    public void viewMainActivity(View view)
+    public void viewDashboard(View view)
     {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, Dashboard.class);
         startActivity(intent);
     }
 }
