@@ -48,7 +48,7 @@ public class GetStudents extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/search/all";
 
-        // Request a string response from the provided URL.
+        // Request a JSONObject response from the provided URL.
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
