@@ -12,9 +12,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GetStudents extends AppCompatActivity {
@@ -45,11 +49,19 @@ public class GetStudents extends AppCompatActivity {
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/search/all";
 
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(String response) {
-                        getResp.setText(response);
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject student = response.getJSONObject(i);
+                                getResp.append("firstName: " + student.getString("firstName") + '\n');
+                                getResp.append("lastName: " + student.getString("lastName") + '\n');
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -60,10 +72,10 @@ public class GetStudents extends AppCompatActivity {
         });
 
         //Set the tag on the request
-        stringRequest.setTag(TAG);
+        jsonRequest.setTag(TAG);
 
         // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        queue.add(jsonRequest);
 
     }
 
