@@ -29,6 +29,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private float markerRotation = 0;
     private ArrayList<Marker> customMarkers = new ArrayList<>();
+    private ArrayList<Marker> featureMarkers = new ArrayList<>();
+    private ArrayList<Marker> uspotMarkers = new ArrayList<>();
+    private ArrayList<Marker> buildingMarkers = new ArrayList<>();
     private ArrayList<String> m_Text = new ArrayList<>();
     private Marker markerShowingInfoWindow;
     private int currentMarkerIndex = 0;
@@ -36,15 +39,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps2);
+        setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
 
-        final Button button = findViewById(R.id.button1);
-        //final CustomMarkerListener cml = new CustomMarkerListener();
+        final Button button = findViewById(R.id.customMarkerButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
@@ -52,6 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Marker m = mMap.addMarker(new MarkerOptions()
                         .position(mMap.getCameraPosition().target)
                         .title("My Marker")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_custom))
                         .draggable(true));
                 m.setTag("Custom");
                 customMarkers.add(m);
@@ -59,6 +62,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        final Button filterButton = findViewById(R.id.filterButton);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+            }
+        });
+
+        final Button dashboardButton = findViewById(R.id.dashboardButton);
+        dashboardButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+            }
+        });
 
     }
 
@@ -75,13 +91,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_retro_simple));
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMarkerDragListener(this);
         // Add a marker in Sydney and move the camera
         LatLng ames = new LatLng(42.025821, -93.646444);
+
+        Marker feature_example = mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(42.025962, -93.649212))
+                .title("Example Feature")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
+                .draggable(false));
+        feature_example.setTag("Feature");
+        featureMarkers.add(feature_example);
+
+
+        Marker uspot_example = mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(42.026962, -93.649233))
+                .title("Example USpot")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
+                .draggable(false));
+        uspot_example.setTag("USpot");
+        uspotMarkers.add(uspot_example);
 
         /*
         Marker scrib = mMap.addMarker(new MarkerOptions()
