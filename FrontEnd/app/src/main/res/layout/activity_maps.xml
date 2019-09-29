@@ -60,6 +60,7 @@
         android:layout_marginBottom="50dp"
         android:background="#ab1f1f"
         android:padding="8dp"
+        android:onClick="viewMainActivity"
         android:text="Dashboard"
         android:textColor="#ffffff" />
 

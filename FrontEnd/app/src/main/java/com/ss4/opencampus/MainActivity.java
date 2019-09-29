@@ -21,4 +21,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void viewBuildingList(View view)
+    {
+        Intent intent = new Intent(this, BuildingList.class);
+        startActivity(intent);
+    }
+
 }

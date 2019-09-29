@@ -1,7 +1,9 @@
 package com.ss4.opencampus;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -22,6 +24,20 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
 import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPolylineClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMarkerClickListener {
@@ -39,6 +55,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean featureFilter;
     private boolean uspotFilter;
     private boolean customFilter;
+
+    private RequestQueue queue;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,22 +93,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Code here executes on main thread after user presses button
 
                 // Display filter screen
-                    FilterDialog dialog = new FilterDialog();
-                    dialog.show(getFragmentManager(), "FragmentDialog");
 
+                FilterDialog dialog = new FilterDialog();
+                dialog.show(getFragmentManager(), "FragmentDialog");
 
-            }
-        });
-
-        final Button dashboardButton = findViewById(R.id.dashboardButton);
-        dashboardButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Code here executes on main thread after user presses button
             }
         });
 
     }
-
 
     /**
      * Manipulates the map once available.
@@ -126,6 +138,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         uspot_example.setTag("USpot");
         uspotMarkers.add(uspot_example);
 
+        /*
+        Marker scrib = mMap.addMarker(new MarkerOptions()
+                .position(ames)
+                .title("Marker in Ames")
+                .draggable(true)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble)));
+        scrib.setTag("Scribble");
+        */
+
         mMap.setOnMarkerDragListener(this);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(ames));
@@ -135,106 +156,107 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
         mMap.setLatLngBoundsForCameraTarget(isuBoundry);
 
+        /*
+        Polyline polyline1 = googleMap.addPolyline((new PolylineOptions())
+                .clickable(true)
+                .add(new LatLng(42.027013, -93.647404),
+                        new LatLng(42.027292, -93.646256),
+                        new LatLng(42.026917, -93.644776),
+                        new LatLng(42.025801, -93.644626),
+                        new LatLng(42.025020, -93.645849),
+                        new LatLng(42.025777, -93.647394),
+                        new LatLng(42.027013, -93.647404)));
+
+        polyline1.setWidth(20);
+        */
+
         mMap.setOnPolylineClickListener(this);
     }
 
     @Override
     public void onPolylineClick(Polyline polyline) {
-        if(polyline.getColor()!=0xff00ffff)
+        if (polyline.getColor() != 0xff00ffff)
             polyline.setColor(0xff00ffff);
         else
             polyline.setColor(0xff000000);
     }
 
     @Override
-    public void onMarkerDragStart(Marker m)
-    {
-        String tag = (String)m.getTag();
-        if(tag.equals("Scribble"))
-        {
+    public void onMarkerDragStart(Marker m) {
+        String tag = (String) m.getTag();
+        if (tag.equals("Scribble")) {
             m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble_highlighted));
             m.setAlpha((float) 0.5);
             m.setSnippet("Moving Marker...");
         }
-        if(tag.equals("Custom"))
-        {
+        if (tag.equals("Custom")) {
 
         }
     }
 
 
     @Override
-    public void onMarkerDragEnd(Marker m)
-    {
-        String tag = (String)m.getTag();
-        if(tag.equals("Scribble"))
-        {
+    public void onMarkerDragEnd(Marker m) {
+        String tag = (String) m.getTag();
+        if (tag.equals("Scribble")) {
             m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble));
             m.setSnippet("");
-            m.setAlpha((float)1.0);
+            m.setAlpha((float) 1.0);
         }
-        if(tag.equals("Custom"))
-        {
+        if (tag.equals("Custom")) {
 
         }
     }
 
     @Override
-    public void onMarkerDrag(Marker m)
-    {
-        String tag = (String)m.getTag();
-        if(tag.equals("Scribble"))
-        {
+    public void onMarkerDrag(Marker m) {
+        String tag = (String) m.getTag();
+        if (tag.equals("Scribble")) {
             markerRotation += 6;
             m.setRotation(markerRotation);
         }
-        if(tag.equals("Custom"))
-        {
+        if (tag.equals("Custom")) {
 
         }
     }
 
     @Override
-    public boolean onMarkerClick(Marker m)
-    {
-        String tag = (String)m.getTag();
-        if(tag.equals("Scribble"))
-        {
+    public boolean onMarkerClick(Marker m) {
+        String tag = (String) m.getTag();
+        if (tag.equals("Scribble")) {
 
         }
-        if(tag.equals("Custom"))
-        {
+        if (tag.equals("Custom")) {
             currentMarkerIndex = customMarkers.indexOf(m);
             updateInfo(m);
             markerShowingInfoWindow = m;
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Set Marker Title: " + m.getTitle());
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Set Marker Title: " + m.getTitle());
 
-                // Set up the input
-                final EditText input = new EditText(this);
-                // Specify the type of input expected
-                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-                builder.setView(input);
+            // Set up the input
+            final EditText input = new EditText(this);
+            // Specify the type of input expected
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+            builder.setView(input);
 
 
+            // Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_Text.set(currentMarkerIndex, input.getText().toString());
+                    markerShowingInfoWindow.setTitle(m_Text.get(currentMarkerIndex));
+                    updateInfo(markerShowingInfoWindow);
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
 
-                // Set up the buttons
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        m_Text.set(currentMarkerIndex, input.getText().toString());
-                        markerShowingInfoWindow.setTitle(m_Text.get(currentMarkerIndex));
-                        updateInfo(markerShowingInfoWindow);
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
+            builder.show();
 
             updateInfo(m);
         }
@@ -242,52 +264,105 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return false;
     }
 
-    public void updateInfo(Marker m)
-    {
+    public void updateInfo(Marker m) {
         currentMarkerIndex = customMarkers.indexOf(m);
         m.setTitle(m_Text.get(currentMarkerIndex));
         m.hideInfoWindow();
         m.showInfoWindow();
     }
 
-    public void setFilters(boolean[] f)
-    {
+    public void setFilters(boolean[] f) {
         buildingFilter = f[0];
         featureFilter = f[1];
         uspotFilter = f[2];
         customFilter = f[3];
 
-        for(Marker m: buildingMarkers)
+        for (Marker m : buildingMarkers)
             m.setVisible(f[0]);
 
-        for(Marker m: featureMarkers)
+        for (Marker m : featureMarkers)
             m.setVisible(f[1]);
 
-        for(Marker m: uspotMarkers)
+        for (Marker m : uspotMarkers)
             m.setVisible(f[2]);
 
-        for(Marker m: customMarkers)
+        for (Marker m : customMarkers)
             m.setVisible(f[3]);
+
+        if(buildingFilter && buildingMarkers.size() == 0)
+            loadBuildings();
     }
 
-    public boolean getBuildingFilter()
-    {
+    public boolean getBuildingFilter() {
         return buildingFilter;
     }
 
-    public boolean getFeatureFilter()
-    {
+    public boolean getFeatureFilter() {
         return featureFilter;
     }
 
-    public boolean getUSpotFilter()
-    {
+    public boolean getUSpotFilter() {
         return uspotFilter;
     }
 
-    public boolean getCustomFilter()
-    {
+    public boolean getCustomFilter() {
         return customFilter;
     }
+
+    public void viewMainActivity(View view)
+    {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    public void loadBuildings()
+    {
+        queue = Volley.newRequestQueue(this);
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/all";
+
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject building = response.getJSONObject(i);
+                                //System.out.println("Building Name: " + building.getString("buildingName"));
+                                //System.out.println("Lat: " + building.getDouble("latit"));
+                                //System.out.println("Lon: " + building.getDouble("longit"));
+                                //System.out.println();
+
+                                Marker currentBuilding = mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(building.getDouble("latit"), building.getDouble("longit")))
+                                        .title(building.getString("buildingName"))
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_building_sized))
+                                        .draggable(false));
+                                currentBuilding.setTag("Building");
+                                buildingMarkers.add(currentBuilding);
+                                //getResp.append("firstName: " + student.getString("firstName") + '\n');
+                                //getResp.append("lastName: " + student.getString("lastName") + '\n');
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        //jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+
+
+    }
+
 
 }
