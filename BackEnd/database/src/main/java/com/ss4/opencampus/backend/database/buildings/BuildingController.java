@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -33,7 +35,7 @@ public class BuildingController
    */
   @PostMapping(path = "/add")
   public @ResponseBody
-  String addSingleBuilding(@RequestBody Building building)
+  Map<String, String> addSingleBuilding(@RequestBody Building building)
   {
     try
     {
@@ -41,9 +43,9 @@ public class BuildingController
     }
     catch (Exception e)
     {
-      return "Failed to add building to Buildings table";
+      return Collections.singletonMap("response", "Failed to add building to Buildings table");
     }
-    return "New building added to Buildings table";
+    return Collections.singletonMap("response", "New building added to Buildings table");
   }
 
   /**
@@ -57,7 +59,7 @@ public class BuildingController
    */
   @PostMapping(path = "/addMultiple")
   public @ResponseBody
-  String addMultipleBuildings(@RequestBody Building[] buildings)
+  Map<String, String> addMultipleBuildings(@RequestBody Building[] buildings)
   {
     int addedCnt = 0;
     try
@@ -70,9 +72,9 @@ public class BuildingController
     }
     catch (Exception e)
     {
-      return "Ran into error. Only added " + addedCnt + " building(s) to the Buildings table";
+      return Collections.singletonMap("response","Ran into error. Only added " + addedCnt + " building(s) to the Buildings table" );
     }
-    return "Added " + addedCnt + " buildings to the Buildings table.";
+    return Collections.singletonMap("response", "Added " + addedCnt + " buildings to the Buildings table.");
   }
 
   /**

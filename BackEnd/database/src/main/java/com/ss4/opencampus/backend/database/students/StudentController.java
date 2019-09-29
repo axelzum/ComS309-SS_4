@@ -3,6 +3,8 @@ package com.ss4.opencampus.backend.database.students;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -32,7 +34,7 @@ public class StudentController
    */
   @PostMapping(path = "/add")
   public @ResponseBody
-  String addNewStudent(@RequestBody Student student)
+  Map<String, String> addNewStudent(@RequestBody Student student)
   {
     try
     {
@@ -40,9 +42,9 @@ public class StudentController
     }
     catch (Exception e)
     {
-      return "Failed to add student to Students table";
+      return Collections.singletonMap("response", "Failed to add student to Students table");
     }
-    return "Added student to Students table";
+    return Collections.singletonMap("response", "Added student to Students table");
   }
 
   /**
