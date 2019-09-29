@@ -35,6 +35,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<String> m_Text = new ArrayList<>();
     private Marker markerShowingInfoWindow;
     private int currentMarkerIndex = 0;
+    private boolean buildingFilter;
+    private boolean featureFilter;
+    private boolean uspotFilter;
+    private boolean customFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +66,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+
         final Button filterButton = findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
+
+                // Display filter screen
+
+                    FilterDialog dialog = new FilterDialog();
+                    dialog.show(getFragmentManager(), "FragmentDialog");
+
+
             }
         });
 
@@ -262,6 +274,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         m.showInfoWindow();
     }
 
+    public void setFilters(boolean[] f)
+    {
+        buildingFilter = f[0];
+        featureFilter = f[1];
+        uspotFilter = f[2];
+        customFilter = f[3];
 
+        for(Marker m: buildingMarkers)
+            m.setVisible(f[0]);
+
+        for(Marker m: featureMarkers)
+            m.setVisible(f[1]);
+
+        for(Marker m: uspotMarkers)
+            m.setVisible(f[2]);
+
+        for(Marker m: customMarkers)
+            m.setVisible(f[3]);
+    }
+
+    public boolean getBuildingFilter()
+    {
+        return buildingFilter;
+    }
+
+    public boolean getFeatureFilter()
+    {
+        return featureFilter;
+    }
+
+    public boolean getUSpotFilter()
+    {
+        return uspotFilter;
+    }
+
+    public boolean getCustomFilter()
+    {
+        return customFilter;
+    }
 
 }
