@@ -73,7 +73,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Code here executes on main thread after user presses button
 
                 // Display filter screen
-
                     FilterDialog dialog = new FilterDialog();
                     dialog.show(getFragmentManager(), "FragmentDialog");
 
@@ -127,15 +126,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         uspot_example.setTag("USpot");
         uspotMarkers.add(uspot_example);
 
-        /*
-        Marker scrib = mMap.addMarker(new MarkerOptions()
-                .position(ames)
-                .title("Marker in Ames")
-                .draggable(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble)));
-        scrib.setTag("Scribble");
-        */
-
         mMap.setOnMarkerDragListener(this);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(ames));
@@ -144,20 +134,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng isuNE = new LatLng(42.039406, -93.625058);
         LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
         mMap.setLatLngBoundsForCameraTarget(isuBoundry);
-
-        /*
-        Polyline polyline1 = googleMap.addPolyline((new PolylineOptions())
-                .clickable(true)
-                .add(new LatLng(42.027013, -93.647404),
-                        new LatLng(42.027292, -93.646256),
-                        new LatLng(42.026917, -93.644776),
-                        new LatLng(42.025801, -93.644626),
-                        new LatLng(42.025020, -93.645849),
-                        new LatLng(42.025777, -93.647394),
-                        new LatLng(42.027013, -93.647404)));
-
-        polyline1.setWidth(20);
-        */
 
         mMap.setOnPolylineClickListener(this);
     }
