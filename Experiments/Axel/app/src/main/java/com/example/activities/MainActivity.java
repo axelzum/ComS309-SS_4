@@ -91,19 +91,23 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        final String requestBody = newStudent.toString();
+        //final String requestBody = newStudent.toString();
 
         queue = Volley.newRequestQueue(this);
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/add";
 
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        postResp.setText(response);
-                    }
-                }, new Response.ErrorListener() {
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newStudent, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                //postResp.setText("win");
+                try {
+                    postResp.setText(response.get("response").toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
@@ -111,45 +115,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }) {
             @Override
-            public String getBodyContentType() {
-                return "application/json; charset=utf-8";
-            }
-
-            @Override
-            public byte[] getBody() throws AuthFailureError {
-                try {
-                    return requestBody == null ? null : requestBody.getBytes("utf-8");
-                } catch (UnsupportedEncodingException uee) {
-                    uee.printStackTrace();
-                    return null;
-                }
-            }
-
-            @Override
-            protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                String responseString = "";
-                if (response != null) {
-                    responseString = String.valueOf(response.statusCode);
-                }
-                return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
-            }
-            /*
-            @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json");
+                headers.put("Content-Type", "application/json; charset=utf-8");
                 return headers;
             }
-             */
         };
 
         //Set the tag on the request
-        stringRequest.setTag(TAG);
+        jsonRequest.setTag(TAG);
 
         // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
+        queue.add(jsonRequest);
 
+    }
     @Override
     protected void onStop () {
         super.onStop();
