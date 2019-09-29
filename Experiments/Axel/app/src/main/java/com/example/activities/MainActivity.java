@@ -1,4 +1,4 @@
-package com.example.testvolley;
+package com.example.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,10 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-
-    Button get;
-
-    Button post;
 
     EditText firstName;
 
@@ -32,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        get = (Button)findViewById(R.id.button);
+        Button get = (Button)findViewById(R.id.button);
         get.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -41,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        post = (Button)findViewById(R.id.button2);
+        Button post = (Button)findViewById(R.id.button2);
         post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
