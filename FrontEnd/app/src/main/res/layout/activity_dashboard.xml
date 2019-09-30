@@ -18,7 +18,7 @@
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Dashboard"
+            android:text="@string/title_activity_dashboard"
             android:textAlignment="center"
             android:textSize="30sp" />
 
@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="viewMapsActivity"
-            android:text="Map View" />
+            android:text="@string/button_map_view" />
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="75dp"
             android:onClick="viewBuildingList"
-            android:text="Building List"
+            android:text="@string/button_building_list"
             app:layout_constraintStart_toStartOf="parent" />
 
     </RelativeLayout>

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 
 public class Dashboard extends AppCompatActivity {
@@ -13,13 +14,6 @@ public class Dashboard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-        /*
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.container,MapsActivity.class,YOUR_FRAGMENT_STRING_TAG);
-        transaction.addToBackStack(null);
-        transaction.commit();
-        */
     }
 
     public void viewMapsActivity(View view)
