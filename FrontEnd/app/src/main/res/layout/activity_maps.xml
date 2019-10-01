@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<fragment
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/map"
@@ -15,18 +15,21 @@
     tools:context=".MapsActivity" />
 
 
-<Button
-    android:id="@+id/customMarkerButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="#ab1f1f"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentEnd="true"
-    android:layout_alignParentRight="true"
-    android:padding="8dp"
-    android:layout_margin="5dp"
-    android:text="Place Marker"
-    android:textColor="#ffffff" />
+    <Button
+        android:id="@+id/customMarkerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="#ab1f1f"
+        android:padding="8dp"
+        android:text="@string/button_place_marker"
+        android:textColor="#ffffff" />
 
     <Button
         android:id="@+id/filterButton"
@@ -42,7 +45,7 @@
         android:layout_marginBottom="50dp"
         android:background="#ab1f1f"
         android:padding="8dp"
-        android:text="Filters"
+        android:text="@string/button_filters"
         android:textColor="#ffffff" />
 
     <Button
@@ -59,9 +62,9 @@
         android:layout_marginRight="5dp"
         android:layout_marginBottom="50dp"
         android:background="#ab1f1f"
-        android:padding="8dp"
         android:onClick="viewDashboard"
-        android:text="Dashboard"
+        android:padding="8dp"
+        android:text="@string/button_dashboard"
         android:textColor="#ffffff" />
 
 </RelativeLayout>
