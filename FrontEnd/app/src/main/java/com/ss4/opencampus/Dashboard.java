@@ -7,6 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+/**
+ * @Author: Morgan Smith
+ * Main class for the Dashboard List Activity
+ * Creates view methods to view different activities with onClick buttons
+ **/
 
 public class Dashboard extends AppCompatActivity {
 
