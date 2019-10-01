@@ -1,5 +1,12 @@
 package com.ss4.opencampus;
 
+/**
+ * @Author: Morgan Smith
+ * Building class to store building object data
+ * Getter and setter methods for building properties
+ * Conversionn of Lat and Long to string type.
+ **/
+ 
 public class Building {
 
     public String buildingName;
@@ -43,10 +50,12 @@ public class Building {
         return longitude;
     }
 
+    //Converts Double latitude to string as a getter method
     public String getLatString() {
         return latitude.toString();
     }
 
+    //Converts Double longitude to string as a getter method
     public String getLongString() {
         return longitude.toString();
     }
