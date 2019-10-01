@@ -14,74 +14,74 @@
         android:padding="10dp">
 
         <TextView
+            android:id="@+id/heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Apply Filters for Map Markers:"
-            android:textSize="18sp"
+            android:text="@string/label_apply_filters"
             android:textColor="#000"
-            android:id="@+id/heading"/>
+            android:textSize="18sp" />
 
         <CheckBox
+            android:id="@+id/checkBuildings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/heading"
             android:layout_marginTop="20dp"
             android:background="@null"
-            android:textColor="#000"
-            android:text="Buildings"
-            android:id="@+id/checkBuildings"/>
+            android:text="@string/buildings"
+            android:textColor="#000" />
 
         <CheckBox
+            android:id="@+id/checkFeatures"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/checkBuildings"
             android:layout_marginTop="20dp"
             android:background="@null"
-            android:textColor="#000"
-            android:text="Features"
-            android:id="@+id/checkFeatures"/>
+            android:text="@string/features"
+            android:textColor="#000" />
 
         <CheckBox
+            android:id="@+id/checkUSpots"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/checkFeatures"
             android:layout_marginTop="20dp"
             android:background="@null"
-            android:textColor="#000"
-            android:text="USpots"
-            android:id="@+id/checkUSpots"/>
+            android:text="@string/uspots"
+            android:textColor="#000" />
 
         <CheckBox
+            android:id="@+id/checkCustom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/checkUSpots"
             android:layout_marginTop="20dp"
             android:background="@null"
-            android:textColor="#000"
-            android:text="Custom Markers"
-            android:id="@+id/checkCustom"/>
+            android:text="@string/custom_markers"
+            android:textColor="#000" />
 
         <TextView
+            android:id="@+id/action_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OK"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginRight="20dp"
-            android:textSize="18sp"
+            android:text="@string/button_ok"
             android:textColor="#33bbff"
-            android:id="@+id/action_ok"/>
+            android:textSize="18sp" />
 
         <TextView
+            android:id="@+id/action_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CANCEL"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginRight="20dp"
-            android:textSize="18sp"
+            android:text="@string/button_cancel"
             android:textColor="#33bbff"
-            android:id="@+id/action_cancel"/>
+            android:textSize="18sp" />
 
     </RelativeLayout>
 
