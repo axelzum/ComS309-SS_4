@@ -27,5 +27,4 @@ public class Dashboard extends AppCompatActivity {
         Intent intent = new Intent(this, BuildingList.class);
         startActivity(intent);
     }
-
 }
