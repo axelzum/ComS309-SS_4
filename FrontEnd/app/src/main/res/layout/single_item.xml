@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/building_list_buildingName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Building Name"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/building_list_abbreviation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Abbreviation"/>
+
+    <TextView
+        android:id="@+id/building_list_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Address"/>
+
+    <TextView
+        android:id="@+id/building_list_latitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Latitude"/>
+
+    <TextView
+        android:id="@+id/building_list_longitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Longitude"/>
+</LinearLayout>
