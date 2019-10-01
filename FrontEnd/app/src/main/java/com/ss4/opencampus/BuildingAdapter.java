@@ -9,6 +9,11 @@ import android.widget.TextView;
 
 import java.util.List;
 
+/**
+ * @Author: Morgan Smith
+ * Formats building object data for Recycler View layout
+ **/
+
 public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHolder> {
 
     private Context context;
