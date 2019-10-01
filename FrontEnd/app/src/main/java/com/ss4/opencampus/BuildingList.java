@@ -23,6 +23,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @Author: Morgan Smith
+ * Main class for the Building List Activity
+ * Reads in JSON data and outputs to recycler viewer
+ **/
+
 public class BuildingList extends AppCompatActivity {
 
     public static final String TAG = "tag";
@@ -31,7 +37,7 @@ public class BuildingList extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) { // Start when page opens
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building_list);
 
@@ -57,13 +63,13 @@ public class BuildingList extends AppCompatActivity {
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/all";
 
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
+                new Response.Listener<JSONArray>() {    // Reads in JSON data for the buildings from the server
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
                             for (int i = 0; i < response.length(); i++) {
-                                JSONObject jsonObject = response.getJSONObject(i);
-                                Building buildingInfo = new Building();
+                                JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
+                                Building buildingInfo = new Building();             // Makes Building object from the JSONObject
 
                                 buildingInfo.setBuildingName(jsonObject.getString("buildingName"));
                                 buildingInfo.setAbbrev(jsonObject.getString("abbreviation"));
