@@ -78,56 +78,31 @@ public class BuildingController
   }
 
   /**
-   * Mapping for the different searches that will return lists of Buildings in the database. If the Client is trying to
-   * see a list of Buildings, this method will be called
+   * Mapping for the different searches that will return Buildings in the database. If the Client is trying to see
+   * either a list of Buildings or a singular Building, this method will be called. Singluar Buildings will be returned
+   * in a List of size 1.
    *
    * @param searchType
    *         Type of list the client wants to see. Can be all Buildings, searching by name Start, or searching by
    *         abbreviation start
-   * @param param
+   * @param param1
+   *         What the client is searching with. Not a required parameter for this method to work.
+   * @param param2
    *         What the client is searching with. Not a required parameter for this method to work.
    *
    * @return A list of Buildings that meet what the client wants. Or null if they somehow search something they
    * shouldn't be able to search.
    */
-  @GetMapping(path = "/search/lists/{searchType}")
+  @GetMapping(path = "/search/{searchType}")
   public @ResponseBody
-  Iterable<Building> getBuildingLists(@PathVariable String searchType, @RequestParam(required = false) String param)
+  Iterable<Building> getBuildingLists(@PathVariable String searchType, @RequestParam(required = false) Object param1, @RequestParam(required = false) Object param2)
   {
     switch (searchType)
     {
-      case "all":
-        return buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName"));
       case "nameStartsWith":
-        return buildingRepository.findAllByBuildingNameStartingWith(param);
+        return buildingRepository.findAllByBuildingNameStartingWith((String) param1);
       case "abbreviationStartsWith":
-        return buildingRepository.findAllByAbbreviationStartingWith(param);
-      default:
-        return null;
-    }
-  }
-
-  /**
-   * Mapping for the different searches that will return a single Building in the database. If the Client is trying to
-   * find a single Building, this method will be called
-   *
-   * @param searchType
-   *         How the client wants to find their specific Building.
-   * @param param1
-   *         Parameter to refine search. This is parameter is required otherwise the Backend does not know what to
-   *         search for
-   * @param param2
-   *         Parameter used when search by location. This is for Longitude. This parameter is optional
-   *
-   * @return A single Building that meets the parameters the Client entered
-   */
-  @GetMapping(path = "/search/specific/{searchType}")
-  public @ResponseBody
-  Building getBuildingBy(@PathVariable String searchType, @RequestParam Object param1,
-                         @RequestParam(required = false) Object param2)
-  {
-    switch (searchType)
-    {
+        return buildingRepository.findAllByAbbreviationStartingWith((String) param1);
       case "name":
         return buildingRepository.findByBuildingName((String) param1);
       case "abbreviation":
@@ -136,8 +111,8 @@ public class BuildingController
         return buildingRepository.findByAddress((String) param1);
       case "location":
         return buildingRepository.findByLatitAndLongit((Double) param1, (Double) param2);
-      default:
-        return null;
+      default: // default is returning a list of all Buildings sorted by there names. There needs to be some text after "search/" otherwise it will not work?
+        return buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName"));
     }
   }
 
@@ -159,112 +134,4 @@ public class BuildingController
     return buildingRepository.findById(id);
   }
 
-  /*
-   * Below are old mappings that have been combined into 2 methods instead of many. The combination will make
-   * it easier to add onto if needed at a later date.
-   * */
-//  /**
-//   * Get a list of all buildings in the database
-//   *
-//   * @return List of all buildings sorted alphabetically in JSON format
-//   */
-//  @GetMapping(path = "/search/all") // should be alphabetical
-//  public @ResponseBody
-//  Iterable<Building> getAllBuildings()
-//  {
-//    // use Java code names for HttpRequests. Not MySQL names
-//    return buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName"));
-//  }
-//
-//  /**
-//   * Find the building with the given name
-//   *
-//   * @param name
-//   *         Name of building to look for
-//   *
-//   * @return JSON data of building
-//   */
-//  @GetMapping(path = "/search/name")
-//  public @ResponseBody
-//  Building getBuildingByName(@RequestParam String name)
-//  {
-//    return buildingRepository.findByBuildingName(name);
-//  }
-//
-//  /**
-//   * Find buildings with names that start with given parameter
-//   *
-//   * @param startsWith
-//   *         Characters buildings could start with
-//   *
-//   * @return List of Building data in JSON format that meet parameters
-//   */
-//  @GetMapping(path = "/search/nameStartsWith")
-//  public @ResponseBody
-//  Iterable<Building> getBuildingsStartingWith(@RequestParam String startsWith)
-//  {
-//    return buildingRepository.findAllByBuildingNameStartingWith(startsWith);
-//  }
-//
-//  /**
-//   * Find Building with given abbreviation
-//   *
-//   * @param abbreviation
-//   *         Building abbreviation to search for
-//   *
-//   * @return Building data in JSON format of Building with given abbreviation
-//   */
-//  @GetMapping("/search/abbreviation")
-//  public @ResponseBody
-//  Building getBuildingByAbbrev(@RequestParam String abbreviation)
-//  {
-//    return buildingRepository.findByAbbreviation(abbreviation);
-//  }
-//
-//  /**
-//   * Find List of buildings whose abbreviations start with given text
-//   *
-//   * @param startsWith
-//   *         text abbreviations are to start with
-//   *
-//   * @return List of Building data in JSON format of Buildings with start of given abbreviation
-//   */
-//  @GetMapping(path = "/search/abbreviationStartsWith")
-//  public @ResponseBody
-//  Iterable<Building> getBuildingsByAddressStartingWith(@RequestParam String startsWith)
-//  {
-//    return buildingRepository.findAllByAbbreviationStartingWith(startsWith);
-//  }
-//
-//  /**
-//   * Get building that has given address
-//   *
-//   * @param address
-//   *         Address to look up
-//   *
-//   * @return data in JSON format of Building with given address
-//   */
-//  @GetMapping(path = "/search/address")
-//  public @ResponseBody
-//  Building getBuildingByAddress(@RequestParam String address)
-//  {
-//    return buildingRepository.findByAddress(address);
-//  }
-//
-//  /**
-//   * Return a Building's information if given it's exact latitude and longitude
-//   *
-//   * @param latit
-//   *         latitude of building
-//   * @param longit
-//   *         longitude of building
-//   *
-//   * @return data in JSON format about Building at given coordinates
-//   */
-//  @GetMapping(path = "/search/location")
-//  public @ResponseBody
-//  Building getBuildingByLocation(@RequestParam Double latit, @RequestParam Double longit)
-//  {
-//    return buildingRepository.findByLatitAndLongit(latit, longit);
-//  }
 }
