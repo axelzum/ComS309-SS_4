@@ -15,4 +15,15 @@ More features can be added on to this application as requested.
 * **Test Lead** - Brett Santema
 * **Tech Lead** - Willis Knox
 
-All files related to this project will go into this repository.
+___
+### Postman Link
+Click this link to access all of Willis's current requests he has made in Postman to test the backend:
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/10c95a13853d4c832aa0)
+
+
+If you have Postman on your computer, it should open up an exact copy of the *Collection* in Postman.
+
+If you don't have Postman, don't worry, this should direct you to download it on your computer. Then you will be able to run the *Requests*.
+
+Sadly, this will not update dynamically, so Willis will have to be updating this link frequently when he makes new *Requests*.

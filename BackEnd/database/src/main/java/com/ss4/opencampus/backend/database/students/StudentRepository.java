@@ -6,11 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Willis Knox
  * <p>
  * Repository for different ways to Query the MySQL Students table
- * </p>
  */
 public interface StudentRepository extends JpaRepository<Student, Integer>
 {
-  Student findByUserName(String userName);
+  Iterable<Student> findByUserName(String userName);
 
   Iterable<Student> findAllByFirstName(String firstName);
 
