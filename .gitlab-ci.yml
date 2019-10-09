@@ -41,8 +41,8 @@ autoDeploy:
     - cd BackEnd/database
     - mvn package
     - sudo mv target/*.jar /target/web-demo.jar 
-    - sudo systemctl stop systemd-web-demo
-    - sudo systemctl start systemd-web-demo
+    - sudo systemctl stop system-web-demo
+    - sudo systemctl start system-web-demo
 
     
 # To build android projects
