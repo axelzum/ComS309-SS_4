@@ -111,7 +111,7 @@ public class BuildingController
         return buildingRepository.findByAddress((String) param1);
       case "location":
         return buildingRepository.findByLatitAndLongit((Double) param1, (Double) param2);
-      default: // default is returning a list of all Buildings sorted by there names. There needs to be some text after "search/" otherwise it will not work?
+      default: // default is returning a list of all Buildings sorted by their names. There needs to be some text after "search/" otherwise it will not work?
         return buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName"));
     }
   }
