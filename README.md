@@ -27,5 +27,3 @@ If you have Postman on your computer, it should open up an exact copy of the *Co
 If you don't have Postman, don't worry, this should direct you to download it on your computer. Then you will be able to run the *Requests*.
 
 Sadly, this will not update dynamically, so Willis will have to be updating this link frequently when he makes new *Requests*.
-
-Test to see if CICD tries to run on my branch
