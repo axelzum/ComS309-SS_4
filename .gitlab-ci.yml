@@ -12,7 +12,7 @@ stages:
 maven-build:
   stage: mavenbuild
   tags:
-    - springboot_tag
+    - shell
   script:
     - cd BackEnd/database
     - mvn package -B
@@ -22,7 +22,7 @@ maven-build:
 maven-test:
   stage: maventest
   tags:
-    - springboot_tag
+    - shell
   script:
     - cd BackEnd/database
     - mvn test
@@ -36,7 +36,7 @@ maven-test:
 autoDeploy:
   stage: autodeploy
   tags:
-   - springboot_tag
+   - shell
   script:
     - cd BackEnd/database
     - mvn package
@@ -56,7 +56,7 @@ android-build:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x ./FrontEnd/gradlew
   tags:
-   - android_tag
+   - docker
   script:
     - cd FrontEnd
     - ./gradlew assemble
@@ -72,7 +72,7 @@ unitTests:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x ./FrontEnd/gradlew
   tags:
-   - android_tag
+   - docker
   script:
     - cd FrontEnd
     - ./gradlew test
