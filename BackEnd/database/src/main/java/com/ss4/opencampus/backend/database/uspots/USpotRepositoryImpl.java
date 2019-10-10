@@ -1,6 +1,12 @@
 package com.ss4.opencampus.backend.database.uspots;
 
-public class USpotSaveImageImpl implements USpotRepositorySaveImage
+/**
+ * Strict naming convention!! Had to have this be called the EXACT same as my custom interface except I had
+ * to replace the word "Custom" with "Impl"
+ *
+ * This would not pass the maven tests if named differently.
+ */
+public class USpotRepositoryImpl implements USpotRepositoryCustom
 {
   // Do these towards the end. Most likely going to have errors :).
   // Probably need Mockitio tests or something??
