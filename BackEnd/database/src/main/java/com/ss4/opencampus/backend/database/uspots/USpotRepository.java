@@ -2,7 +2,8 @@ package com.ss4.opencampus.backend.database.uspots;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface USpotRepository extends JpaRepository<USpot, Integer>, USpotRepositoryCustom
+
+public interface USpotRepository extends JpaRepository<USpot, Integer>
 {
   Iterable<USpot> findAllByUsCategory(String category);
   Iterable<USpot> findByUsName(String name);

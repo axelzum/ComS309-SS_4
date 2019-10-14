@@ -37,6 +37,9 @@ public class USpot
   @Column(name = "Picture_Directory")
   private String usImagePath;
 
+  @Transient
+  private byte[] picBytes;
+
   public USpot()
   {
     // default value for rating. Can be set in MySQL
@@ -133,5 +136,14 @@ public class USpot
     this.usImagePath = usImagePath;
   }
 
+  public byte[] getPicBytes()
+  {
+    return picBytes;
+  }
+
+  public void setPicBytes(byte[] arr)
+  {
+    picBytes = arr;
+  }
 
 }
