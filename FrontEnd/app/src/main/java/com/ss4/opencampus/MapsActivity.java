@@ -10,6 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,7 +43,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPolylineClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMarkerClickListener {
 
@@ -55,7 +63,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean featureFilter;
     private boolean uspotFilter;
     private boolean customFilter;
+    public String customMarkerFileText;
 
+    private static final String FILE_NAME = "CustomMarkers.txt";
     private RequestQueue queue;
 
 
@@ -100,6 +110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        customMarkerFileText = "";
     }
 
     /**
@@ -138,14 +149,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         uspot_example.setTag("USpot");
         uspotMarkers.add(uspot_example);
 
-        /*
-        Marker scrib = mMap.addMarker(new MarkerOptions()
-                .position(ames)
-                .title("Marker in Ames")
-                .draggable(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble)));
-        scrib.setTag("Scribble");
-        */
+        loadCustomMarkers();
+        placeCustomMarkers();
 
         mMap.setOnMarkerDragListener(this);
 
@@ -255,6 +260,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     dialog.cancel();
                 }
             });
+            builder.setNeutralButton("Save", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Open save dialog
+                    CustomMarkerDialog cmDialog = new CustomMarkerDialog();
+                    cmDialog.show(getFragmentManager(), "CustomMarkerDialog");
+                    dialog.cancel();
+                }
+            });
 
             builder.show();
 
@@ -291,6 +305,127 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(buildingFilter && buildingMarkers.size() == 0)
             loadBuildings();
+    }
+
+    public void saveCustomMarkers(boolean[] f) {
+        boolean device = f[0];
+        boolean account = f[1];
+
+        if(device)
+        {
+            // Save markers to internal storage.
+            loadCustomMarkers(); // updates string
+            String fileContent = "";
+            Marker m = customMarkers.get(currentMarkerIndex);
+            fileContent = m.getTitle() + " " + m.getPosition().latitude + " " + m.getPosition().longitude + "\n"; // line we want to add.
+            Scanner cmScan = new Scanner(customMarkerFileText);
+            boolean markerSavedAlready = false;
+            String currentMarkerTitle;
+            while(cmScan.hasNextLine())
+            {
+                currentMarkerTitle = cmScan.next();
+                while(!cmScan.hasNextDouble())
+                {
+                    currentMarkerTitle += " " + cmScan.next();
+                }
+                if(currentMarkerTitle.equals(m.getTitle()))
+                {
+                    markerSavedAlready = true;
+                    break;
+                }
+                cmScan.nextLine();
+            }
+
+            if(!markerSavedAlready) {
+                customMarkerFileText += fileContent;
+                FileOutputStream fos = null;
+                try {
+                    fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
+                    fos.write(customMarkerFileText.getBytes());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (fos != null) {
+                        try {
+                            fos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }
+            System.out.println(fileContent);
+        }
+
+        if(account)
+        {
+            // Save markers to database.
+        }
+
+    }
+
+    public void loadCustomMarkers() {
+        FileInputStream fis = null;
+
+        try {
+            fis = openFileInput(FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String text;
+
+            while((text = br.readLine()) != null) {
+                sb.append(text).append("\n");
+            }
+            customMarkerFileText = sb.toString();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void placeCustomMarkers()
+    {
+        Scanner s = new Scanner(customMarkerFileText);
+        Scanner lineScanner;
+        String currentLine;
+        Marker markerToAdd;
+        double lat;
+        double lng;
+        String title;
+        while(s.hasNextLine())
+        {
+            currentLine = s.nextLine();
+            lineScanner = new Scanner(currentLine);
+            title = lineScanner.next();
+            while(!lineScanner.hasNextDouble())
+            {
+                title += " " + lineScanner.next();
+            }
+            lat = lineScanner.nextDouble();
+            lng = lineScanner.nextDouble();
+            markerToAdd = mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(lat, lng))
+                    .title(title)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_custom))
+                    .draggable(true));
+            markerToAdd.setTag("Custom");
+            m_Text.add(title);
+            customMarkers.add(markerToAdd);
+
+        }
     }
 
     public boolean getBuildingFilter() {
