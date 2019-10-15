@@ -112,6 +112,7 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findByAddress("1732 S 4th St");
   }
 
+  @Test
   public void findByAbbrev()
   {
     Mockito.when(buildingRepository.findByAbbreviation("JTS")).thenReturn(Collections.singletonList(building2));
@@ -120,6 +121,7 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findByAbbreviation("JTS");
   }
 
+  @Test    
   public void findByAbbrevStart()
   {
     Mockito.when(buildingRepository.findAllByAbbreviationStartingWith("W")).thenReturn(
@@ -128,7 +130,8 @@ public class BuildingsTests
     assertEquals(buildingRepository.findByAbbreviation("W"), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findAllByAbbreviationStartingWith("W");
   }
-
+  
+  @Test
   public void findByLatLong()
   {
     Mockito.when(buildingRepository.findByLatitAndLongit(42.0187128, -93.6633696)).thenReturn(
