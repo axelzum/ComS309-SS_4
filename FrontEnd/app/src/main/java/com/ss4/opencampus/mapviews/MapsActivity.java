@@ -1,6 +1,5 @@
-package com.ss4.opencampus;
+package com.ss4.opencampus.mapviews;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,9 +28,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ss4.opencampus.R;
+import com.ss4.opencampus.mainviews.Dashboard;
 
 import org.json.JSONArray;
 import org.json.JSONException;

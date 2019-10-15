@@ -1,4 +1,4 @@
-package com.ss4.opencampus;
+package com.ss4.opencampus.mainviews;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.ss4.opencampus.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

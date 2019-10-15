@@ -1,11 +1,14 @@
-package com.ss4.opencampus;
+package com.ss4.opencampus.mainviews;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+
+import com.ss4.opencampus.dataviews.BuildingList;
+import com.ss4.opencampus.mapviews.MapsActivity;
+import com.ss4.opencampus.R;
 
 /**
  * @Author: Morgan Smith

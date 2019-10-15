@@ -1,4 +1,4 @@
-package com.ss4.opencampus;
+package com.ss4.opencampus.dataviews;
 
 /**
  * @Author: Morgan Smith

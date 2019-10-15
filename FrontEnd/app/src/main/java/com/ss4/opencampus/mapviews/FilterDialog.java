@@ -1,4 +1,4 @@
-package com.ss4.opencampus;
+package com.ss4.opencampus.mapviews;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import com.ss4.opencampus.R;
+import com.ss4.opencampus.mapviews.MapsActivity;
 
 
 public class FilterDialog extends DialogFragment{
