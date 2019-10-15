@@ -127,7 +127,7 @@ public class BuildingsTests
     Mockito.when(buildingRepository.findAllByAbbreviationStartingWith("W")).thenReturn(
             Arrays.asList(building1, building3));
     Iterable<Building> b = buildingController.getBuildingLists("abbreviationStartsWith", "W", null);
-    assertEquals(buildingRepository.findByAbbreviation("W"), b);
+    assertEquals(buildingRepository.findAllByAbbreviationStartingWith("W"), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findAllByAbbreviationStartingWith("W");
   }
   
