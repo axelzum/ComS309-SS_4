@@ -13,6 +13,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * @author Willis Knox
+ */
 @RestController
 @RequestMapping(path = "/uspots")
 public class USpotController
@@ -86,7 +89,7 @@ public class USpotController
   Optional<USpot> getUSpotById(@PathVariable Integer id) throws IOException
   {
     Optional<USpot> u = uSpotRepository.findById(id);
-    if(u.isPresent())
+    if (u.isPresent())
       u.get().setPicBytes(pathToBytes(u.get().getUsImagePath()));
     return u;
   }

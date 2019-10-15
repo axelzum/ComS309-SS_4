@@ -2,6 +2,9 @@ package com.ss4.opencampus.backend.database.uspots;
 
 import javax.persistence.*;
 
+/**
+ * @author Willis Knox
+ */
 @Entity
 @Table(name = "USpots")
 public class USpot
@@ -73,9 +76,9 @@ public class USpot
 
   public void setUsRating(Double usRating)
   {
-    if(usRating > 5.0)
+    if (usRating > 5.0)
       usRating = 5.0;
-    if(usRating < 0.0)
+    if (usRating < 0.0)
       usRating = 0.0;
     this.usRating = usRating;
     ratingCount = 1;
@@ -86,9 +89,9 @@ public class USpot
   // add their new rating to the USpot
   public void updateRating(Double nextRating)
   {
-    if(nextRating > 5.0)
+    if (nextRating > 5.0)
       nextRating = 5.0;
-    if(nextRating < 0.0)
+    if (nextRating < 0.0)
       nextRating = 0.0;
     ratingCount++;
     ratingTotal += nextRating;
