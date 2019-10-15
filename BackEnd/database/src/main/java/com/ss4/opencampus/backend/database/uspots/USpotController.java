@@ -23,7 +23,7 @@ public class USpotController
   @Autowired
   private USpotRepository uSpotRepository;
 
-  private final String path = "PATH_TO_PHOTOS_HERE";
+  private final String path = "/photos/uspots/";
 
   @PostMapping("/add")
   public @ResponseBody
@@ -31,14 +31,18 @@ public class USpotController
   {
     try
     {
+      byte[] bytes = uSpot.getPicBytes();
       //janky fix for pathname setting but works for now.
       int length = uSpotRepository.findAll().size();
-      uSpot.setUsImagePath(path + (length + 1) + ".png");
-      //works!!
-      byte[] bytes = uSpot.getPicBytes();
-      FileOutputStream fos = new FileOutputStream(uSpot.getUsImagePath());
-      fos.write(bytes);
-      fos.close();
+      if (bytes != null)
+      {
+        uSpot.setUsImagePath(path + (length + 1) + ".png");
+        FileOutputStream fos = new FileOutputStream(uSpot.getUsImagePath());
+        fos.write(bytes);
+        fos.close();
+      }
+      else
+        uSpot.setUsImagePath("/photos/noimage.png");
       uSpotRepository.save(uSpot);
     }
     catch (IOException | DataAccessException ex)

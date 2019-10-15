@@ -65,7 +65,8 @@ public class BuildingsTests
   @Test
   public void findAllNoBuildings()
   {
-    Mockito.when(buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName"))).thenReturn(Collections.emptyList());
+    Mockito.when(buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName"))).thenReturn(
+            Collections.emptyList());
     Iterable<Building> b = buildingController.getBuildingLists("all", null, null);
     assertEquals(buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName")), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findAll(new Sort(Sort.Direction.ASC, "buildingName"));
@@ -121,7 +122,7 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findByAbbreviation("JTS");
   }
 
-  @Test    
+  @Test
   public void findByAbbrevStart()
   {
     Mockito.when(buildingRepository.findAllByAbbreviationStartingWith("W")).thenReturn(
@@ -130,7 +131,7 @@ public class BuildingsTests
     assertEquals(buildingRepository.findAllByAbbreviationStartingWith("W"), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findAllByAbbreviationStartingWith("W");
   }
-  
+
   @Test
   public void findByLatLong()
   {
