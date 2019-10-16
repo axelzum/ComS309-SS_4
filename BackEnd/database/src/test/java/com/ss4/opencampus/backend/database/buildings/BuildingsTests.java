@@ -19,6 +19,9 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * @author Willis Knox
+ * <p>
+ * Test Class for Buildings. Tests that the BuildingController is correctly working by using a combination of JUnit4 and
+ * Mockito
  */
 @RunWith(MockitoJUnitRunner.class)
 @SpringBootTest

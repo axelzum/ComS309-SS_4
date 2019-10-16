@@ -4,6 +4,9 @@ import javax.persistence.*;
 
 /**
  * @author Willis Knox
+ * <p>
+ * This is the table for USpots on the MySQL server. Anything with the @Transient annotation will NOT be directly in the
+ * database.
  */
 @Entity
 @Table(name = "USpots")
@@ -14,32 +17,62 @@ public class USpot
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer usID;
 
+
+  /*
+   * Remember to use the instance variable names in the JSON!! Not the names in the MySQL table!!!
+   */
+
+  /**
+   * Provided by Frontend
+   */
   @Column(name = "USpotName")
   private String usName;
 
+  /**
+   * Provided by Frontend
+   */
   @Column(name = "Rating")
   private Double usRating;
 
-  //used internally to keep track of overall rating of USpot
+  /**
+   * NOT provided by Frontend. Backend determines what this will be. Not saved to DB
+   */
   @Transient
   private Integer ratingCount;
 
-  //used internally to keep track of overall rating of USpot
+  /**
+   * NOT provided by Frontend. Backend determines what this will be. Not saved to DB
+   */
   @Transient
   private Double ratingTotal;
 
+  /**
+   * Provided by Frontend
+   */
   @Column(name = "Latitude")
   private Double usLatit;
 
+  /**
+   * Provided by Frontend
+   */
   @Column(name = "Longitude")
   private Double usLongit;
 
+  /**
+   * Provided by Frontend... will probably be in a ComboBox/ListBox of options
+   */
   @Column(name = "Category")
   private String usCategory;
 
+  /**
+   * NOT provided by Frontend. Backend determines what this will be. Saved to DB
+   */
   @Column(name = "Picture_Directory")
   private String usImagePath;
 
+  /**
+   * Provided by Frontend but not saved directly to database
+   */
   @Transient
   private byte[] picBytes;
 
@@ -48,6 +81,10 @@ public class USpot
     // default value for rating. Can be set in MySQL
     this.setUsRating(2.5);
   }
+
+  /*
+   * Unless noted, everything below is a basic Getter/Setter method
+   */
 
   public Integer getUsID()
   {
@@ -74,6 +111,14 @@ public class USpot
     return usRating;
   }
 
+  /**
+   * Initializes the amount of ratings for the given USpot to 1 on the total rating amount to the given rating.
+   * ratingCount and ratingTotal are used to calculate the average rating that will be eventually saved in the
+   * database.
+   *
+   * @param usRating
+   *         Rating the USpot is given
+   */
   public void setUsRating(Double usRating)
   {
     if (usRating > 5.0)
@@ -85,8 +130,13 @@ public class USpot
     ratingTotal = usRating;
   }
 
-  // Will be used by USpotController in PATCH/PUT Request. i.e. when new users
-  // add their new rating to the USpot
+  /**
+   * Will be used by USpotController in PATCH/PUT Request. i.e. when new users add their new rating to the USpot
+   * Calculates the average rating of the USpot from all users and saves that number to the DB
+   *
+   * @param nextRating
+   *         Rating the User gave to the EXISTING USpot.
+   */
   public void updateRating(Double nextRating)
   {
     if (nextRating > 5.0)

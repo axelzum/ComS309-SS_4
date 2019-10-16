@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * @author Willis Knox
+ *
+ * Collection of the currently implemented search methods for USpots
  */
 public interface USpotRepository extends JpaRepository<USpot, Integer>
 {
@@ -14,5 +16,4 @@ public interface USpotRepository extends JpaRepository<USpot, Integer>
   Iterable<USpot> findAllByUsNameStartingWith(String nameStart);
 
   Iterable<USpot> findAllByUsRatingGreaterThanEqual(Double minRating);
-  //TODO: add more useful searches
 }
