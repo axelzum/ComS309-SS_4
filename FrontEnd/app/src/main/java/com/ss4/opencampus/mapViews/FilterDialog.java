@@ -19,7 +19,7 @@ public class FilterDialog extends DialogFragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_filters, container, false);
+        View view = inflater.inflate(R.layout.map_dialog_filters, container, false);
 
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionOK = view.findViewById(R.id.action_ok);

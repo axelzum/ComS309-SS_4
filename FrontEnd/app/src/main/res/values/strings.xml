@@ -2,6 +2,9 @@
     <string name="app_name">OpenCampus</string>
 
     <!-- Main Views Strings -->
+    <string name="btn_dashboard">Dashboard</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_cancel">CANCEL</string>
     <!-- LoginActivity -->
     <string name="btn_sign_in">Sign In</string>
     <string name="btn_need_account">Need An Account?</string>
@@ -20,25 +23,15 @@
 
     <!-- Map Views Strings -->
     <!-- MapActivity -->
+    <string name="btn_place_marker">Place Marker</string>
+    <string name="btn_filters">Filters</string>
     <!-- FilterDialog -->
+    <string name="title_filter">Apply Filters for Map Markers:</string>
+    <string name="check_buildings">Buildings</string>
+    <string name="check_features">Features</string>
+    <string name="check_uspots">USpots</string>
+    <string name="check_custom_markers">Custom Markers</string>
 
     <!-- Data Views Strings -->
     <!-- BuildingListActivity -->
-
-
-
-    <string name="title_activity_maps">Map</string>
-
-
-    <string name="button_place_marker">Place Marker</string>
-    <string name="button_filters">Filters</string>
-    <string name="button_ok">OK</string>
-    <string name="button_cancel">CANCEL</string>
-
-    <string name="label_apply_filters">Apply Filters for Map Markers:</string>
-    <string name="buildings">Buildings</string>
-    <string name="features">Features</string>
-    <string name="uspots">USpots</string>
-    <string name="custom_markers">Custom_Markers</string>
-    <string name="button_dashboard">Dashboard</string>
 </resources>
