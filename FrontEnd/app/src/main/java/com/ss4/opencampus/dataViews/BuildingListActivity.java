@@ -31,7 +31,7 @@ import java.util.List;
  * Reads in JSON data and outputs to recycler viewer
  **/
 
-public class BuildingList extends AppCompatActivity {
+public class BuildingListActivity extends AppCompatActivity {
 
     public static final String TAG = "tag";
     private RequestQueue queue;
@@ -41,7 +41,7 @@ public class BuildingList extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) { // Start when page opens
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_building_list);
+        setContentView(R.layout.data_activity_building_list);
 
         RecyclerView bList;
         bList = findViewById(R.id.building_list);

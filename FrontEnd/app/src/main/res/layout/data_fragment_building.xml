@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp">
@@ -9,30 +11,30 @@
         android:id="@+id/building_list_buildingName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Building Name"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        tools:text="@string/tip_building_name" />
 
     <TextView
         android:id="@+id/building_list_abbreviation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Abbreviation"/>
+        tools:text="@string/tip_abbreviation" />
 
     <TextView
         android:id="@+id/building_list_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Address"/>
+        tools:text="@string/tip_address" />
 
     <TextView
         android:id="@+id/building_list_latitude"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Latitude"/>
+        tools:text="@string/tip_latitue" />
 
     <TextView
         android:id="@+id/building_list_longitude"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Longitude"/>
+        tools:text="@string/tip_longitude" />
 </LinearLayout>

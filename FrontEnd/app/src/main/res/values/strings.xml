@@ -34,4 +34,9 @@
 
     <!-- Data Views Strings -->
     <!-- BuildingListActivity -->
+    <string name="tip_building_name">Building Name</string>
+    <string name="tip_abbreviation">Abbreviation</string>
+    <string name="tip_address">Address</string>
+    <string name="tip_latitue">Latitude</string>
+    <string name="tip_longitude">Longitude</string>
 </resources>
