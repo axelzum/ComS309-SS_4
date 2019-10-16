@@ -1,12 +1,10 @@
-package com.ss4.opencampus.mainviews;
+package com.ss4.opencampus.mainViews;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -23,7 +21,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Register extends AppCompatActivity {
+public class CreateAccountActivity extends AppCompatActivity {
 
     private static final String TAG = "tag";
 
@@ -42,16 +40,16 @@ public class Register extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.main_activity_register);
 
-        firstName = (EditText) findViewById(R.id.editText);
-        lastName = (EditText) findViewById(R.id.editText2);
-        userName = (EditText) findViewById(R.id.editText3);
-        email = (EditText) findViewById(R.id.editText4);
-        password = (EditText) findViewById(R.id.editText5);
+        firstName = (EditText) findViewById(R.id.editText_FirstName);
+        lastName = (EditText) findViewById(R.id.editText_LastName);
+        userName = (EditText) findViewById(R.id.editText_UserName);
+        email = (EditText) findViewById(R.id.editText_Email);
+        password = (EditText) findViewById(R.id.editText_Password);
     }
 
-    public void addStudent(View view) {
+    public void createAccount(View view) {
         JSONObject newStudent = new JSONObject();
         try {
             newStudent.put("firstName", firstName.getText());

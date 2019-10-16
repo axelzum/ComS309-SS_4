@@ -1,4 +1,4 @@
-package com.ss4.opencampus.mapviews;
+package com.ss4.opencampus.mapViews;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -30,7 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.mainviews.Dashboard;
+import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -310,7 +310,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void viewDashboard(View view)
     {
-        Intent intent = new Intent(this, Dashboard.class);
+        Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
 

@@ -1,4 +1,4 @@
-package com.ss4.opencampus.dataviews;
+package com.ss4.opencampus.dataViews;
 
 import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;

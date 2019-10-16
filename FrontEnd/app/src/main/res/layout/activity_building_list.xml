@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#2A6072"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".dataviews.BuildingList">
+    tools:context=".dataViews.BuildingList">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/building_list"

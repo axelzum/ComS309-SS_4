@@ -1,4 +1,4 @@
-package com.ss4.opencampus.dataviews;
+package com.ss4.opencampus.dataViews;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -16,7 +16,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.mainviews.Dashboard;
+import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -100,7 +100,7 @@ public class BuildingList extends AppCompatActivity {
 
     public void viewDashboard(View view)
     {
-        Intent intent = new Intent(this, Dashboard.class);
+        Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
 
