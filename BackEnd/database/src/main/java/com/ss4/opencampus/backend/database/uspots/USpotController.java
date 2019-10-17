@@ -40,7 +40,7 @@ public class USpotController
    */
   @PostMapping("/add")
   public @ResponseBody
-  Map<String, String> addNewUSpot(@RequestBody USpot uSpot)
+  Map<String, Boolean> addNewUSpot(@RequestBody USpot uSpot)
   {
     try
     {
@@ -61,9 +61,9 @@ public class USpotController
     }
     catch (IOException | DataAccessException ex)
     {
-      return Collections.singletonMap("response", ex.getMessage());
+      return Collections.singletonMap("response", false);
     }
-    return Collections.singletonMap("response", "true");
+    return Collections.singletonMap("response", true);
   }
 
   /**
