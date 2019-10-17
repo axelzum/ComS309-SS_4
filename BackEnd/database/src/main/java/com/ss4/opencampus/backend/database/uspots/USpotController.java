@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,7 +28,7 @@ public class USpotController
   /**
    * Default path for a USpot image
    */
-  private final String path = "/photos/uspots/";
+  private final String path = "/target/images/";
 
   /**
    * POST Request to handle adding a new USpot to the database.
@@ -51,7 +50,7 @@ public class USpotController
       int length = uSpotRepository.findAll().size();
       if (bytes != null) // if a picture was present
       {
-        uSpot.setUsImagePath((length + 1) + ".png");
+        uSpot.setUsImagePath(path + (length + 1) + ".png");
         FileOutputStream fos = new FileOutputStream(uSpot.getUsImagePath());
         fos.write(bytes);
         fos.close();
