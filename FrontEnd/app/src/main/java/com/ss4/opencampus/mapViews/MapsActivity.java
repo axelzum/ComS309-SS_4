@@ -1,6 +1,5 @@
-package com.ss4.opencampus;
+package com.ss4.opencampus.mapViews;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,9 +28,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ss4.opencampus.R;
+import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,7 +62,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.map_activity_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -311,7 +310,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void viewDashboard(View view)
     {
-        Intent intent = new Intent(this, Dashboard.class);
+        Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
 

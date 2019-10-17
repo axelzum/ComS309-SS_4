@@ -1,4 +1,4 @@
-package com.ss4.opencampus;
+package com.ss4.opencampus.mapViews;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import com.ss4.opencampus.R;
 
 
 public class FilterDialog extends DialogFragment{
@@ -17,7 +19,7 @@ public class FilterDialog extends DialogFragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_filters, container, false);
+        View view = inflater.inflate(R.layout.map_dialog_filters, container, false);
 
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionOK = view.findViewById(R.id.action_ok);

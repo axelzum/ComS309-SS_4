@@ -12,7 +12,7 @@
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MapsActivity" />
+    tools:context=".mapViews.MapsActivity" />
 
 
     <Button
@@ -21,50 +21,36 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="5dp"
-        android:background="#ab1f1f"
+        android:background="@color/colorPrimaryDark"
         android:padding="8dp"
-        android:text="@string/button_place_marker"
-        android:textColor="#ffffff" />
+        android:text="@string/btn_place_marker" />
 
     <Button
         android:id="@+id/filterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="50dp"
-        android:background="#ab1f1f"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/colorPrimaryDark"
         android:padding="8dp"
-        android:text="@string/button_filters"
-        android:textColor="#ffffff" />
+        android:text="@string/btn_filters" />
 
     <Button
         android:id="@+id/dashboardButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="50dp"
-        android:background="#ab1f1f"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/colorPrimaryDark"
         android:onClick="viewDashboard"
         android:padding="8dp"
-        android:text="@string/button_dashboard"
-        android:textColor="#ffffff" />
+        android:text="@string/btn_dashboard" />
 
 </RelativeLayout>

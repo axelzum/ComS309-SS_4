@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ss4.opencampus.MapsActivity"
+    tools:context="com.ss4.opencampus.mapViews.MapsActivity"
     >
 
     <RelativeLayout
@@ -17,7 +17,7 @@
             android:id="@+id/heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_apply_filters"
+            android:text="@string/title_filter"
             android:textColor="#000"
             android:textSize="18sp" />
 
@@ -28,7 +28,7 @@
             android:layout_below="@id/heading"
             android:layout_marginTop="20dp"
             android:background="@null"
-            android:text="@string/buildings"
+            android:text="@string/check_buildings"
             android:textColor="#000" />
 
         <CheckBox
@@ -38,7 +38,7 @@
             android:layout_below="@id/checkBuildings"
             android:layout_marginTop="20dp"
             android:background="@null"
-            android:text="@string/features"
+            android:text="@string/check_features"
             android:textColor="#000" />
 
         <CheckBox
@@ -48,7 +48,7 @@
             android:layout_below="@id/checkFeatures"
             android:layout_marginTop="20dp"
             android:background="@null"
-            android:text="@string/uspots"
+            android:text="@string/check_uspots"
             android:textColor="#000" />
 
         <CheckBox
@@ -58,17 +58,17 @@
             android:layout_below="@id/checkUSpots"
             android:layout_marginTop="20dp"
             android:background="@null"
-            android:text="@string/custom_markers"
+            android:text="@string/check_custom_markers"
             android:textColor="#000" />
 
         <TextView
             android:id="@+id/action_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginRight="20dp"
-            android:text="@string/button_ok"
+            android:layout_marginEnd="20dp"
+            android:text="@string/btn_ok"
             android:textColor="#33bbff"
             android:textSize="18sp" />
 
@@ -76,10 +76,10 @@
             android:id="@+id/action_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginRight="20dp"
-            android:text="@string/button_cancel"
+            android:layout_marginEnd="20dp"
+            android:text="@string/btn_cancel"
             android:textColor="#33bbff"
             android:textSize="18sp" />
 

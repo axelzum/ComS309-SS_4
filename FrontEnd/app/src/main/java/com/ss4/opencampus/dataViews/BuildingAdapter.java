@@ -1,4 +1,4 @@
-package com.ss4.opencampus;
+package com.ss4.opencampus.dataViews;
 
 import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;
@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.ss4.opencampus.R;
 
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.single_item, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.data_fragment_building, parent, false);
         return new ViewHolder(v);
     }
 
