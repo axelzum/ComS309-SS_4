@@ -28,7 +28,7 @@ public class USpotController
   /**
    * Default path for a USpot image
    */
-  private final String path = "/target/images/";
+  private final String path = "/target/images/uspots/";
 
   /**
    * POST Request to handle adding a new USpot to the database.
@@ -50,13 +50,13 @@ public class USpotController
       int length = uSpotRepository.findAll().size();
       if (bytes != null) // if a picture was present
       {
-        uSpot.setUsImagePath(path + (length + 1) + ".png");
+        uSpot.setUsImagePath(path + "uspot" + (length + 1) + ".png");
         FileOutputStream fos = new FileOutputStream(uSpot.getUsImagePath());
         fos.write(bytes);
         fos.close();
       }
       else // no given picture
-        uSpot.setUsImagePath("/photos/noimage.png");
+        uSpot.setUsImagePath("/target/images/noimage.png");
       uSpotRepository.save(uSpot);
     }
     catch (IOException | DataAccessException ex)
