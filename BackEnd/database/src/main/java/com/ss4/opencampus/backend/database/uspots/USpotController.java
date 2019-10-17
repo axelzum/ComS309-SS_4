@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ public class USpotController
    */
   @PostMapping("/add")
   public @ResponseBody
-  Map<String, Boolean> addNewUSpot(@RequestBody USpot uSpot)
+  Map<String, String> addNewUSpot(@RequestBody USpot uSpot)
   {
     try
     {
@@ -50,7 +51,7 @@ public class USpotController
       int length = uSpotRepository.findAll().size();
       if (bytes != null) // if a picture was present
       {
-        uSpot.setUsImagePath(path + (length + 1) + ".png");
+        uSpot.setUsImagePath((length + 1) + ".png");
         FileOutputStream fos = new FileOutputStream(uSpot.getUsImagePath());
         fos.write(bytes);
         fos.close();
@@ -61,9 +62,9 @@ public class USpotController
     }
     catch (IOException | DataAccessException ex)
     {
-      return Collections.singletonMap("response", false);
+      return Collections.singletonMap("response", ex.getMessage());
     }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", "true");
   }
 
   /**
