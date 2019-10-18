@@ -1,6 +1,9 @@
 package com.ss4.opencampus.dataViews.uspots;
 
+import android.graphics.BitmapFactory;
+
 import org.json.JSONObject;
+import android.graphics.Bitmap;
 
 /**
  * @Author: Morgan Smith
@@ -21,12 +24,12 @@ public class USpot {
 
     public String usCategory;
 
-    private JSONObject picBytes;
+    private byte[] picBytes;
 
     public USpot() {
     }
 
-    public USpot(String usName, Double usRating, Double usLatit, Double usLongit, String usCategory, JSONObject picBytes) {
+    public USpot(String usName, Double usRating, Double usLatit, Double usLongit, String usCategory, byte[] picBytes) {
         this.usName = usName;
         this.usRating = usRating;
         this.usLatit = usLatit;
@@ -55,7 +58,7 @@ public class USpot {
         return usCategory;
     }
 
-    public JSONObject getPicBytes() {
+    public byte[] getPicBytes() {
         return picBytes;
     }
 
@@ -93,8 +96,12 @@ public class USpot {
         this.usCategory = uspotCategory;
     }
 
-    public void setPicBytes(JSONObject picBytes) {
+    public void setPicBytes(byte[] picBytes) {
         this.picBytes = picBytes;
     }
+    public Bitmap setBitmap() {
+        return BitmapFactory.decodeByteArray(picBytes, 0, picBytes.length);
+    }
+
 }
 

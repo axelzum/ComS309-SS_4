@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 
 import com.android.volley.Request;
@@ -79,7 +80,7 @@ public class USpotListActivity extends AppCompatActivity {
                                 uspotInfo.setUsLatit(jsonObject.getDouble("usLatit"));
                                 uspotInfo.setUsLongit(jsonObject.getDouble("usLongit"));
                                 uspotInfo.setUspotCategory(jsonObject.getString("usCategory"));
-                                //uspotInfo.setPicBytes(jsonObject.getJSONObject("picBytes"));
+                                uspotInfo.setPicBytes(Base64.decode(jsonObject.getString("picBytes"), Base64.DEFAULT));
 
                                 uspotList.add(uspotInfo);
                             }
