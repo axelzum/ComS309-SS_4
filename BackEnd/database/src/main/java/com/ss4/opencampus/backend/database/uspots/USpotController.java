@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -85,29 +86,29 @@ public class USpotController
    */
   @GetMapping(path = "/search/{searchType}")
   public @ResponseBody
-  Iterable<USpot> getUSpotLists(@PathVariable String searchType, @RequestParam(required = false) Object param1,
-                                @RequestParam(required = false) Object param2) throws IOException
+  Iterable<USpot> getUSpotLists(@PathVariable String searchType, @RequestParam(required = false) String param1,
+                                @RequestParam(required = false) String param2) throws IOException
   {
     Iterable<USpot> uList;
     switch (searchType)
     {
       case "name":
-        uList = uSpotRepository.findByUsName((String) param1);
+        uList = uSpotRepository.findByUsName(param1);
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
       case "nameStartsWith":
-        uList = uSpotRepository.findAllByUsNameStartingWith((String) param1);
+        uList = uSpotRepository.findAllByUsNameStartingWith(param1);
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
       case "category":
-        uList = uSpotRepository.findAllByUsCategory((String) param1);
+        uList = uSpotRepository.findAllByUsCategory(param1);
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
       case "minRating":
-        uList = uSpotRepository.findAllByUsRatingGreaterThanEqual((Double) param1);
+        uList = uSpotRepository.findAllByUsRatingGreaterThanEqual(Double.parseDouble(param1));
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
@@ -140,6 +141,104 @@ public class USpotController
       u.get().setPicBytes(pathToBytes(u.get().getUsImagePath()));
     return u;
   }
+
+  @PutMapping(path = "/update/{id}")
+  public Map<String, Boolean> updateUSpot(@RequestBody USpot newUSpot, @PathVariable Integer id)
+  {
+    try
+    {
+      Optional<USpot> tmp = uSpotRepository.findById(id);
+      USpot u = tmp.get();
+      u.setUsName(newUSpot.getUsName());
+      u.setUsCategory(newUSpot.getUsCategory());
+      u.setUsLatit(newUSpot.getUsLatit());
+      u.setUsLongit(newUSpot.getUsLongit());
+      u.setUsRating(newUSpot.getUsRating());
+      byte[] bytes = newUSpot.getPicBytes();
+      if (bytes != null)//if it is null, just keep the old picture
+      {
+        u.setPicBytes(bytes);
+        FileOutputStream fos = new FileOutputStream(u.getUsImagePath(), false);
+        fos.write(u.getPicBytes());
+        fos.close();
+      }
+      uSpotRepository.save(u);
+      return Collections.singletonMap("response", true);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+  }
+
+  /*
+   * Doesn't work for ratings correctly yet
+   */
+  @PatchMapping(path = "/patch/{id}")
+  public @ResponseBody Map<String, Boolean> patchUSpot(@RequestBody Map<String, Object> updatedVar, @PathVariable Integer id)
+  {
+    try
+    {
+      Optional<USpot> tmp = uSpotRepository.findById(id);
+      USpot u = tmp.get();
+      if(updatedVar.containsKey("usName"))
+      {
+        u.setUsName((String) updatedVar.get("usName"));
+      } // not working properly. Need to look into more.
+//      else if (updatedVar.containsKey("usRating"))
+//      {
+//        u.updateRating((Double) updatedVar.get("usRating")); //calculate average rating
+//      }
+      else if (updatedVar.containsKey("usLatit"))
+      {
+        u.setUsLatit((Double) updatedVar.get("usLatit"));
+      }
+      else if (updatedVar.containsKey("usLongit"))
+      {
+        u.setUsLongit((Double) updatedVar.get("usLongit"));
+      }
+      else if (updatedVar.containsKey("usCategory"))
+      {
+        u.setUsCategory((String) updatedVar.get("usCategory"));
+      }
+      else if (updatedVar.containsKey("picBytes"))
+      {
+        byte[] bytes = (byte[]) updatedVar.get("picBytes");
+        if(bytes != null) //if null, just keep old picture
+        {
+          u.setPicBytes(bytes);
+          FileOutputStream fos = new FileOutputStream(u.getUsImagePath(), false);
+          fos.write(u.getPicBytes());
+          fos.close();
+        }
+      }
+      uSpotRepository.save(u);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
+
+  @DeleteMapping("/delete/{id}")
+  public @ResponseBody Map<String, Boolean> deleteUSpot(@PathVariable Integer id)
+  {
+    try
+    {
+      Optional<USpot> tmp = uSpotRepository.findById(id);
+      USpot u = tmp.get();
+      File file = new File(u.getUsImagePath());
+      file.delete();
+      uSpotRepository.deleteById(id);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
+
 
   /**
    * Helper method to retrieve the image bytes of an image that is tied to a USpot. Used in GET Requests

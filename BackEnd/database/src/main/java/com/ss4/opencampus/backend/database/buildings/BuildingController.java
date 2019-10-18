@@ -95,22 +95,23 @@ public class BuildingController
    */
   @GetMapping(path = "/search/{searchType}")
   public @ResponseBody
-  Iterable<Building> getBuildingLists(@PathVariable String searchType, @RequestParam(required = false) Object param1, @RequestParam(required = false) Object param2)
+  Iterable<Building> getBuildingLists(@PathVariable String searchType, @RequestParam(required = false) String param1,
+                                      @RequestParam(required = false) String  param2)
   {
     switch (searchType)
     {
       case "nameStartsWith":
-        return buildingRepository.findAllByBuildingNameStartingWith((String) param1);
+        return buildingRepository.findAllByBuildingNameStartingWith(param1);
       case "abbreviationStartsWith":
-        return buildingRepository.findAllByAbbreviationStartingWith((String) param1);
+        return buildingRepository.findAllByAbbreviationStartingWith(param1);
       case "name":
-        return buildingRepository.findByBuildingName((String) param1);
+        return buildingRepository.findByBuildingName(param1);
       case "abbreviation":
-        return buildingRepository.findByAbbreviation((String) param1);
+        return buildingRepository.findByAbbreviation(param1);
       case "address":
-        return buildingRepository.findByAddress((String) param1);
+        return buildingRepository.findByAddress(param1);
       case "location":
-        return buildingRepository.findByLatitAndLongit((Double) param1, (Double) param2);
+        return buildingRepository.findByLatitAndLongit(Double.parseDouble(param1), Double.parseDouble(param2));
       default: // default is returning a list of all Buildings sorted by their names. There needs to be some text after "search/" otherwise it will not work?
         return buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName"));
     }
