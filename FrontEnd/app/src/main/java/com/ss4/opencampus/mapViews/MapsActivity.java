@@ -90,7 +90,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .draggable(true));
                 m.setTag("Custom");
                 customMarkers.add(m);
-                m_Text.add("My Marker");
+
+                String uniqueTitle = "";
+                uniqueTitle = genUniqueTitle("My Marker");
+                m.setTitle(uniqueTitle);
+                m_Text.add(uniqueTitle);
             }
         });
 

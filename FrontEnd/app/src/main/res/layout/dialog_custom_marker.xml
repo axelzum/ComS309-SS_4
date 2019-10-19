@@ -43,18 +43,18 @@
 
 
         <TextView
-            android:id="@+id/action_ok"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="40dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="100dp"
-            android:text="OK"
-            android:textColor="#33bbff"
-            android:textSize="18sp" />
+        android:id="@+id/action_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="100dp"
+        android:text="OK"
+        android:textColor="#33bbff"
+        android:textSize="18sp" />
 
         <TextView
             android:id="@+id/action_cancel"
