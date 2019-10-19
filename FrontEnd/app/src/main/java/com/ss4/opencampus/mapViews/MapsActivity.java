@@ -232,9 +232,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    m_Text.set(currentMarkerIndex, input.getText().toString());
-                    markerShowingInfoWindow.setTitle(m_Text.get(currentMarkerIndex));
+                    String title = input.getText().toString();
+                    markerShowingInfoWindow.setTitle(title);
+                    String uniqueTitle = genUniqueTitle(title);
+                    markerShowingInfoWindow.setTitle(uniqueTitle);
+                    m_Text.set(currentMarkerIndex, markerShowingInfoWindow.getTitle());
+
                     updateInfo(markerShowingInfoWindow);
+                    //markerShowingInfoWindow.setTitle(genUniqueTitle(markerShowingInfoWindow.getTitle()));
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -377,6 +382,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivity(intent);
     }
 
+    public String genUniqueTitle(String oldTitle)
+    {
+        int identifier = 0;
+        for(Marker cm: customMarkers)
+        {
+            if(cm.getTitle().contains(oldTitle))
+                identifier++; // A unique title will have an identifier of 1 at the end of this loop.
+        }
+        if(identifier > 1)
+            return oldTitle + " " + identifier;
+
+        return oldTitle;
+    }
+
     public void saveCustomMarkers(boolean[] f) {
         boolean device = f[0];
         boolean account = f[1];
@@ -400,7 +419,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 if(currentMarkerTitle.equals(m.getTitle()))
                 {
-                    markerSavedAlready = true;
+                    markerSavedAlready = true; //Has same title as a marker already saved
                     break;
                 }
                 cmScan.nextLine();
