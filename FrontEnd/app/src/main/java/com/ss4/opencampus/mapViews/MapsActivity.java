@@ -55,6 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Marker> uspotMarkers = new ArrayList<>();
     private ArrayList<Marker> buildingMarkers = new ArrayList<>();
     private ArrayList<String> m_Text = new ArrayList<>();
+    private ArrayList<String> cmDescriptions = new ArrayList<>();
     private Marker markerShowingInfoWindow;
     private int currentMarkerIndex = 0;
     private boolean buildingFilter;
@@ -90,7 +91,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .draggable(true));
                 m.setTag("Custom");
                 customMarkers.add(m);
-
+                cmDescriptions.add("My description");
                 String uniqueTitle = "";
                 uniqueTitle = genUniqueTitle("My Marker");
                 m.setTitle(uniqueTitle);
