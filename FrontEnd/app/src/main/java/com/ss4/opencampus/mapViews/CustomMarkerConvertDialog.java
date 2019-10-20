@@ -15,7 +15,7 @@ import com.ss4.opencampus.R;
 
 public class CustomMarkerConvertDialog extends DialogFragment{
 
-    private TextView mActionCancel, mActionOk;
+    private TextView mActionCancel, mActionContinue;
     private RadioButton uspot, building, feature;
 
     @Override
@@ -23,7 +23,7 @@ public class CustomMarkerConvertDialog extends DialogFragment{
         View view = inflater.inflate(R.layout.dialog_custom_marker_convert, container, false);
 
         mActionCancel = view.findViewById(R.id.action_cancel);
-        mActionOk = view.findViewById(R.id.action_ok);
+        mActionContinue = view.findViewById(R.id.action_continue);
         uspot = view.findViewById(R.id.radio_uspot);
         building = view.findViewById(R.id.radio_building);
         feature = view.findViewById(R.id.radio_feature);
@@ -35,11 +35,13 @@ public class CustomMarkerConvertDialog extends DialogFragment{
             }
         });
 
-        mActionOk.setOnClickListener(new View.OnClickListener() {
+        mActionContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Open corresponding submission dialog
-
+                USpotSubmissionDialog uspotsubmit = new USpotSubmissionDialog();
+                uspotsubmit.show(getFragmentManager(), "USpotSubmissionDialog");
+                dismiss();
             }
         });
 

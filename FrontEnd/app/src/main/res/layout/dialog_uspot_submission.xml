@@ -17,32 +17,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Submit a new USpot:"
-            android:textSize="18sp"
+            android:textSize="24sp"
             android:textColor="#000"
             android:id="@+id/heading"/>
 
-        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/name_text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:orientation="vertical">
-            <RadioButton android:id="@+id/radio_uspot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="USpot" />
-            <RadioButton android:id="@+id/radio_feature"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Feature" />
-            <RadioButton android:id="@+id/radio_building"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Building" />
-        </RadioGroup>
-
+            android:layout_marginTop="30dp"
+            android:ems="18"
+            android:hint="Name of USpot"
+            android:inputType="text" />
 
         <TextView
-            android:id="@+id/action_continue"
+            android:id="@+id/category_label"
+            android:textColor="#000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="80dp"
+            android:text="Category"
+            android:textSize="18sp" />
+
+        <Spinner
+            android:id="@+id/category_dropdown"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:layout_marginLeft="80dp"/>
+
+        <TextView
+            android:id="@+id/action_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -51,7 +58,7 @@
             android:layout_marginEnd="40dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="100dp"
-            android:text="Continue"
+            android:text="Submit"
             android:textColor="#33bbff"
             android:textSize="18sp" />
 
@@ -64,7 +71,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="100dp"
-            android:text="Cancel"
+            android:text="CANCEL"
             android:textColor="#33bbff"
             android:textSize="18sp" />
 
