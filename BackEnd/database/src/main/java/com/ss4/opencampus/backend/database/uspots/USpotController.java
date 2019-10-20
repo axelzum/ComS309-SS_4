@@ -5,6 +5,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +18,9 @@ import java.util.Optional;
  * @author Willis Knox
  * <p>
  * Controller class for USpots
+ * <p>
+ * Base URL for all USpot related Requests:
+ * <p>http://coms-309-ss-4.misc.iastate.edu:8080/uspots/</p>
  */
 @RestController
 @RequestMapping(path = "/uspots")
@@ -57,6 +61,8 @@ public class USpotController
       }
       else // no given picture
         uSpot.setUsImagePath("/target/images/noimage.png");
+      uSpot.setRatingCount(1);
+      uSpot.setRatingTotal(uSpot.getUsRating());
       uSpotRepository.save(uSpot);
     }
     catch (IOException | DataAccessException ex)
@@ -107,7 +113,8 @@ public class USpotController
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
       case "minRating":
-        uList = uSpotRepository.findAllByUsRatingGreaterThanEqual((Double) param1);
+        Double rating = Double.parseDouble((String) param1);
+        uList = uSpotRepository.findAllByUsRatingGreaterThanEqual(rating);
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
@@ -139,6 +146,134 @@ public class USpotController
     if (u.isPresent())
       u.get().setPicBytes(pathToBytes(u.get().getUsImagePath()));
     return u;
+  }
+
+  /**
+   * Method that handles PUT Requests. These are requests where the whole USpot is being updated. Everything should be
+   * provided from the Frontend to the Backend. Anything NOT provided will be set to NULL. If you only want to update
+   * part of the USpot, use the PATCH Request.
+   *
+   * @param newUSpot
+   *         Info of the USpot that will be placed into the table
+   * @param id
+   *         USpot that exists in Table that will be updated
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
+  @PutMapping(path = "/update/{id}")
+  public @ResponseBody
+  Map<String, Boolean> updateUSpot(@RequestBody USpot newUSpot, @PathVariable Integer id)
+  {
+    try
+    {
+      USpot u = uSpotRepository.findById(id).get();
+      u.setUsName(newUSpot.getUsName());
+      u.setUsCategory(newUSpot.getUsCategory());
+      u.setUsLatit(newUSpot.getUsLatit());
+      u.setUsLongit(newUSpot.getUsLongit());
+      u.setUsRating(newUSpot.getUsRating());
+      byte[] bytes = newUSpot.getPicBytes();
+      if (bytes != null)//if it is null, just keep the old picture
+      {
+        u.setPicBytes(bytes);
+        FileOutputStream fos = new FileOutputStream(u.getUsImagePath(), false);
+        fos.write(u.getPicBytes());
+        fos.close();
+      }
+      uSpotRepository.save(u);
+      return Collections.singletonMap("response", true);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+  }
+
+  /**
+   * Method that handles PATCH Requests. These requests only update the part of the USpot that was given by the
+   * Frontend. So, if you only want to change part of the USpot, use this request. These are much more common than PUT
+   * Requests.
+   *
+   * @param patch
+   *         Map of the different fields that will be updated
+   * @param id
+   *         Current USpot that will be updated
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
+  @PatchMapping(path = "/patch/{id}")
+  public @ResponseBody
+  Map<String, Boolean> patchUSpot(@RequestBody Map<String, Object> patch, @PathVariable Integer id)
+  {
+    try
+    {
+      USpot u = uSpotRepository.findById(id).get();
+      if (patch.containsKey("usName"))
+      {
+        u.setUsName((String) patch.get("usName"));
+      }
+      if (patch.containsKey("usRating"))
+      {
+        u.updateRating(((Double) patch.get("usRating"))); //calculate average rating
+      }
+      if (patch.containsKey("usLatit"))
+      {
+        u.setUsLatit(((Double) patch.get("usLatit")));
+      }
+      if (patch.containsKey("usLongit"))
+      {
+        u.setUsLongit(((Double) patch.get("usLongit")));
+      }
+      if (patch.containsKey("usCategory"))
+      {
+        u.setUsCategory((String) patch.get("usCategory"));
+      }
+      if (patch.containsKey("picBytes"))
+      {
+        byte[] bytes = (byte[]) patch.get("picBytes");
+        if (bytes != null) //if null, just keep old picture
+        {
+          u.setPicBytes(bytes);
+          FileOutputStream fos = new FileOutputStream(u.getUsImagePath(), false);
+          fos.write(u.getPicBytes());
+          fos.close();
+        }
+      }
+      uSpotRepository.save(u);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
+
+  /**
+   * Method to handle DELETE Requests. Will delete the USpot with the given ID. Also removes its image from the server
+   * IF the image is not the "noimage.png"
+   *
+   * @param id
+   *         ID of USpot to be removed
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
+  @DeleteMapping("/delete/{id}")
+  public @ResponseBody
+  Map<String, Boolean> deleteUSpot(@PathVariable Integer id)
+  {
+    try
+    {
+      USpot u = uSpotRepository.findById(id).get();
+      File file = new File(u.getUsImagePath());
+      if (!(file.getAbsolutePath().equals("/target/images/noimage.png")))
+        file.delete();
+      uSpotRepository.deleteById(id);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
   }
 
   /**
