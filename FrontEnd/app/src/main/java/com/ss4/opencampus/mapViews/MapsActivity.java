@@ -220,6 +220,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
         if (tag.equals("Custom")) {
+            CustomMarkerDialog cmDialog = new CustomMarkerDialog();
+            cmDialog.show(getFragmentManager(), "CustomMarkerDialog");
+
+            /*
             currentMarkerIndex = customMarkers.indexOf(m);
             updateInfo(m);
             markerShowingInfoWindow = m;
@@ -266,6 +270,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             builder.show();
 
             updateInfo(m);
+            */
         }
 
         return false;

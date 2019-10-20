@@ -21,7 +21,7 @@ public class CustomMarkerDetailsDialog extends DialogFragment{
         mActionDone = view.findViewById(R.id.action_done);
         mActionSave = view.findViewById(R.id.action_save);
         mActionDelete = view.findViewById(R.id.action_delete);
-        mActionRename = view.findViewById(R.id.action_cancel);
+        mActionRename = view.findViewById(R.id.action_rename);
         mActionEditdesc = view.findViewById(R.id.action_editdesc);
 
 

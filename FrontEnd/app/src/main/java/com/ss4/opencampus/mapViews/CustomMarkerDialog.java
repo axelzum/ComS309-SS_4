@@ -32,6 +32,9 @@ public class CustomMarkerDialog extends DialogFragment{
         mActionDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Open details dialog
+                CustomMarkerDetailsDialog cmDetails = new CustomMarkerDetailsDialog();
+                cmDetails.show(getFragmentManager(), "CustomMarkerDetails");
 
             }
         });
