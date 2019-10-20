@@ -24,7 +24,6 @@ public class CustomMarkerDetailsDialog extends DialogFragment{
         mActionRename = view.findViewById(R.id.action_rename);
         mActionEditdesc = view.findViewById(R.id.action_editdesc);
 
-
         mActionDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,7 +48,7 @@ public class CustomMarkerDetailsDialog extends DialogFragment{
         mActionRename.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ((MapsActivity)getActivity()).customMarkerRename();
             }
         });
 

@@ -42,6 +42,7 @@ public class CustomMarkerDialog extends DialogFragment{
         mActionConvert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Open convert to uspot dialog
 
             }
         });
