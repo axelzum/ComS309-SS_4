@@ -37,8 +37,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="80dp"
-            android:text="Category"
+            android:layout_marginTop="85dp"
+            android:text="Category:"
             android:textSize="18sp" />
 
         <Spinner
@@ -49,6 +49,26 @@
             android:layout_marginLeft="80dp"/>
 
         <TextView
+            android:id="@+id/rating_label"
+            android:textColor="#000"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="130dp"
+            android:text="My Rating:"
+            android:textSize="18sp" />
+
+        <RatingBar
+            android:id="@+id/ratingbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="115dp"
+            android:layout_marginLeft="30dp"
+            android:scaleX=".5"
+            android:scaleY=".5"/>
+
+        <TextView
             android:id="@+id/action_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,7 +77,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="40dp"
             android:layout_marginRight="10dp"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="40dp"
             android:text="Submit"
             android:textColor="#33bbff"
             android:textSize="18sp" />
@@ -70,7 +90,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="40dp"
             android:text="CANCEL"
             android:textColor="#33bbff"
             android:textSize="18sp" />
