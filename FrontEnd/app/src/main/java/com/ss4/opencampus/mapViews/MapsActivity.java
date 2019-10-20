@@ -257,8 +257,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // Open save dialog
-                    CustomMarkerDialog cmDialog = new CustomMarkerDialog();
-                    cmDialog.show(getFragmentManager(), "CustomMarkerDialog");
+                    CustomMarkerSaveDialog cmDialog = new CustomMarkerSaveDialog();
+                    cmDialog.show(getFragmentManager(), "CustomMarkerSaveDialog");
                     dialog.cancel();
                 }
             });

@@ -11,17 +11,20 @@ import android.widget.TextView;
 import com.ss4.opencampus.R;
 
 
-public class CustomMarkerDialogUpdated extends DialogFragment{
+public class CustomMarkerDeleteDialog extends DialogFragment{
 
-    private TextView mActionCancel, mActionConvert, mActionDetails;
+    private TextView mActionCancel, mActionOK;
+
+    private CheckBox checkDevice, checkAccount;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_custom_marker, container, false);
+        View view = inflater.inflate(R.layout.dialog_custom_marker_delete, container, false);
 
         mActionCancel = view.findViewById(R.id.action_cancel);
-        mActionConvert = view.findViewById(R.id.action_convert);
-        mActionDetails = view.findViewById(R.id.action_details);
+        mActionOK = view.findViewById(R.id.action_ok);
+        checkDevice = view.findViewById(R.id.checkDeleteDevice);
+        checkAccount = view.findViewById(R.id.checkDeleteAccount);
 
         mActionCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,14 +33,7 @@ public class CustomMarkerDialogUpdated extends DialogFragment{
             }
         });
 
-        mActionDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
-        mActionConvert.setOnClickListener(new View.OnClickListener() {
+        mActionOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

@@ -16,46 +16,43 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="My Marker (no title found)"
-            android:textSize="24sp"
+            android:text="Delete Custom Marker:"
+            android:textSize="18sp"
             android:textColor="#000"
             android:id="@+id/heading"/>
 
-        <TextView
-            android:id="@+id/desc"
+        <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="40dp"
-            android:text="My Marker Description. This is a description for my marker., "
+            android:layout_below="@id/heading"
+            android:layout_marginTop="20dp"
+            android:background="@null"
             android:textColor="#000"
-            android:textSize="18sp" />
+            android:text="Remove from this device"
+            android:id="@+id/checkDeleteDevice"/>
+
+        <CheckBox
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/checkDeleteDevice"
+            android:layout_marginTop="20dp"
+            android:background="@null"
+            android:textColor="#000"
+            android:text="Remove from my OpenCampus Account"
+            android:id="@+id/checkDeleteAccount"/>
+
 
         <TextView
-            android:id="@+id/action_convert"
+            android:id="@+id/action_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="100dp"
-            android:layout_marginRight="100dp"
-            android:layout_marginBottom="100dp"
-            android:text="Convert"
-            android:textColor="#33bbff"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/action_details"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="40dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="100dp"
-            android:text="Details"
+            android:text="OK"
             android:textColor="#33bbff"
             android:textSize="18sp" />
 

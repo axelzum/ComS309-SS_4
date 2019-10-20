@@ -16,7 +16,7 @@ public class CustomMarkerDetailsDialog extends DialogFragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_custom_marker, container, false);
+        View view = inflater.inflate(R.layout.dialog_custom_marker_details, container, false);
 
         mActionDone = view.findViewById(R.id.action_done);
         mActionSave = view.findViewById(R.id.action_save);
