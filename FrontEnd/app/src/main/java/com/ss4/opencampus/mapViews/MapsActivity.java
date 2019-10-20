@@ -463,6 +463,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return oldTitle;
     }
 
+    public void deleteCustomMarkers(boolean[] f)
+    {
+        boolean device = f[0];
+        boolean account = f[1];
+
+        if(device)
+        {
+            // Remove markers from internal storage
+
+        }
+
+        if(account)
+        {
+            // Remove markers from database.
+
+        }
+    }
+
     public void saveCustomMarkers(boolean[] f) {
         boolean device = f[0];
         boolean account = f[1];

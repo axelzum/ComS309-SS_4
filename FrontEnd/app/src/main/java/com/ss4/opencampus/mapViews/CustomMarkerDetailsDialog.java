@@ -39,16 +39,16 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
         mActionSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                CustomMarkerSaveDialog cmSave = new CustomMarkerSaveDialog();
+                cmSave.show(getFragmentManager(), "CustomMarkerSaveDialog");
             }
         });
 
         mActionDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                
+                CustomMarkerDeleteDialog cmDelete = new CustomMarkerDeleteDialog();
+                cmDelete.show(getFragmentManager(), "CustomMarkerDeleteDialog");
             }
         });
 
