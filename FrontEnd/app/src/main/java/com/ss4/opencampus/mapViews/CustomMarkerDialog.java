@@ -50,7 +50,9 @@ public class CustomMarkerDialog extends DialogFragment{
             @Override
             public void onClick(View v) {
                 // Open convert to uspot dialog
-
+                CustomMarkerConvertDialog cmConvert = new CustomMarkerConvertDialog();
+                cmConvert.show(getFragmentManager(), "CustomMarkerConvert");
+                dismiss();
             }
         });
 
