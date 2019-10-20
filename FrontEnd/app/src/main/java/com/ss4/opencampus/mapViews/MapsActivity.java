@@ -402,6 +402,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double lat;
         double lng;
         String title;
+        String desc;
         while(s.hasNextLine())
         {
             currentLine = s.nextLine();
@@ -413,6 +414,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             lat = lineScanner.nextDouble();
             lng = lineScanner.nextDouble();
+            desc = s.nextLine();
             markerToAdd = mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(lat, lng))
                     .title(title)
@@ -421,7 +423,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             markerToAdd.setTag("Custom");
             m_Text.add(title);
             customMarkers.add(markerToAdd);
-
+            cmDescriptions.add(desc);
         }
     }
 
@@ -491,7 +493,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             loadCustomMarkers(); // updates string
             String fileContent = "";
             Marker m = customMarkers.get(currentMarkerIndex);
-            fileContent = m.getTitle() + " " + m.getPosition().latitude + " " + m.getPosition().longitude + "\n"; // line we want to add.
+            fileContent = m.getTitle() + " " + m.getPosition().latitude + " " + m.getPosition().longitude + "\n" + cmDescriptions.get(currentMarkerIndex) + "\n"; // lines we want to add.
             Scanner cmScan = new Scanner(customMarkerFileText);
             boolean markerSavedAlready = false;
             String currentMarkerTitle;
@@ -502,11 +504,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 {
                     currentMarkerTitle += " " + cmScan.next();
                 }
-                if(currentMarkerTitle.equals(m.getTitle()))
+                double lat = cmScan.nextDouble();
+                double lng = cmScan.nextDouble();
+                if(currentMarkerTitle.equals(m.getTitle()) && lat==m.getPosition().latitude && lng==m.getPosition().longitude)
                 {
-                    markerSavedAlready = true; //Has same title as a marker already saved
+                    markerSavedAlready = true; //Has same title as a marker already saved, and same coords
                     break;
                 }
+                else if(currentMarkerTitle.equals(m.getTitle()))
+                {
+                    // Same marker info, but lat/lng needs to be changed.
+                    customMarkerFileText = customMarkerFileText.replace(""+m.getPosition().latitude, ""+lat);
+                    customMarkerFileText = customMarkerFileText.replace(""+m.getPosition().longitude, ""+lng);
+                    break;
+                }
+                cmScan.nextLine();//skip desc
                 cmScan.nextLine();
             }
 
