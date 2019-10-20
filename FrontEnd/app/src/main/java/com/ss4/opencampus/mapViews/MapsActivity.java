@@ -63,6 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean uspotFilter;
     private boolean customFilter;
     public String customMarkerFileText;
+    private CustomMarkerDetailsDialog cmdd;
 
     private static final String FILE_NAME = "CustomMarkers.txt";
     private RequestQueue queue;
@@ -165,6 +166,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         loadCustomMarkers();
         placeCustomMarkers();
+    }
+
+    public void setCmdd(CustomMarkerDetailsDialog newcmdd)
+    {
+        cmdd = newcmdd;
     }
 
     public Marker getMarkerShowingInfoWindow()
@@ -334,7 +340,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         updateInfo(m);
     }
 
-    public void customMarkerRename()
+    public String customMarkerRename()
     {
         Marker m = markerShowingInfoWindow;
         currentMarkerIndex = customMarkers.indexOf(m);
@@ -361,12 +367,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 m_Text.set(currentMarkerIndex, markerShowingInfoWindow.getTitle());
 
                 updateInfo(markerShowingInfoWindow);
+                cmdd.updateTextViews();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                cmdd.updateTextViews();
             }
         });
         builder.setNeutralButton("Save", new DialogInterface.OnClickListener() {
@@ -378,10 +386,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 dialog.cancel();
             }
         });
-
         builder.show();
-
         updateInfo(m);
+        cmdd.updateTextViews();
+        return m.getTitle();
     }
 
     public void updateInfo(Marker m) {

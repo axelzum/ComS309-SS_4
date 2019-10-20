@@ -40,8 +40,9 @@ public class CustomMarkerDialog extends DialogFragment{
             public void onClick(View v) {
                 // Open details dialog
                 CustomMarkerDetailsDialog cmDetails = new CustomMarkerDetailsDialog();
+                ((MapsActivity)getActivity()).setCmdd(cmDetails);
                 cmDetails.show(getFragmentManager(), "CustomMarkerDetails");
-
+                dismiss();
             }
         });
 
