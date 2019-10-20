@@ -96,7 +96,7 @@ public class BuildingController
   @GetMapping(path = "/search/{searchType}")
   public @ResponseBody
   Iterable<Building> getBuildingLists(@PathVariable String searchType, @RequestParam(required = false) String param1,
-                                      @RequestParam(required = false) String  param2)
+                                      @RequestParam(required = false) String param2)
   {
     switch (searchType)
     {
@@ -135,4 +135,76 @@ public class BuildingController
     return buildingRepository.findById(id);
   }
 
+  @PutMapping(path = "/update/{id}")
+  public @ResponseBody
+  Map<String, Boolean> updateBuilding(@RequestBody Building building, @PathVariable Integer id)
+  {
+    try
+    {
+      Building b = buildingRepository.findById(id).get();
+      b.setBuildingName(building.getBuildingName());
+      b.setAddress(building.getAddress());
+      b.setAbbreviation(building.getAbbreviation());
+      b.setLatit(building.getLatit());
+      b.setLongit(building.getLongit());
+      buildingRepository.save(b);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
+
+  @PatchMapping(path = "/patch/{id}")
+  public @ResponseBody
+  Map<String, Boolean> patchBuilding(@RequestBody Map<String, Object> patch,
+                                     @PathVariable Integer id)
+  {
+    try
+    {
+      Building building = buildingRepository.findById(id).get();
+      if (patch.containsKey("buildingName"))
+      {
+        building.setBuildingName((String) patch.get("buildingName"));
+      }
+      if (patch.containsKey("address"))
+      {
+        building.setAddress((String) patch.get("address"));
+      }
+      if (patch.containsKey("abbreviation"))
+      {
+        building.setAbbreviation((String) patch.get("abbreviation"));
+      }
+      if (patch.containsKey("latit"))
+      {
+        building.setLatit((Double) patch.get("latit"));
+      }
+      if (patch.containsKey("longit"))
+      {
+        building.setLongit((Double) patch.get("longit"));
+      }
+      buildingRepository.save(building);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
+
+  @DeleteMapping(path = "/delete/{id}")
+  public @ResponseBody
+  Map<String, Boolean> deleteBuilding(@PathVariable Integer id)
+  {
+    try
+    {
+      buildingRepository.deleteById(id);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
 }

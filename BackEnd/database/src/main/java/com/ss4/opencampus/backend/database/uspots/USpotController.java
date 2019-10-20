@@ -58,6 +58,8 @@ public class USpotController
       }
       else // no given picture
         uSpot.setUsImagePath("/target/images/noimage.png");
+      uSpot.setRatingCount(1);
+      uSpot.setRatingTotal(uSpot.getUsRating());
       uSpotRepository.save(uSpot);
     }
     catch (IOException | DataAccessException ex)
@@ -143,12 +145,12 @@ public class USpotController
   }
 
   @PutMapping(path = "/update/{id}")
-  public Map<String, Boolean> updateUSpot(@RequestBody USpot newUSpot, @PathVariable Integer id)
+  public @ResponseBody
+  Map<String, Boolean> updateUSpot(@RequestBody USpot newUSpot, @PathVariable Integer id)
   {
     try
     {
-      Optional<USpot> tmp = uSpotRepository.findById(id);
-      USpot u = tmp.get();
+      USpot u = uSpotRepository.findById(id).get();
       u.setUsName(newUSpot.getUsName());
       u.setUsCategory(newUSpot.getUsCategory());
       u.setUsLatit(newUSpot.getUsLatit());
@@ -175,36 +177,40 @@ public class USpotController
    * Doesn't work for ratings correctly yet
    */
   @PatchMapping(path = "/patch/{id}")
-  public @ResponseBody Map<String, Boolean> patchUSpot(@RequestBody Map<String, Object> updatedVar, @PathVariable Integer id)
+  public @ResponseBody
+  Map<String, Boolean> patchUSpot(@RequestBody Map<String, Object> patch, @PathVariable Integer id)
   {
     try
     {
-      Optional<USpot> tmp = uSpotRepository.findById(id);
-      USpot u = tmp.get();
-      if(updatedVar.containsKey("usName"))
+      USpot u = uSpotRepository.findById(id).get();
+      if (patch.containsKey("usName"))
       {
-        u.setUsName((String) updatedVar.get("usName"));
-      } // not working properly. Need to look into more.
-//      else if (updatedVar.containsKey("usRating"))
+        u.setUsName((String) patch.get("usName"));
+      }
+      // not working properly. Need to look into more.
+//      if (patch.containsKey("usRating"))
 //      {
-//        u.updateRating((Double) updatedVar.get("usRating")); //calculate average rating
+//        // think ratingCount and ratingTotal might have to be saved to DB
+//        // otherwise won't be able to update properly because USpot u
+//        // won't know what to set for these values...
+//        u.updateRating((Double) patch.get("usRating")); //calculate average rating
 //      }
-      else if (updatedVar.containsKey("usLatit"))
+      if (patch.containsKey("usLatit"))
       {
-        u.setUsLatit((Double) updatedVar.get("usLatit"));
+        u.setUsLatit((Double) patch.get("usLatit"));
       }
-      else if (updatedVar.containsKey("usLongit"))
+      if (patch.containsKey("usLongit"))
       {
-        u.setUsLongit((Double) updatedVar.get("usLongit"));
+        u.setUsLongit((Double) patch.get("usLongit"));
       }
-      else if (updatedVar.containsKey("usCategory"))
+      if (patch.containsKey("usCategory"))
       {
-        u.setUsCategory((String) updatedVar.get("usCategory"));
+        u.setUsCategory((String) patch.get("usCategory"));
       }
-      else if (updatedVar.containsKey("picBytes"))
+      if (patch.containsKey("picBytes"))
       {
-        byte[] bytes = (byte[]) updatedVar.get("picBytes");
-        if(bytes != null) //if null, just keep old picture
+        byte[] bytes = (byte[]) patch.get("picBytes");
+        if (bytes != null) //if null, just keep old picture
         {
           u.setPicBytes(bytes);
           FileOutputStream fos = new FileOutputStream(u.getUsImagePath(), false);
@@ -222,12 +228,12 @@ public class USpotController
   }
 
   @DeleteMapping("/delete/{id}")
-  public @ResponseBody Map<String, Boolean> deleteUSpot(@PathVariable Integer id)
+  public @ResponseBody
+  Map<String, Boolean> deleteUSpot(@PathVariable Integer id)
   {
     try
     {
-      Optional<USpot> tmp = uSpotRepository.findById(id);
-      USpot u = tmp.get();
+      USpot u = uSpotRepository.findById(id).get();
       File file = new File(u.getUsImagePath());
       file.delete();
       uSpotRepository.deleteById(id);
@@ -238,7 +244,6 @@ public class USpotController
     }
     return Collections.singletonMap("response", true);
   }
-
 
   /**
    * Helper method to retrieve the image bytes of an image that is tied to a USpot. Used in GET Requests

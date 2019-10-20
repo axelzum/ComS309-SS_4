@@ -99,4 +99,76 @@ public class StudentController
   {
     return studentRepository.findById(id);
   }
+
+  @PutMapping(path = "/update/{id}")
+  public @ResponseBody
+  Map<String, Boolean> updateStudent(@RequestBody Student student, @PathVariable Integer id)
+  {
+    try
+    {
+      Student s = studentRepository.findById(id).get();
+      s.setFirstName(student.getFirstName());
+      s.setLastName(student.getLastName());
+      s.setEmail(student.getEmail());
+      s.setUserName(student.getUserName());
+      s.setPassword(student.getPassword());
+      studentRepository.save(s);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
+
+  @PatchMapping(path = "/patch/{id}")
+  public @ResponseBody
+  Map<String, Boolean> patchStudent(@RequestBody Map<String, String> patch,
+                                    @PathVariable Integer id)
+  {
+    try
+    {
+      Student student = studentRepository.findById(id).get();
+      if (patch.containsKey("firstName"))
+      {
+        student.setFirstName(patch.get("firstName"));
+      }
+      if (patch.containsKey("lastName"))
+      {
+        student.setLastName(patch.get("lastName"));
+      }
+      if (patch.containsKey("userName"))
+      {
+        student.setUserName(patch.get("userName"));
+      }
+      if (patch.containsKey("email"))
+      {
+        student.setEmail(patch.get("email"));
+      }
+      if (patch.containsKey("password"))
+      {
+        student.setPassword(patch.get("password"));
+      }
+      studentRepository.save(student);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
+
+  @DeleteMapping(path = "/delete/{id}")
+  public @ResponseBody Map<String, Boolean> deleteStudent(@PathVariable Integer id)
+  {
+    try
+    {
+      studentRepository.deleteById(id);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
 }
