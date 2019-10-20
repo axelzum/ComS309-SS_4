@@ -78,6 +78,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        customMarkerFileText = "";
 
         final Button button = findViewById(R.id.customMarkerButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +166,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         loadCustomMarkers();
         placeCustomMarkers();
     }
+
+    public Marker getMarkerShowingInfoWindow()
+    {
+        return markerShowingInfoWindow;
+    }
+
+    public String getCustomMarkerDescription(Marker m)
+    {
+        int markerIndex = customMarkers.indexOf(m);
+        return cmDescriptions.get(markerIndex);
+    }
+
 
     @Override
     public void onPolylineClick(Polyline polyline) {
@@ -278,6 +291,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return false;
     }
 
+    public void customMarkerChangeDescription()
+    {
+        Marker m = markerShowingInfoWindow;
+        currentMarkerIndex = customMarkers.indexOf(m);
+        updateInfo(m);
+        markerShowingInfoWindow = m;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Change marker description: " + m.getTitle());
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        builder.setView(input);
+
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String desc = input.getText().toString();
+                cmDescriptions.set(currentMarkerIndex, desc);
+                /*
+                markerShowingInfoWindow.setTitle(title);
+                String uniqueTitle = genUniqueTitle(title);
+                markerShowingInfoWindow.setTitle(uniqueTitle);
+                m_Text.set(currentMarkerIndex, markerShowingInfoWindow.getTitle());
+
+                 */
+
+                updateInfo(markerShowingInfoWindow);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+        updateInfo(m);
+    }
+
     public void customMarkerRename()
     {
         Marker m = markerShowingInfoWindow;
@@ -305,7 +361,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 m_Text.set(currentMarkerIndex, markerShowingInfoWindow.getTitle());
 
                 updateInfo(markerShowingInfoWindow);
-                //markerShowingInfoWindow.setTitle(genUniqueTitle(markerShowingInfoWindow.getTitle()));
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

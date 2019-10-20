@@ -7,12 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.Marker;
 import com.ss4.opencampus.R;
 
 
 public class CustomMarkerDialog extends DialogFragment{
 
-    private TextView mActionCancel, mActionConvert, mActionDetails;
+    private TextView mActionCancel, mActionConvert, mActionDetails, heading, description;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -21,7 +22,12 @@ public class CustomMarkerDialog extends DialogFragment{
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionConvert = view.findViewById(R.id.action_convert);
         mActionDetails = view.findViewById(R.id.action_details);
+        heading = view.findViewById(R.id.heading);
+        description = view.findViewById(R.id.desc);
 
+        Marker m = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow();
+        heading.setText(m.getTitle());
+        description.setText(((MapsActivity)getActivity()).getCustomMarkerDescription(m));
         mActionCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

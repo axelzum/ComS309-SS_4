@@ -55,7 +55,7 @@ public class CustomMarkerDetailsDialog extends DialogFragment{
         mActionEditdesc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ((MapsActivity)getActivity()).customMarkerChangeDescription();
             }
         });
 
