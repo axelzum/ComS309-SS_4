@@ -15,7 +15,6 @@ import com.ss4.opencampus.R;
 public class CustomMarkerDetailsDialog extends DialogFragment {
 
     private TextView mActionDone, mActionSave, mActionDelete, mActionRename, mActionEditdesc, markerTitle, markerDesc;
-    public static boolean visible = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,11 +29,9 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
         markerTitle = view.findViewById(R.id.marker_title);
         markerDesc = view.findViewById(R.id.marker_desc);
         updateTextViews();
-        visible = true;
         mActionDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                visible = false;
                 getDialog().dismiss();
             }
         });
@@ -42,31 +39,31 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
         mActionSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                visible = false;
+
+
             }
         });
 
         mActionDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                visible = false;
+
+                
             }
         });
 
         mActionRename.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                visible = false;
-                String updatedTitle = ((MapsActivity)getActivity()).customMarkerRename();
-                //Marker cm = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow();
-                markerTitle.setText(updatedTitle);
+
+                ((MapsActivity)getActivity()).customMarkerRename();
             }
         });
 
         mActionEditdesc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                visible = false;
+
                 ((MapsActivity)getActivity()).customMarkerChangeDescription();
             }
         });

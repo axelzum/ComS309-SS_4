@@ -235,63 +235,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(Marker m) {
         String tag = (String) m.getTag();
-        if (tag.equals("Scribble")) {
 
-        }
         if (tag.equals("Custom")) {
             updateInfo(m);
             markerShowingInfoWindow = m;
             CustomMarkerDialog cmDialog = new CustomMarkerDialog();
             cmDialog.show(getFragmentManager(), "CustomMarkerDialog");
-
-            /*
-            currentMarkerIndex = customMarkers.indexOf(m);
-            updateInfo(m);
-            markerShowingInfoWindow = m;
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Set Marker Title: " + m.getTitle());
-
-            // Set up the input
-            final EditText input = new EditText(this);
-            // Specify the type of input expected
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-            builder.setView(input);
-
-
-            // Set up the buttons
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    String title = input.getText().toString();
-                    markerShowingInfoWindow.setTitle(title);
-                    String uniqueTitle = genUniqueTitle(title);
-                    markerShowingInfoWindow.setTitle(uniqueTitle);
-                    m_Text.set(currentMarkerIndex, markerShowingInfoWindow.getTitle());
-
-                    updateInfo(markerShowingInfoWindow);
-                    //markerShowingInfoWindow.setTitle(genUniqueTitle(markerShowingInfoWindow.getTitle()));
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            builder.setNeutralButton("Save", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // Open save dialog
-                    CustomMarkerSaveDialog cmDialog = new CustomMarkerSaveDialog();
-                    cmDialog.show(getFragmentManager(), "CustomMarkerSaveDialog");
-                    dialog.cancel();
-                }
-            });
-
-            builder.show();
-
-            updateInfo(m);
-            */
         }
 
         return false;
@@ -319,28 +268,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(DialogInterface dialog, int which) {
                 String desc = input.getText().toString();
                 cmDescriptions.set(currentMarkerIndex, desc);
-                /*
-                markerShowingInfoWindow.setTitle(title);
-                String uniqueTitle = genUniqueTitle(title);
-                markerShowingInfoWindow.setTitle(uniqueTitle);
-                m_Text.set(currentMarkerIndex, markerShowingInfoWindow.getTitle());
-
-                 */
-
                 updateInfo(markerShowingInfoWindow);
+                cmdd.updateTextViews();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                cmdd.updateTextViews();
             }
         });
         builder.show();
         updateInfo(m);
     }
 
-    public String customMarkerRename()
+    public void customMarkerRename()
     {
         Marker m = markerShowingInfoWindow;
         currentMarkerIndex = customMarkers.indexOf(m);
@@ -389,7 +332,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         builder.show();
         updateInfo(m);
         cmdd.updateTextViews();
-        return m.getTitle();
     }
 
     public void updateInfo(Marker m) {
