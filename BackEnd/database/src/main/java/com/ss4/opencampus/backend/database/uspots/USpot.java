@@ -38,14 +38,14 @@ public class USpot
   /**
    * NOT provided by Frontend. Backend determines what this will be. Not saved to DB
    */
-  @Transient
+  @Column(name = "Number_Ratings")
   private Integer ratingCount;
 
   //these might need to be saved...
   /**
    * NOT provided by Frontend. Backend determines what this will be. Not saved to DB
    */
-  @Transient
+  @Column(name = "Total_Rating")
   private Double ratingTotal;
 
   /**
@@ -146,8 +146,7 @@ public class USpot
       nextRating = 0.0;
     ratingCount++;
     ratingTotal += nextRating;
-    double avgRating = ratingTotal / (double) ratingCount;
-    this.setUsRating(avgRating);
+    usRating = ratingTotal / (double) ratingCount;
   }
 
   public Double getUsLatit()

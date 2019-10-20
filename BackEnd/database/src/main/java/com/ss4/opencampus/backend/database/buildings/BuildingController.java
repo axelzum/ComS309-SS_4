@@ -95,23 +95,25 @@ public class BuildingController
    */
   @GetMapping(path = "/search/{searchType}")
   public @ResponseBody
-  Iterable<Building> getBuildingLists(@PathVariable String searchType, @RequestParam(required = false) String param1,
-                                      @RequestParam(required = false) String param2)
+  Iterable<Building> getBuildingLists(@PathVariable String searchType, @RequestParam(required = false) Object param1,
+                                      @RequestParam(required = false) Object param2)
   {
     switch (searchType)
     {
       case "nameStartsWith":
-        return buildingRepository.findAllByBuildingNameStartingWith(param1);
+        return buildingRepository.findAllByBuildingNameStartingWith((String) param1);
       case "abbreviationStartsWith":
-        return buildingRepository.findAllByAbbreviationStartingWith(param1);
+        return buildingRepository.findAllByAbbreviationStartingWith((String) param1);
       case "name":
-        return buildingRepository.findByBuildingName(param1);
+        return buildingRepository.findByBuildingName((String) param1);
       case "abbreviation":
-        return buildingRepository.findByAbbreviation(param1);
+        return buildingRepository.findByAbbreviation((String) param1);
       case "address":
-        return buildingRepository.findByAddress(param1);
+        return buildingRepository.findByAddress((String) param1);
       case "location":
-        return buildingRepository.findByLatitAndLongit(Double.parseDouble(param1), Double.parseDouble(param2));
+        Double lat = Double.parseDouble((String) param1);
+        Double lon = Double.parseDouble((String) param2);
+        return buildingRepository.findByLatitAndLongit(lat, lon);
       default: // default is returning a list of all Buildings sorted by their names. There needs to be some text after "search/" otherwise it will not work?
         return buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName"));
     }
@@ -135,6 +137,18 @@ public class BuildingController
     return buildingRepository.findById(id);
   }
 
+  /**
+   * Method that handles PUT Requests. These are requests where the whole Building is being updated. Everything should
+   * be provided from the Frontend to the Backend. Anything NOT provided will be set to NULL. If you only want to update
+   * part of the Building, use the PATCH Request.
+   *
+   * @param building
+   *         Info of the Building that will be placed into the table
+   * @param id
+   *         ID of the Building that exists in Table that will be updated
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
   @PutMapping(path = "/update/{id}")
   public @ResponseBody
   Map<String, Boolean> updateBuilding(@RequestBody Building building, @PathVariable Integer id)
@@ -156,6 +170,18 @@ public class BuildingController
     return Collections.singletonMap("response", true);
   }
 
+  /**
+   * Method that handles PATCH Requests. These requests only update the part of the Student that was given by the
+   * Frontend. So, if you only want to change part of the USpot, use this request. These are much more common than PUT
+   * Requests.
+   *
+   * @param patch
+   *         Map of the different fields that will be updated
+   * @param id
+   *         ID of the Building that exists in Table that will be updated
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
   @PatchMapping(path = "/patch/{id}")
   public @ResponseBody
   Map<String, Boolean> patchBuilding(@RequestBody Map<String, Object> patch,
@@ -178,11 +204,11 @@ public class BuildingController
       }
       if (patch.containsKey("latit"))
       {
-        building.setLatit((Double) patch.get("latit"));
+        building.setLatit(((Double) patch.get("latit")));
       }
       if (patch.containsKey("longit"))
       {
-        building.setLongit((Double) patch.get("longit"));
+        building.setLongit(((Double) patch.get("longit")));
       }
       buildingRepository.save(building);
     }
@@ -193,6 +219,14 @@ public class BuildingController
     return Collections.singletonMap("response", true);
   }
 
+  /**
+   * Method to handle DELETE Requests. Will delete the Building with the given ID if it is in the table
+   *
+   * @param id
+   *         ID of the Building that will be deleted
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
   @DeleteMapping(path = "/delete/{id}")
   public @ResponseBody
   Map<String, Boolean> deleteBuilding(@PathVariable Integer id)

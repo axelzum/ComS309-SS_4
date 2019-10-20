@@ -18,6 +18,9 @@ import java.util.Optional;
  * @author Willis Knox
  * <p>
  * Controller class for USpots
+ * <p>
+ * Base URL for all USpot related Requests:
+ * <p>http://coms-309-ss-4.misc.iastate.edu:8080/uspots/</p>
  */
 @RestController
 @RequestMapping(path = "/uspots")
@@ -88,29 +91,30 @@ public class USpotController
    */
   @GetMapping(path = "/search/{searchType}")
   public @ResponseBody
-  Iterable<USpot> getUSpotLists(@PathVariable String searchType, @RequestParam(required = false) String param1,
-                                @RequestParam(required = false) String param2) throws IOException
+  Iterable<USpot> getUSpotLists(@PathVariable String searchType, @RequestParam(required = false) Object param1,
+                                @RequestParam(required = false) Object param2) throws IOException
   {
     Iterable<USpot> uList;
     switch (searchType)
     {
       case "name":
-        uList = uSpotRepository.findByUsName(param1);
+        uList = uSpotRepository.findByUsName((String) param1);
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
       case "nameStartsWith":
-        uList = uSpotRepository.findAllByUsNameStartingWith(param1);
+        uList = uSpotRepository.findAllByUsNameStartingWith((String) param1);
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
       case "category":
-        uList = uSpotRepository.findAllByUsCategory(param1);
+        uList = uSpotRepository.findAllByUsCategory((String) param1);
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
       case "minRating":
-        uList = uSpotRepository.findAllByUsRatingGreaterThanEqual(Double.parseDouble(param1));
+        Double rating = Double.parseDouble((String) param1);
+        uList = uSpotRepository.findAllByUsRatingGreaterThanEqual(rating);
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
@@ -144,6 +148,18 @@ public class USpotController
     return u;
   }
 
+  /**
+   * Method that handles PUT Requests. These are requests where the whole USpot is being updated. Everything should be
+   * provided from the Frontend to the Backend. Anything NOT provided will be set to NULL. If you only want to update
+   * part of the USpot, use the PATCH Request.
+   *
+   * @param newUSpot
+   *         Info of the USpot that will be placed into the table
+   * @param id
+   *         USpot that exists in Table that will be updated
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
   @PutMapping(path = "/update/{id}")
   public @ResponseBody
   Map<String, Boolean> updateUSpot(@RequestBody USpot newUSpot, @PathVariable Integer id)
@@ -173,8 +189,17 @@ public class USpotController
     }
   }
 
-  /*
-   * Doesn't work for ratings correctly yet
+  /**
+   * Method that handles PATCH Requests. These requests only update the part of the USpot that was given by the
+   * Frontend. So, if you only want to change part of the USpot, use this request. These are much more common than PUT
+   * Requests.
+   *
+   * @param patch
+   *         Map of the different fields that will be updated
+   * @param id
+   *         Current USpot that will be updated
+   *
+   * @return JSON formatted response telling Frontend of success or failure
    */
   @PatchMapping(path = "/patch/{id}")
   public @ResponseBody
@@ -187,21 +212,17 @@ public class USpotController
       {
         u.setUsName((String) patch.get("usName"));
       }
-      // not working properly. Need to look into more.
-//      if (patch.containsKey("usRating"))
-//      {
-//        // think ratingCount and ratingTotal might have to be saved to DB
-//        // otherwise won't be able to update properly because USpot u
-//        // won't know what to set for these values...
-//        u.updateRating((Double) patch.get("usRating")); //calculate average rating
-//      }
+      if (patch.containsKey("usRating"))
+      {
+        u.updateRating(((Double) patch.get("usRating"))); //calculate average rating
+      }
       if (patch.containsKey("usLatit"))
       {
-        u.setUsLatit((Double) patch.get("usLatit"));
+        u.setUsLatit(((Double) patch.get("usLatit")));
       }
       if (patch.containsKey("usLongit"))
       {
-        u.setUsLongit((Double) patch.get("usLongit"));
+        u.setUsLongit(((Double) patch.get("usLongit")));
       }
       if (patch.containsKey("usCategory"))
       {
@@ -227,6 +248,15 @@ public class USpotController
     return Collections.singletonMap("response", true);
   }
 
+  /**
+   * Method to handle DELETE Requests. Will delete the USpot with the given ID. Also removes its image from the server
+   * IF the image is not the "noimage.png"
+   *
+   * @param id
+   *         ID of USpot to be removed
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
   @DeleteMapping("/delete/{id}")
   public @ResponseBody
   Map<String, Boolean> deleteUSpot(@PathVariable Integer id)
@@ -235,7 +265,8 @@ public class USpotController
     {
       USpot u = uSpotRepository.findById(id).get();
       File file = new File(u.getUsImagePath());
-      file.delete();
+      if (!(file.getAbsolutePath().equals("/target/images/noimage.png")))
+        file.delete();
       uSpotRepository.deleteById(id);
     }
     catch (Exception e)

@@ -100,6 +100,18 @@ public class StudentController
     return studentRepository.findById(id);
   }
 
+  /**
+   * Method that handles PUT Requests. These are requests where the whole Student is being updated. Everything should be
+   * provided from the Frontend to the Backend. Anything NOT provided will be set to NULL. If you only want to update
+   * part of the Student, use the PATCH Request.
+   *
+   * @param student
+   *         Info of the Student that will be placed into the table
+   * @param id
+   *         Student that exists in Table that will be updated
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
   @PutMapping(path = "/update/{id}")
   public @ResponseBody
   Map<String, Boolean> updateStudent(@RequestBody Student student, @PathVariable Integer id)
@@ -121,6 +133,18 @@ public class StudentController
     return Collections.singletonMap("response", true);
   }
 
+  /**
+   * Method that handles PATCH Requests. These requests only update the part of the Student that was given by the
+   * Frontend. So, if you only want to change part of the USpot, use this request. These are much more common than PUT
+   * Requests.
+   *
+   * @param patch
+   *         Map of the different fields that will be updated
+   * @param id
+   *         ID of Student that will be updated
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
   @PatchMapping(path = "/patch/{id}")
   public @ResponseBody
   Map<String, Boolean> patchStudent(@RequestBody Map<String, String> patch,
@@ -158,8 +182,17 @@ public class StudentController
     return Collections.singletonMap("response", true);
   }
 
+  /**
+   * Method to handle DELETE Requests. Will delete the Student with the given ID if it is in the table
+   *
+   * @param id
+   *         ID of Student to be deleted
+   *
+   * @return JSON formatted response telling Frontend of success or failure
+   */
   @DeleteMapping(path = "/delete/{id}")
-  public @ResponseBody Map<String, Boolean> deleteStudent(@PathVariable Integer id)
+  public @ResponseBody
+  Map<String, Boolean> deleteStudent(@PathVariable Integer id)
   {
     try
     {
