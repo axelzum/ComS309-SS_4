@@ -45,7 +45,6 @@ public class StudentController
     catch (Exception e)
     {
       //Map<String, String> errorResponse = new HashMap<String, String>();
-
       return Collections.singletonMap("response", e.getMessage());
     }
     return Collections.singletonMap("response", "uh oh stinky");
