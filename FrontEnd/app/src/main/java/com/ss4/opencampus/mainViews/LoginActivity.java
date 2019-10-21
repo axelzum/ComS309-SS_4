@@ -1,4 +1,4 @@
-package com.ss4.opencampus;
+package com.ss4.opencampus.mainViews;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -14,12 +13,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.ss4.opencampus.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "tag";
 
@@ -27,21 +27,24 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText email;
 
+    private EditText password;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity_login);
 
-        email = (EditText)findViewById(R.id.editText4);
+        email = (EditText)findViewById(R.id.editText_Email);
+        password = (EditText)findViewById(R.id.editText_Password);
     }
 
-    public void viewRegister(View view)
+    public void viewCreateAccountActivity(View view)
     {
-        Intent intent = new Intent(this, Register.class);
+        Intent intent = new Intent(this, CreateAccountActivity.class);
         startActivity(intent);
     }
 
-    public void viewDashboard(View view)
+    public void viewDashboardActivity(View view)
     {
         queue = Volley.newRequestQueue(this);
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/search/all";
@@ -55,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject student = response.getJSONObject(i);
                                 if (student.getString("email").equals(email.getText().toString())) {
-                                    Intent intent = new Intent(MainActivity.this, Dashboard.class);
+                                    Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                                     startActivity(intent);
                                 }
                             }

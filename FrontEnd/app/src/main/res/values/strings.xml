@@ -1,37 +1,42 @@
 <resources>
     <string name="app_name">OpenCampus</string>
 
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="promp_first_name">First Name</string>
-    <string name="promp_last_name">Last Name</string>
-    <string name="promp_user_name">User Name</string>
+    <!-- Main Views Strings -->
+    <string name="btn_dashboard">Dashboard</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_cancel">CANCEL</string>
+    <!-- LoginActivity -->
+    <string name="btn_sign_in">Sign In</string>
+    <string name="btn_need_account">Need An Account?</string>
+    <string name="edit_txt_email">Email</string>
+    <string name="edit_txt_password">Password</string>
+    <!-- CreateAccountActivity -->
+    <string name="title_create_account">Create New Account</string>
+    <string name="edit_txt_firstname">First Name</string>
+    <string name="edit_txt_lastname">Last Name</string>
+    <string name="edit_txt_username">User Name</string>
+    <string name="btn_create_account">Create Account</string>
+    <!-- DashboardActivity -->
+    <string name="title_dashboard">Content Dashboard</string>
+    <string name="btn_open_map">Open Map</string>
+    <string name="btn_building_list">Show Building List</string>
 
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be > 5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <!-- Map Views Strings -->
+    <!-- MapActivity -->
+    <string name="btn_place_marker">Place Marker</string>
+    <string name="btn_filters">Filters</string>
+    <!-- FilterDialog -->
+    <string name="title_filter">Apply Filters for Map Markers:</string>
+    <string name="check_buildings">Buildings</string>
+    <string name="check_features">Features</string>
+    <string name="check_uspots">USpots</string>
+    <string name="check_custom_markers">Custom Markers</string>
 
-    <string name="title_activity_dashboard">Dashboard</string>
-    <string name="title_activity_main">Login</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="title_activity_login">Sign in</string>
-
-    <string name="button_dashboard">Dashboard</string>
-    <string name="button_map_view">Map View</string>
-    <string name="button_building_list">Building List</string>
-    <string name="button_sign_in">Sign In</string>
-    <string name="button_need_account">Need An Account?</string>
-    <string name="button_place_marker">Place Marker</string>
-    <string name="button_filters">Filters</string>
-    <string name="button_register">Register</string>
-    <string name="button_ok">OK</string>
-    <string name="button_cancel">CANCEL</string>
-
-    <string name="label_apply_filters">Apply Filters for Map Markers:</string>
-    <string name="buildings">Buildings</string>
-    <string name="features">Features</string>
-    <string name="uspots">USpots</string>
-    <string name="custom_markers">Custom_Markers</string>
+    <!-- Data Views Strings -->
+    <!-- BuildingListActivity -->
+    <string name="tip_building_name">Building Name</string>
+    <string name="tip_abbreviation">Abbreviation</string>
+    <string name="tip_address">Address</string>
+    <string name="tip_latitue">Latitude</string>
+    <string name="tip_longitude">Longitude</string>
 </resources>

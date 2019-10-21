@@ -1,4 +1,4 @@
-package com.ss4.opencampus;
+package com.ss4.opencampus.dataViews;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -15,6 +15,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.ss4.opencampus.R;
+import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +31,7 @@ import java.util.List;
  * Reads in JSON data and outputs to recycler viewer
  **/
 
-public class BuildingList extends AppCompatActivity {
+public class BuildingListActivity extends AppCompatActivity {
 
     public static final String TAG = "tag";
     private RequestQueue queue;
@@ -39,7 +41,7 @@ public class BuildingList extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) { // Start when page opens
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_building_list);
+        setContentView(R.layout.data_activity_building_list);
 
         RecyclerView bList;
         bList = findViewById(R.id.building_list);
@@ -98,7 +100,7 @@ public class BuildingList extends AppCompatActivity {
 
     public void viewDashboard(View view)
     {
-        Intent intent = new Intent(this, Dashboard.class);
+        Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
 

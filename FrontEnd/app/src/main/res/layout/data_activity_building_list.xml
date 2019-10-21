@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     android:background="#2A6072"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".BuildingList">
+    tools:context=".dataViews.BuildingListActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/building_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,11 +22,13 @@
         android:id="@+id/dashboardButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:onClick="viewDashboard"
-        android:text="@string/button_dashboard"
+        android:text="@string/btn_dashboard"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="HardcodedText" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
