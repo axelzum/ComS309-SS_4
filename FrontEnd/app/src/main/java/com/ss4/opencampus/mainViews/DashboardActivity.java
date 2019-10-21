@@ -16,7 +16,9 @@ import com.ss4.opencampus.R;
  * Creates view methods to view different activities with onClick buttons
  **/
 
+
 public class DashboardActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,8 @@ public class DashboardActivity extends AppCompatActivity {
     public void viewMapsActivity(View view)
     {
         Intent intent = new Intent(this, MapsActivity.class);
+        String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 

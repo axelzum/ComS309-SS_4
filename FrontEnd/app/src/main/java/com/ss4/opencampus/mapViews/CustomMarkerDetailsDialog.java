@@ -81,11 +81,11 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
     public void updateTextViews()
     {
         Marker m = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow();
-        //getTitleTextView().setText(m.getTitle());
-        //getDescTextView().setText(((MapsActivity)getActivity()).getCustomMarkerDescription(m));
+        getTitleTextView().setText(m.getTitle());
+        getDescTextView().setText(((MapsActivity)getActivity()).getCustomMarkerDescription(m));
 
-        setTVText(getTitleTextView(), m.getTitle());
-        setTVText(getDescTextView(), ((MapsActivity)getActivity()).getCustomMarkerDescription(m));
+        //setTVText(getTitleTextView(), m.getTitle());
+        //setTVText(getDescTextView(), ((MapsActivity)getActivity()).getCustomMarkerDescription(m));
     }
 
     public TextView getTitleTextView()

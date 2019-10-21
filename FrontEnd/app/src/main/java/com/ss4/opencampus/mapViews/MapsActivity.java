@@ -11,6 +11,8 @@ import android.widget.EditText;
 
 import androidx.fragment.app.FragmentActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,6 +46,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPolylineClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMarkerClickListener {
@@ -64,6 +68,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean customFilter;
     public String customMarkerFileText;
     private CustomMarkerDetailsDialog cmdd;
+    private static final String TAG = "tag";
+    String studentId;
+
 
     private static final String FILE_NAME = "CustomMarkers.txt";
     private RequestQueue queue;
@@ -550,7 +557,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(account)
         {
             // Save markers to database.
+            //int studentID = 3; // Placeholder
+            JSONObject newCM = new JSONObject();
+            try {
+                newCM.put("name", markerShowingInfoWindow.getTitle());
+                newCM.put("desc", cmDescriptions.get(currentMarkerIndex));
+                newCM.put("cmLatit", markerShowingInfoWindow.getPosition().latitude);
+                newCM.put("cmLongit", markerShowingInfoWindow.getPosition().longitude);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
+
+            queue = Volley.newRequestQueue(this);
+            studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+            System.out.println("Student id for posting custom marker: " + studentId);
+            String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers";
+            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newCM, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    //
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            jsonRequest.setTag(TAG);
+            queue.add(jsonRequest);
 
         }
 
