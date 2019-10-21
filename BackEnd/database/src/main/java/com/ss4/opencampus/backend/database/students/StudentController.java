@@ -5,6 +5,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,9 +44,21 @@ public class StudentController
     }
     catch (Exception e)
     {
-      return Collections.singletonMap("response", false);
+      boolean dupUsername = false;
+      boolean dupEmail = false;
+      if (e.getMessage().equals("could not execute statement; SQL [n/a]; constraint [Username_UNIQUE]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement")) {
+        dupUsername = true;
+      }
+      else if (e.getMessage().equals("could not execute statement; SQL [n/a]; constraint [Email_UNIQUE]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement")) {
+        dupEmail = true;
+      }
+      Map<String, Boolean> errorResponse = new HashMap<String, Boolean>();
+      errorResponse.put("duplicateUsername", dupUsername);
+      errorResponse.put("duplicateEmail", dupEmail);
+
+      return errorResponse;
     }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("addedUser", true);
   }
 
   /**
