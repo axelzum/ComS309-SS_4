@@ -5,10 +5,13 @@ import android.app.DialogFragment;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +26,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.Marker;
 import com.ss4.opencampus.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -38,6 +55,9 @@ public class USpotSubmissionDialog extends DialogFragment{
     private Button photoButton;
     private ImageView imgView;
     private Uri photo_uri;
+
+    private RequestQueue queue;
+    private static final String TAG = "tag";
 
     private static final int PERMISSION_CODE = 1000;
     private static final int IMAGE_CAPTURE_CODE = 1001;
@@ -90,10 +110,58 @@ public class USpotSubmissionDialog extends DialogFragment{
         mActionSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // POST
-                //title.getText().toString();
-                //category.getSelectedItem().toString();
-                //rating.getRating();
+                double lat = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow().getPosition().latitude;
+                double lng = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow().getPosition().longitude;
+
+                Bitmap bitmap = ((BitmapDrawable) imgView.getDrawable()).getBitmap();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] imageInByte = baos.toByteArray();
+                String byteString = "";
+                byteString = Base64.encodeToString(imageInByte, Base64.DEFAULT);
+                System.out.println(byteString);
+                JSONObject newUSpot = new JSONObject();
+                try {
+                    newUSpot.put("usName", title.getText().toString());
+                    newUSpot.put("usRating", (double)rating.getRating());
+                    newUSpot.put("usLatit", lat);
+                    newUSpot.put("usLongit", lng);
+                    newUSpot.put("usCategory", category.getSelectedItem().toString());
+                    newUSpot.put("picBytes", byteString);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                /*
+                picBytes: "lkdfjlkdsfjfdslkj"
+                 */
+
+                queue = Volley.newRequestQueue(getActivity());
+                String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/add";
+                JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newUSpot, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            title.setText(response.get("response").toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> headers = new HashMap<String, String>();
+                        headers.put("Content-Type", "application/json; charset=utf-8");
+                        return headers;
+                    }
+                };
+                jsonRequest.setTag(TAG);
+                queue.add(jsonRequest);
                 getDialog().dismiss();
             }
         });

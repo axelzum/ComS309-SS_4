@@ -168,6 +168,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         placeCustomMarkers();
     }
 
+
     public void setCmdd(CustomMarkerDetailsDialog newcmdd)
     {
         cmdd = newcmdd;
