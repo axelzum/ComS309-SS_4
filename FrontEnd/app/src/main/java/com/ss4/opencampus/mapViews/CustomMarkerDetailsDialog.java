@@ -81,8 +81,37 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
     public void updateTextViews()
     {
         Marker m = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow();
-        markerTitle.setText(m.getTitle());
-        markerDesc.setText(((MapsActivity)getActivity()).getCustomMarkerDescription(m));
+        //getTitleTextView().setText(m.getTitle());
+        //getDescTextView().setText(((MapsActivity)getActivity()).getCustomMarkerDescription(m));
+
+        setTVText(getTitleTextView(), m.getTitle());
+        setTVText(getDescTextView(), ((MapsActivity)getActivity()).getCustomMarkerDescription(m));
+    }
+
+    public TextView getTitleTextView()
+    {
+        return markerTitle;
+    }
+
+    public TextView getDescTextView()
+    {
+        return markerDesc;
+    }
+
+    public String getMarkerTitleText()
+    {
+        return markerTitle.getText().toString();
+    }
+
+    public String getMarkerDescText()
+    {
+        return markerDesc.getText().toString();
+    }
+
+    public String setTVText(TextView tv, String s)
+    {
+        tv.setText(s);
+        return s;
     }
 
 
