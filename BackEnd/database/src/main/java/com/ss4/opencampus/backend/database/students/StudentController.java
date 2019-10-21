@@ -36,7 +36,7 @@ public class StudentController
    */
   @PostMapping(path = "/add")
   public @ResponseBody
-  Map<String, String> addNewStudent(@RequestBody Student student)
+  Map<String, Boolean> addNewStudent(@RequestBody Student student)
   {
     try
     {
@@ -44,11 +44,21 @@ public class StudentController
     }
     catch (Exception e)
     {
-      //Map<String, String> errorResponse = new HashMap<String, String>();
+      boolean dupUsername = false;
+      boolean dupEmail = false;
+      if (e.getMessage().equals("could not execute statement; SQL [n/a]; constraint [Username_UNIQUE]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement")) {
+        dupUsername = true;
+      }
+      else if (e.getMessage().equals("could not execute statement; SQL [n/a]; constraint [Email_UNIQUE]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement")) {
+        dupEmail = true;
+      }
+      Map<String, Boolean> errorResponse = new HashMap<String, Boolean>();
+      errorResponse.put("duplicateUsername", dupUsername);
+      errorResponse.put("duplicateEmail", dupEmail);
 
-      return Collections.singletonMap("response", e.getMessage());
+      return errorResponse;
     }
-    return Collections.singletonMap("response", "uh oh stinky");
+    return Collections.singletonMap("addedUser", true);
   }
 
   /**
