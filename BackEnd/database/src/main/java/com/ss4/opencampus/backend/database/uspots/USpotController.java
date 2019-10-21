@@ -1,5 +1,6 @@
 package com.ss4.opencampus.backend.database.uspots;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
@@ -173,13 +174,7 @@ public class USpotController
       u.setUsLongit(newUSpot.getUsLongit());
       u.setUsRating(newUSpot.getUsRating());
       byte[] bytes = newUSpot.getPicBytes();
-      if (bytes != null)//if it is null, just keep the old picture
-      {
-        u.setPicBytes(bytes);
-        FileOutputStream fos = new FileOutputStream(u.getUsImagePath(), false);
-        fos.write(u.getPicBytes());
-        fos.close();
-      }
+      u = newUSpotImage(u, bytes);
       uSpotRepository.save(u);
       return Collections.singletonMap("response", true);
     }
@@ -230,14 +225,8 @@ public class USpotController
       }
       if (patch.containsKey("picBytes"))
       {
-        byte[] bytes = (byte[]) patch.get("picBytes");
-        if (bytes != null) //if null, just keep old picture
-        {
-          u.setPicBytes(bytes);
-          FileOutputStream fos = new FileOutputStream(u.getUsImagePath(), false);
-          fos.write(u.getPicBytes());
-          fos.close();
-        }
+        byte[] bytes = Base64.decodeBase64((String) patch.get("picBytes"));
+        u = newUSpotImage(u, bytes);
       }
       uSpotRepository.save(u);
     }
@@ -290,5 +279,41 @@ public class USpotController
   private byte[] pathToBytes(String picPath) throws IOException
   {
     return Files.readAllBytes(Paths.get(picPath));
+  }
+
+  /**
+   * Helper method that is used by PUT and PATCH when trying to update the USpot picture. If the USpot is using
+   * "noimage.png" as the image, we DON'T want to replace it and if it is using another image, we can go ahead and
+   * overwrite it.
+   * <p>
+   * If the byte[] is null, it will simply keep the old image that is currently linked to the USpot.
+   *
+   * @param u
+   *         USpot who's image is being changed
+   * @param bytes
+   *         array of base64 bytes of the new image
+   *
+   * @return The USpot so it can be saved to the table
+   *
+   * @throws IOException
+   *         Could potentially through an error if given a non-valid path.
+   */
+  private USpot newUSpotImage(USpot u, byte[] bytes) throws IOException
+  {
+    if (bytes != null) //if null, just keep old picture
+    {
+      u.setPicBytes(bytes);
+      FileOutputStream fos;
+      if (u.getUsImagePath().equals("/target/images/noimage.png"))
+      {
+        u.setUsImagePath(path + "uspot_fresh_image_" + u.getUsID() + ".png");
+        fos = new FileOutputStream(u.getUsImagePath());
+      }
+      else
+        fos = new FileOutputStream(u.getUsImagePath(), false);
+      fos.write(u.getPicBytes());
+      fos.close();
+    }
+    return u;
   }
 }

@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+/**
+ * @author Willis Knox
+ */
 public interface CustomMarkerRepository extends JpaRepository<CustomMarker, Integer>
 {
   Iterable<CustomMarker> findAllByStudentId(Integer studentId, Sort sort);

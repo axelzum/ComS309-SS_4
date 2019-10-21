@@ -7,6 +7,12 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
+/**
+ * @author Willis Knox
+ *
+ * Table for CustomMarkers. These are tied to specific Students. A Student's CustomMarkers will NOT
+ * be shared with other Students.
+ */
 @Entity
 @Table(name = "CustomMarkers")
 public class CustomMarker
@@ -27,6 +33,10 @@ public class CustomMarker
   @Column(name = "Longitude")
   private Double cmLongit;
 
+  /**
+   * Foreign key to the Student Table. Links the Student_ID to this CustomMarker.
+   * If the Student is deleted, so will this CustomMarker.
+   */
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "student_id", nullable = false)
   @OnDelete(action = OnDeleteAction.CASCADE)
