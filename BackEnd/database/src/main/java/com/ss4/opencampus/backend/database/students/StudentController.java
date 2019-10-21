@@ -5,6 +5,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -35,7 +36,7 @@ public class StudentController
    */
   @PostMapping(path = "/add")
   public @ResponseBody
-  Map<String, Boolean> addNewStudent(@RequestBody Student student)
+  Map<String, String> addNewStudent(@RequestBody Student student)
   {
     try
     {
@@ -43,9 +44,11 @@ public class StudentController
     }
     catch (Exception e)
     {
-      return Collections.singletonMap("response", false);
+      //Map<String, String> errorResponse = new HashMap<String, String>();
+
+      return Collections.singletonMap("response", e.getMessage());
     }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", "uh oh stinky");
   }
 
   /**
