@@ -46,7 +46,7 @@ public class StudentController
     {
       //Map<String, String> errorResponse = new HashMap<String, String>();
 
-      return Collections.singletonMap("response", e.getMessage());
+      return Collections.singletonMap("response", e.getCause().toString());
     }
     return Collections.singletonMap("response", "uh oh stinky");
   }
