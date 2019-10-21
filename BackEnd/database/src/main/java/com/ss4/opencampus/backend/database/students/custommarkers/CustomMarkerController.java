@@ -61,4 +61,77 @@ public class CustomMarkerController
   {
     return customMarkerRepository.findByCmIdAndStudentId(cmId, studentId);
   }
+
+  @PutMapping(path = "/students/{studentId}/customMarkers/update/{id}")
+  public @ResponseBody
+  Map<String, Boolean> updateCustomMarker(@PathVariable(value = "studentId") Integer studentId,
+                                          @PathVariable(value = "id") Integer cmId,
+                                          @RequestBody CustomMarker customMarker)
+  {
+    try
+    {
+      CustomMarker cm = customMarkerRepository.findByCmIdAndStudentId(cmId, studentId).get();
+      cm.setName(customMarker.getName());
+      cm.setDesc(customMarker.getDesc());
+      cm.setCmLatit(customMarker.getCmLatit());
+      cm.setCmLongit(customMarker.getCmLongit());
+      customMarkerRepository.save(cm);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
+
+  @PatchMapping(path = "/students/{studentId}/customMarkers/patch/{id}")
+  public @ResponseBody
+  Map<String, Boolean> patchCustomMarker(@PathVariable(value = "studentId") Integer studentId,
+                                         @PathVariable(value = "id") Integer cmId,
+                                         @RequestBody Map<String, Object> patch)
+  {
+    try
+    {
+      CustomMarker cm = customMarkerRepository.findByCmIdAndStudentId(cmId, studentId).get();
+      if (patch.containsKey("name"))
+      {
+        cm.setName((String) patch.get("name"));
+      }
+      if (patch.containsKey("desc"))
+      {
+        cm.setDesc((String) patch.get("desc"));
+      }
+      if (patch.containsKey("cmLatit"))
+      {
+        cm.setCmLatit(((Double) patch.get("cmLatit")));
+      }
+      if (patch.containsKey("cmLongit"))
+      {
+        cm.setCmLongit(((Double) patch.get("cmLongit")));
+      }
+      customMarkerRepository.save(cm);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
+
+  @DeleteMapping(path = "/students/{studentId}/customMarkers/delete/{id}")
+  public @ResponseBody
+  Map<String, Boolean> deleteCustomMarker(@PathVariable(value = "studentId") Integer studentId,
+                                          @PathVariable(value = "id") Integer cmId)
+  {
+    try
+    {
+      CustomMarker cm = customMarkerRepository.findByCmIdAndStudentId(cmId, studentId).get();
+      customMarkerRepository.delete(cm);
+    }
+    catch (Exception e)
+    {
+      return Collections.singletonMap("response", false);
+    }
+    return Collections.singletonMap("response", true);
+  }
 }
