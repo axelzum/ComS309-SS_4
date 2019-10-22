@@ -40,15 +40,25 @@
             android:inputType="textPassword" />
 
         <Button
-            android:id="@+id/button_OpenMap"
+            android:id="@+id/button_SignIn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:onClick="viewDashboardActivity"
+            android:onClick="attemptSignIn"
             android:text="@string/btn_sign_in" />
 
+        <TextView
+            android:id="@+id/textView_signin_error"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_view_signin_error"
+            android:textAlignment="center"
+            android:textColor="@color/colorWarningText"
+            android:textSize="12sp"
+            android:visibility="invisible" />
+
         <Button
-            android:id="@+id/button_BuildingList"
+            android:id="@+id/button_need_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"

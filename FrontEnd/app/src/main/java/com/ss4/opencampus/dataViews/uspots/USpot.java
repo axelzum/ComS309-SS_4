@@ -2,7 +2,6 @@ package com.ss4.opencampus.dataViews.uspots;
 
 import android.graphics.BitmapFactory;
 
-import org.json.JSONObject;
 import android.graphics.Bitmap;
 
 /**
@@ -13,6 +12,8 @@ import android.graphics.Bitmap;
  **/
 
 public class USpot {
+
+    public int usID;
 
     public String usName;
 
@@ -29,7 +30,8 @@ public class USpot {
     public USpot() {
     }
 
-    public USpot(String usName, Double usRating, Double usLatit, Double usLongit, String usCategory, byte[] picBytes) {
+    public USpot(int usID, String usName, Double usRating, Double usLatit, Double usLongit, String usCategory, byte[] picBytes) {
+        this.usID = usID;
         this.usName = usName;
         this.usRating = usRating;
         this.usLatit = usLatit;
@@ -37,6 +39,8 @@ public class USpot {
         this.usCategory = usCategory;
         this.picBytes = picBytes;
     }
+
+    public int getUsID() { return usID; }
 
     public String getUsName() {
         return usName;
@@ -74,6 +78,10 @@ public class USpot {
 
     public String getRatingString() {
         return usRating.toString();
+    }
+
+    public void setUsID(int usID) {
+        this.usID = usID;
     }
 
     public void setUsName(String usName) {
