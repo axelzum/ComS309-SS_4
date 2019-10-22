@@ -1,4 +1,4 @@
-package com.ss4.opencampus.dataViews;
+package com.ss4.opencampus.dataViews.uspots;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 
 import com.android.volley.Request;
@@ -15,71 +16,73 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ss4.opencampus.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @Author: Morgan Smith
- * Main class for the Building List Activity
+ * Main class for the USpot List
  * Reads in JSON data and outputs to recycler viewer
  **/
 
-public class BuildingListActivity extends AppCompatActivity {
+public class USpotListActivity extends AppCompatActivity {
 
     public static final String TAG = "tag";
     private RequestQueue queue;
-    private List<Building> buildingList;
+    private List<USpot> uspotList;
     private RecyclerView.Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { // Start when page opens
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.data_activity_building_list);
+        setContentView(R.layout.data_activity_uspot_list);
 
-        RecyclerView bList;
-        bList = findViewById(R.id.building_list);
+        RecyclerView uList;
+        uList = findViewById(R.id.uspot_list);
 
-        buildingList = new ArrayList<>();
-        adapter = new BuildingAdapter(getApplicationContext(),buildingList);
+        uspotList = new ArrayList<>();
+        adapter = new USpotAdapter(getApplicationContext(),uspotList);
 
         LinearLayoutManager linearLayoutManager;
         DividerItemDecoration dividerItemDecoration;
 
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        dividerItemDecoration = new DividerItemDecoration(bList.getContext(), linearLayoutManager.getOrientation());
+        dividerItemDecoration = new DividerItemDecoration(uList.getContext(), linearLayoutManager.getOrientation());
 
-        bList.setHasFixedSize(true);
-        bList.setLayoutManager(linearLayoutManager);
-        bList.addItemDecoration(dividerItemDecoration);
-        bList.setAdapter(adapter);
+        uList.setHasFixedSize(true);
+        uList.setLayoutManager(linearLayoutManager);
+        uList.addItemDecoration(dividerItemDecoration);
+        uList.setAdapter(adapter);
 
         queue = Volley.newRequestQueue(this);
-        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/all";
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/all";
 
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {    // Reads in JSON data for the buildings from the server
+                new Response.Listener<JSONArray>() {    // Reads in JSON data for the uspots from the server
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
-                                Building buildingInfo = new Building();             // Makes Building object from the JSONObject
+                                USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
 
-                                buildingInfo.setBuildingName(jsonObject.getString("buildingName"));
-                                buildingInfo.setAbbrev(jsonObject.getString("abbreviation"));
-                                buildingInfo.setAddress(jsonObject.getString("address"));
-                                buildingInfo.setLatitude(jsonObject.getDouble("latit"));
-                                buildingInfo.setLongitude(jsonObject.getDouble("longit"));
+                                uspotInfo.setUsName(jsonObject.getString("usName"));
+                                uspotInfo.setUsRating(jsonObject.getDouble("usRating"));
+                                uspotInfo.setUsLatit(jsonObject.getDouble("usLatit"));
+                                uspotInfo.setUsLongit(jsonObject.getDouble("usLongit"));
+                                uspotInfo.setUspotCategory(jsonObject.getString("usCategory"));
+                                uspotInfo.setPicBytes(Base64.decode(jsonObject.getString("picBytes"), Base64.DEFAULT));
 
-                                buildingList.add(buildingInfo);
+                                uspotList.add(uspotInfo);
                             }
                             adapter.notifyDataSetChanged();
                         } catch (JSONException e) {
@@ -111,4 +114,5 @@ public class BuildingListActivity extends AppCompatActivity {
             queue.cancelAll(TAG);
         }
     }
+
 }

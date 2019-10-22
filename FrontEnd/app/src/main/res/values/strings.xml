@@ -39,4 +39,5 @@
     <string name="tip_address">Address</string>
     <string name="tip_latitue">Latitude</string>
     <string name="tip_longitude">Longitude</string>
+    <string name="show_uspot_list">Show USpot List</string>
 </resources>
