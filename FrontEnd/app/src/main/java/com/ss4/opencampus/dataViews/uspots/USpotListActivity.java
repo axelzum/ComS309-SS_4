@@ -107,13 +107,13 @@ public class USpotListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
-/*
-    public void viewSingleUSpot(View view)
-    {
-        Intent intent = new Intent(this, SingleUSpotActivity.class);
-        startActivity(intent);
-    }
-*/
 
+    @Override
+    protected void onStop () {
+        super.onStop();
+        if (queue != null) {
+            queue.cancelAll(TAG);
+        }
+    }
 
 }

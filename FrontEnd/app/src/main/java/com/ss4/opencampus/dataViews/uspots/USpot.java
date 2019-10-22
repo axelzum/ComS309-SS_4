@@ -110,5 +110,6 @@ public class USpot {
     public Bitmap setBitmap() {
         return BitmapFactory.decodeByteArray(picBytes, 0, picBytes.length);
     }
+
 }
 
