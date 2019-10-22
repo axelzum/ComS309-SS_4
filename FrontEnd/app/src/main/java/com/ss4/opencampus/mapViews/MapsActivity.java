@@ -598,7 +598,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
+    public void setCustomMarkerList(ArrayList<Marker> cmList)
+    {
+        customMarkers = cmList;
+    }
 
     public void loadBuildings()
     {

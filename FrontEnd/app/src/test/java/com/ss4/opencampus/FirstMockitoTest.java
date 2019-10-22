@@ -1,69 +1,148 @@
 package com.ss4.opencampus;
 
 import android.content.Context;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.ss4.opencampus.mapViews.CustomMarkerDetailsDialog;
+
+import com.ss4.opencampus.dataViews.Building;
+import com.ss4.opencampus.dataViews.BuildingAdapter;
 import com.ss4.opencampus.mapViews.MapsActivity;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FirstMockitoTest {
 
-    private String titleText;
-    private String descText;
+    MapsActivity mapsActivity;
+    BuildingAdapter buildingAdapter;
+    Building b1, b2, b3;
+    Marker m1, m2, m3;
+    ArrayList<Marker> customMarkers;
     @Mock
     Context mMockContext;
+
+    @Before
+    public void setupBuildings()
+    {
+        b1 = new Building("Pearson Hall", "PH", "address", 20.0, 30.0);
+        b2 = new Building("Marston Hall", "MH", "address", 24.0, 32.0);
+        b3 = new Building("Parks Library", "PL", "address", 25.0, 35.0);
+        ArrayList<Building> buildingList = new ArrayList<>();
+        buildingList.add(b1);
+        buildingList.add(b2);
+        buildingList.add(b3);
+
+        buildingAdapter = new BuildingAdapter(mMockContext, buildingList);
+    }
+
+    @Before
+    public void setupMarkers()
+    {
+        customMarkers = new ArrayList<>();
+        m1 = Mockito.mock(Marker.class);
+        m2 = Mockito.mock(Marker.class);
+        m3 = Mockito.mock(Marker.class);
+        customMarkers.add(m1);
+        customMarkers.add(m2);
+        customMarkers.add(m3);
+        mapsActivity = new MapsActivity();
+    }
 
     @Test
     public void firstTest()
     {
-        // Mock MapsActivity with a mock marker
-        Marker mockMarker = Mockito.mock(Marker.class);
-        MapsActivity mockMap = Mockito.mock(MapsActivity.class);
+        Mockito.when(m1.getTitle()).thenReturn("Mock Marker Title");
 
-        // We need our mock marker to have a title, and the mock map to have our mock marker as the marker showing the info window.
-        Mockito.when(mockMarker.getTitle()).thenReturn("Mock Marker Title");
-        //Mockito.when(mockMap.getMarkerShowingInfoWindow()).thenReturn(mockMarker);
-
-        // When accessing description for our mock marker, provide a mock description
-        Mockito.when(mockMap.getCustomMarkerDescription(mockMarker)).thenReturn("Mock Description");
-
-        //Create a real CustomMarkerDetailsDialog
-        CustomMarkerDetailsDialog cmdd = Mockito.mock(CustomMarkerDetailsDialog.class);
-
-        //Return our own TextViews when accessors are called
-        TextView title = Mockito.mock(TextView.class);
-        TextView desc = Mockito.mock(TextView.class);
-        //Mockito.when(cmdd.getTitleTextView()).thenReturn(title);
-        //Mockito.when(cmdd.getDescTextView()).thenReturn(desc);
-        String mockMarkerTitle = mockMarker.getTitle();
-        String mockMarkerDesc = mockMap.getCustomMarkerDescription(mockMarker);
-        //doNothing().when(title).setText(any(String.class));
-        //doNothing().when(desc).setText(any(String.class));
-
-        //Mockito.when(cmdd.setTVText(title,eq(any(String.class)))).thenReturn(mockMarkerTitle);
-        //Mockito.when(cmdd.setTVText(desc,eq(any(String.class)))).thenReturn(mockMarkerDesc);
-//        //Update the text views
-        //Mockito.doCallRealMethod().when(cmdd).updateTextViews();
-        //cmdd.updateTextViews();
-        boolean matchingTitles = mockMarker.getTitle().equals("Mock Marker Title");
-        assertTrue(matchingTitles);
+        assertTrue(m1.getTitle().equals("Mock Marker Title"));
     }
+
+    @Test
+    public void testItemCount()
+    {
+        assertEquals(buildingAdapter.getItemCount(), 3);
+    }
+
+    @Test
+    public void testPosition()
+    {
+        LatLng expectedPos = new LatLng(20.0, 30.0);
+        LatLng truePos = new LatLng(b1.getLatitude(), b1.getLongitude());
+
+        assertTrue(truePos.equals(expectedPos));
+    }
+
+    @Test
+    public void testMarkerTitles()
+    {
+        Mockito.when(m1.getTitle()).thenReturn("MockMarker");
+        Mockito.when(m2.getTitle()).thenReturn("MockMarker");
+        Mockito.when(m3.getTitle()).thenReturn("AnotherMarker");
+
+        mapsActivity.setCustomMarkerList(customMarkers);
+        String unique = mapsActivity.genUniqueTitle(m2.getTitle());
+
+        assertTrue(unique.equals("MockMarker 2"));
+    }
+
+    @Test
+    public void testMarkerTitles2()
+    {
+        Mockito.when(m1.getTitle()).thenReturn("MockMarker");
+        Mockito.when(m2.getTitle()).thenReturn("MockedMark");
+        Mockito.when(m3.getTitle()).thenReturn("MockedMark");
+        customMarkers.clear();
+        customMarkers.add(m1);
+        customMarkers.add(m2);
+        customMarkers.add(m3);
+        mapsActivity.setCustomMarkerList(customMarkers);
+        String unique = mapsActivity.genUniqueTitle(m2.getTitle());
+
+        assertTrue(unique.equals("MockedMark 2"));
+    }
+
+    @Test
+    public void testMarkerTitles3()
+    {
+        Mockito.when(m1.getTitle()).thenReturn("MockMarker");
+        Mockito.when(m2.getTitle()).thenReturn("MockMarker 2");
+        Mockito.when(m3.getTitle()).thenReturn("AnotherMarker");
+        customMarkers.clear();
+        customMarkers.add(m1);
+        customMarkers.add(m2);
+        customMarkers.add(m3);
+        mapsActivity.setCustomMarkerList(customMarkers);
+        String unique = mapsActivity.genUniqueTitle(m2.getTitle());
+
+        assertTrue(unique.equals("MockMarker 2"));
+    }
+
+    @Test
+    public void testMarkerTitles4()
+    {
+        Mockito.when(m1.getTitle()).thenReturn("MockMarker");
+        Mockito.when(m2.getTitle()).thenReturn("MockMarker 2");
+        Mockito.when(m3.getTitle()).thenReturn("MockMarker");
+        customMarkers.clear();
+        customMarkers.add(m1);
+        customMarkers.add(m2);
+        customMarkers.add(m3);
+        mapsActivity.setCustomMarkerList(customMarkers);
+        String unique = mapsActivity.genUniqueTitle(m3.getTitle());
+
+        assertTrue(unique.equals("MockMarker 3"));
+    }
+
 
 }
 
