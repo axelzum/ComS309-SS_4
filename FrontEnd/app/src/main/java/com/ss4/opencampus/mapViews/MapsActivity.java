@@ -173,8 +173,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.setOnPolylineClickListener(this);
 
-        loadCustomMarkers();
-        placeCustomMarkers();
+        //loadCustomMarkers();
+        //placeCustomMarkers();
     }
 
 
@@ -374,6 +374,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(uspotFilter)
             loadUspots();
+
+        if(customFilter)
+            loadCustomMarkersDB();
     }
 
     public void loadCustomMarkers() {
@@ -727,6 +730,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .draggable(false));
                                 currentUspot.setTag("Building");
                                 uspotMarkers.add(currentUspot);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+    }
+
+    public void loadCustomMarkersDB()
+    {
+        studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers/all";
+
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject cm = response.getJSONObject(i);
+
+                                Marker currentCM = mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(cm.getDouble("cmLatit"), cm.getDouble("cmLongit")))
+                                        .title(cm.getString("name"))
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_custom))
+                                        .draggable(false));
+                                currentCM.setTag("Custom");
+                                customMarkers.add(currentCM);
+                                cmDescriptions.add(cm.getString("desc"));
+                                m_Text.add(cm.getString("name"));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
