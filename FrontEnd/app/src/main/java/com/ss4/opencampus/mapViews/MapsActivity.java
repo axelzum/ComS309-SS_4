@@ -13,6 +13,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -487,7 +488,67 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(account)
         {
             // Remove markers from database.
+            //
+            studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+            // markerId
+            // get marker from database by name, http://coms-309-ss-4.misc.iastate.edu:8080/students/ studentId /customMarkers/name?param= markerShowingInfoWindow.getTitle()
+            // get cmID from JSON Object
+            // Delete by id, http://coms-309-ss-4.misc.iastate.edu:8080/students/{studentId}/customMarkers/delete/{id}
 
+            String getByNameurl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers/name?param=" + markerShowingInfoWindow.getTitle();
+
+            // Request a JSONObject response from the provided URL.
+            JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, getByNameurl, null,
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            try {
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject cm = response.getJSONObject(i);
+                                    int cmID = cm.getInt("cmID");
+                                    String deleteUrl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/"+studentId+"/customMarkers/delete/" + cmID;
+
+                                    StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, deleteUrl,  new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            //
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            error.printStackTrace();
+                                        }
+                                    }) {
+                                        @Override
+                                        public Map<String, String> getHeaders() throws AuthFailureError {
+                                            HashMap<String, String> headers = new HashMap<String, String>();
+                                            headers.put("Content-Type", "application/json; charset=utf-8");
+                                            return headers;
+                                        }
+                                    };
+                                    deleteRequest.setTag(TAG);
+                                    queue.add(deleteRequest);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                    System.out.println("failed");
+                }
+            });
+
+            markerShowingInfoWindow.setVisible(false);
+            customMarkers.remove(markerShowingInfoWindow);
+
+            //Set the tag on the request
+            jsonRequest.setTag(TAG);
+
+            // Add the request to the RequestQueue.
+            queue.add(jsonRequest);
         }
     }
 
@@ -557,7 +618,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(account)
         {
             // Save markers to database.
-            //int studentID = 3; // Placeholder
             JSONObject newCM = new JSONObject();
             try {
                 newCM.put("name", markerShowingInfoWindow.getTitle());
@@ -567,7 +627,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
 
             queue = Volley.newRequestQueue(this);
             studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
@@ -616,10 +675,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         try {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject building = response.getJSONObject(i);
-                                //System.out.println("Building Name: " + building.getString("buildingName"));
-                                //System.out.println("Lat: " + building.getDouble("latit"));
-                                //System.out.println("Lon: " + building.getDouble("longit"));
-                                //System.out.println();
 
                                 Marker currentBuilding = mMap.addMarker(new MarkerOptions()
                                         .position(new LatLng(building.getDouble("latit"), building.getDouble("longit")))
@@ -628,8 +683,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .draggable(false));
                                 currentBuilding.setTag("Building");
                                 buildingMarkers.add(currentBuilding);
-                                //getResp.append("firstName: " + student.getString("firstName") + '\n');
-                                //getResp.append("lastName: " + student.getString("lastName") + '\n');
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -644,7 +697,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         //Set the tag on the request
-        //jsonRequest.setTag(TAG);
+        jsonRequest.setTag(TAG);
 
         // Add the request to the RequestQueue.
         queue.add(jsonRequest);
