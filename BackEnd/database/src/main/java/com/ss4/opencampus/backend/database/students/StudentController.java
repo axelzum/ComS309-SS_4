@@ -90,6 +90,8 @@ public class StudentController
         return studentRepository.findAllByFirstNameAndLastName(param1, param2);
       case "userName":
         return studentRepository.findByUserName(param1);
+      case "email":
+        return studentRepository.findByEmail(param1);
       default: // default is returning a list of students sorted by last name. There needs to be some text after "search/" otherwise it will not work?
         return studentRepository.findAll(new Sort(Sort.Direction.ASC, "lastName"));
     }
