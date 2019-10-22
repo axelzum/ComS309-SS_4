@@ -33,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import org.json.JSONArray;
@@ -251,6 +252,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             markerShowingInfoWindow = m;
             CustomMarkerDialog cmDialog = new CustomMarkerDialog();
             cmDialog.show(getFragmentManager(), "CustomMarkerDialog");
+        }
+
+        if (tag.equals("USpot")) {
+//            markerShowingInfoWindow = m;
+////            SingleUSpotActivity singleUSpotActivity = new SingleUSpotActivity();
+////            Intent intent = new Intent(this, SingleUSpotActivity.class);
+////            startActivity(intent);
+
+
+
         }
 
         return false;
@@ -728,7 +739,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .title(uspot.getString("usName"))
                                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
                                         .draggable(false));
-                                currentUspot.setTag("Building");
+                                currentUspot.setTag("USpot");
                                 uspotMarkers.add(currentUspot);
                             }
                         } catch (JSONException e) {

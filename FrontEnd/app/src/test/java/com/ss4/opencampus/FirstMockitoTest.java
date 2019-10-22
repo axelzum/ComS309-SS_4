@@ -5,8 +5,8 @@ import android.content.Context;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
-import com.ss4.opencampus.dataViews.Building;
-import com.ss4.opencampus.dataViews.BuildingAdapter;
+import com.ss4.opencampus.dataViews.buildings.Building;
+import com.ss4.opencampus.dataViews.buildings.BuildingAdapter;
 import com.ss4.opencampus.mapViews.MapsActivity;
 
 import org.junit.Before;
