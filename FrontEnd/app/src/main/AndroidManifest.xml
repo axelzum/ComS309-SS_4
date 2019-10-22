@@ -29,8 +29,9 @@
         </activity>
         <activity android:name=".mainViews.DashboardActivity" />
         <activity android:name=".mainViews.CreateAccountActivity" />
-        <activity android:name=".dataViews.BuildingListActivity" />
+        <activity android:name=".dataViews.buildings.BuildingListActivity" />
         <activity android:name=".mapViews.MapsActivity" />
+        <activity android:name=".dataViews.uspots.USpotListActivity" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

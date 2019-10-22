@@ -6,7 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.ss4.opencampus.dataViews.BuildingListActivity;
+import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
+import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
 
@@ -37,6 +38,11 @@ public class DashboardActivity extends AppCompatActivity {
     public void viewBuildingListActivity(View view)
     {
         Intent intent = new Intent(this, BuildingListActivity.class);
+        startActivity(intent);
+    }
+
+    public void viewUspotListActivity(View view) {
+        Intent intent = new Intent(this, USpotListActivity.class);
         startActivity(intent);
     }
 }

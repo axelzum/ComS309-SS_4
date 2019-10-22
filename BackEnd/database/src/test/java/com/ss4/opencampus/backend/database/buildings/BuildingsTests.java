@@ -140,7 +140,7 @@ public class BuildingsTests
   {
     Mockito.when(buildingRepository.findByLatitAndLongit(42.0187128, -93.6633696)).thenReturn(
             Collections.singletonList(building3));
-    Iterable<Building> b = buildingController.getBuildingLists("location", 42.0187128, -93.6633696);
+    Iterable<Building> b = buildingController.getBuildingLists("location", "42.0187128", "-93.6633696");
     assertEquals(buildingRepository.findByLatitAndLongit(42.0187128, -93.6633696), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findByLatitAndLongit(42.0187128, -93.6633696);
   }
