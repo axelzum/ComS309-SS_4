@@ -6,18 +6,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText password;
 
+    private TextView signInError;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
 
         email = (EditText)findViewById(R.id.editText_Email);
         password = (EditText)findViewById(R.id.editText_Password);
+        signInError = (TextView)findViewById(R.id.textView_signin_error);
+        signInError.setVisibility(View.INVISIBLE);
     }
 
     public void viewCreateAccountActivity(View view)
@@ -44,27 +54,28 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void viewDashboardActivity(View view)
-    {
+    public void attemptSignIn(View view) {
+        signInError.setVisibility(View.INVISIBLE);
+
         queue = Volley.newRequestQueue(this);
-        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/search/all";
+        String url = String.format("http://coms-309-ss-4.misc.iastate.edu:8080/students/search/email?param1=%1$s", email.getText().toString());
 
         // Request a JSONObject response from the provided URL.
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject student = response.getJSONObject(i);
-                                if (student.getString("email").equals(email.getText().toString())) {
-                                    Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-                                    intent.putExtra("EXTRA_STUDENT_ID", student.getString("id"));
-                                    startActivity(intent);
-                                }
+                        if (response.isNull(0)) {
+                            displayErrorMessage();
+                        }
+                        else {
+                            try {
+                                JSONObject student = response.getJSONObject(0);
+                                validatePassword(student.getString("password"), student.getString("id"));
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -79,7 +90,31 @@ public class LoginActivity extends AppCompatActivity {
 
         // Add the request to the RequestQueue.
         queue.add(jsonRequest);
+    }
 
+    private void validatePassword(String password, String studentId) {
+        try {
+            if (Crypto.decodeAndDecrypt(password).equals(this.password.getText().toString())) {
+                viewDashboardActivity(studentId);
+            }
+            else {
+                displayErrorMessage();
+            }
+        }
+        catch (Exception e) {
+
+        }
+    }
+
+    private void viewDashboardActivity(String studentId)
+    {
+        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
+        startActivity(intent);
+    }
+
+    private void displayErrorMessage() {
+        signInError.setVisibility(View.VISIBLE);
     }
 
     @Override
