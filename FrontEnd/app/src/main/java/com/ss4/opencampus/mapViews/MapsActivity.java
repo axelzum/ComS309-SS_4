@@ -123,6 +123,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        queue = Volley.newRequestQueue(this);
     }
 
     /**
@@ -153,13 +154,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         featureMarkers.add(feature_example);
 
 
-        Marker uspot_example = mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(42.026962, -93.649233))
-                .title("Example USpot")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
-                .draggable(false));
-        uspot_example.setTag("USpot");
-        uspotMarkers.add(uspot_example);
+//        Marker uspot_example = mMap.addMarker(new MarkerOptions()
+//                .position(new LatLng(42.026962, -93.649233))
+//                .title("Example USpot")
+//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
+//                .draggable(false));
+//        uspot_example.setTag("USpot");
+//        uspotMarkers.add(uspot_example);
 
         mMap.setOnMarkerDragListener(this);
 
@@ -370,6 +371,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(buildingFilter && buildingMarkers.size() == 0)
             loadBuildings();
+
+        if(uspotFilter)
+            loadUspots();
     }
 
     public void loadCustomMarkers() {
@@ -664,7 +668,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void loadBuildings()
     {
-        queue = Volley.newRequestQueue(this);
+        //queue = Volley.newRequestQueue(this);
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/all";
 
         // Request a JSONObject response from the provided URL.
@@ -701,8 +705,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Add the request to the RequestQueue.
         queue.add(jsonRequest);
+    }
 
+    public void loadUspots()
+    {
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/all";
 
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject uspot = response.getJSONObject(i);
+
+                                Marker currentUspot = mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
+                                        .title(uspot.getString("usName"))
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
+                                        .draggable(false));
+                                currentUspot.setTag("Building");
+                                uspotMarkers.add(currentUspot);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
 
 
