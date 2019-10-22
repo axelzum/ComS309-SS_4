@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                         else {
                             try {
                                 JSONObject student = response.getJSONObject(0);
-                                validatePassword(student.getString("password"));
+                                validatePassword(student.getString("password"), student.getString("id"));
                             }
                             catch (JSONException e) {
                                 e.printStackTrace();
@@ -92,10 +92,10 @@ public class LoginActivity extends AppCompatActivity {
         queue.add(jsonRequest);
     }
 
-    private void validatePassword(String password) {
+    private void validatePassword(String password, String studentId) {
         try {
             if (Crypto.decodeAndDecrypt(password).equals(this.password.getText().toString())) {
-                viewDashboardActivity();
+                viewDashboardActivity(studentId);
             }
             else {
                 displayErrorMessage();
@@ -106,9 +106,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void viewDashboardActivity()
+    private void viewDashboardActivity(String studentId)
     {
         Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 
