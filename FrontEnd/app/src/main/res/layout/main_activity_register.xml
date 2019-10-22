@@ -33,7 +33,7 @@
             android:id="@+id/editText_LastName"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:ems="10"
             android:hint="@string/edit_txt_lastname"
             android:importantForAutofill="no"
@@ -43,34 +43,59 @@
             android:id="@+id/editText_UserName"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:ems="10"
             android:hint="@string/edit_txt_username"
             android:importantForAutofill="no"
             android:inputType="textNoSuggestions" />
 
+        <TextView
+            android:id="@+id/textView_userName_error"
+            android:layout_width="300dp"
+            android:layout_height="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/colorWarningText"
+            android:textSize="12sp"
+            android:visibility="invisible" />
+
         <EditText
             android:id="@+id/editText_Email"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:ems="10"
             android:hint="@string/edit_txt_email"
             android:importantForAutofill="no"
             android:inputType="textEmailAddress" />
 
+        <TextView
+            android:id="@+id/textView_email_error"
+            android:layout_width="300dp"
+            android:layout_height="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/colorWarningText"
+            android:textSize="12sp"
+            android:visibility="invisible" />
+
         <EditText
             android:id="@+id/editText_Password"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:ems="10"
             android:hint="@string/edit_txt_password"
             android:importantForAutofill="no"
             android:inputType="textPassword" />
 
+        <TextView
+            android:id="@+id/textView_password_error"
+            android:layout_width="300dp"
+            android:layout_height="20dp"
+            android:textAlignment="center"
+            android:textColor="@color/colorWarningText"
+            android:textSize="12sp"
+            android:visibility="invisible" />
+
         <Button
-            android:id="@+id/button_OpenMap"
+            android:id="@+id/button_CreateAccount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
