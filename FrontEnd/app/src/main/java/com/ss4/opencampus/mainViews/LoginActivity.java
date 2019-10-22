@@ -92,6 +92,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void validatePassword(String password) {
         System.out.println(password);
+        viewDashboardActivity();
     }
 
     private void viewDashboardActivity()
