@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                                 JSONObject student = response.getJSONObject(i);
                                 if (student.getString("email").equals(email.getText().toString())) {
                                     Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                                    intent.putExtra("EXTRA_STUDENT_ID", student.getString("id"));
                                     startActivity(intent);
                                 }
                             }

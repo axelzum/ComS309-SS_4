@@ -11,6 +11,9 @@ import android.widget.EditText;
 
 import androidx.fragment.app.FragmentActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,6 +33,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import org.json.JSONArray;
@@ -37,7 +41,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPolylineClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMarkerClickListener {
 
@@ -48,13 +61,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Marker> uspotMarkers = new ArrayList<>();
     private ArrayList<Marker> buildingMarkers = new ArrayList<>();
     private ArrayList<String> m_Text = new ArrayList<>();
+    private ArrayList<String> cmDescriptions = new ArrayList<>();
     private Marker markerShowingInfoWindow;
     private int currentMarkerIndex = 0;
     private boolean buildingFilter;
     private boolean featureFilter;
     private boolean uspotFilter;
     private boolean customFilter;
+    public String customMarkerFileText;
+    private CustomMarkerDetailsDialog cmdd;
+    private static final String TAG = "tag";
+    String studentId;
 
+
+    private static final String FILE_NAME = "CustomMarkers.txt";
     private RequestQueue queue;
 
 
@@ -68,6 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        customMarkerFileText = "";
 
         final Button button = findViewById(R.id.customMarkerButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +102,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .draggable(true));
                 m.setTag("Custom");
                 customMarkers.add(m);
-                m_Text.add("My Marker");
+                cmDescriptions.add("My description");
+                String uniqueTitle = "";
+                uniqueTitle = genUniqueTitle("My Marker");
+                m.setTitle(uniqueTitle);
+                m_Text.add(uniqueTitle);
             }
         });
 
@@ -99,6 +124,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        queue = Volley.newRequestQueue(this);
     }
 
     /**
@@ -129,22 +155,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         featureMarkers.add(feature_example);
 
 
-        Marker uspot_example = mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(42.026962, -93.649233))
-                .title("Example USpot")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
-                .draggable(false));
-        uspot_example.setTag("USpot");
-        uspotMarkers.add(uspot_example);
-
-        /*
-        Marker scrib = mMap.addMarker(new MarkerOptions()
-                .position(ames)
-                .title("Marker in Ames")
-                .draggable(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble)));
-        scrib.setTag("Scribble");
-        */
+//        Marker uspot_example = mMap.addMarker(new MarkerOptions()
+//                .position(new LatLng(42.026962, -93.649233))
+//                .title("Example USpot")
+//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
+//                .draggable(false));
+//        uspot_example.setTag("USpot");
+//        uspotMarkers.add(uspot_example);
 
         mMap.setOnMarkerDragListener(this);
 
@@ -155,22 +172,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
         mMap.setLatLngBoundsForCameraTarget(isuBoundry);
 
-        /*
-        Polyline polyline1 = googleMap.addPolyline((new PolylineOptions())
-                .clickable(true)
-                .add(new LatLng(42.027013, -93.647404),
-                        new LatLng(42.027292, -93.646256),
-                        new LatLng(42.026917, -93.644776),
-                        new LatLng(42.025801, -93.644626),
-                        new LatLng(42.025020, -93.645849),
-                        new LatLng(42.025777, -93.647394),
-                        new LatLng(42.027013, -93.647404)));
-
-        polyline1.setWidth(20);
-        */
-
         mMap.setOnPolylineClickListener(this);
+
+        //loadCustomMarkers();
+        //placeCustomMarkers();
     }
+
+
+    public void setCmdd(CustomMarkerDetailsDialog newcmdd)
+    {
+        cmdd = newcmdd;
+    }
+
+    public Marker getMarkerShowingInfoWindow()
+    {
+        return markerShowingInfoWindow;
+    }
+
+    public String getCustomMarkerDescription(Marker m)
+    {
+        int markerIndex = customMarkers.indexOf(m);
+        return cmDescriptions.get(markerIndex);
+    }
+
 
     @Override
     public void onPolylineClick(Polyline polyline) {
@@ -222,45 +246,113 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(Marker m) {
         String tag = (String) m.getTag();
-        if (tag.equals("Scribble")) {
 
-        }
         if (tag.equals("Custom")) {
-            currentMarkerIndex = customMarkers.indexOf(m);
             updateInfo(m);
             markerShowingInfoWindow = m;
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Set Marker Title: " + m.getTitle());
+            CustomMarkerDialog cmDialog = new CustomMarkerDialog();
+            cmDialog.show(getFragmentManager(), "CustomMarkerDialog");
+        }
 
-            // Set up the input
-            final EditText input = new EditText(this);
-            // Specify the type of input expected
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
-            builder.setView(input);
+        if (tag.equals("USpot")) {
+//            markerShowingInfoWindow = m;
+////            SingleUSpotActivity singleUSpotActivity = new SingleUSpotActivity();
+////            Intent intent = new Intent(this, SingleUSpotActivity.class);
+////            startActivity(intent);
 
 
-            // Set up the buttons
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    m_Text.set(currentMarkerIndex, input.getText().toString());
-                    markerShowingInfoWindow.setTitle(m_Text.get(currentMarkerIndex));
-                    updateInfo(markerShowingInfoWindow);
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
 
-            builder.show();
-
-            updateInfo(m);
         }
 
         return false;
+    }
+
+    public void customMarkerChangeDescription()
+    {
+        Marker m = markerShowingInfoWindow;
+        currentMarkerIndex = customMarkers.indexOf(m);
+        updateInfo(m);
+        markerShowingInfoWindow = m;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Change marker description: " + m.getTitle());
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        builder.setView(input);
+
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String desc = input.getText().toString();
+                cmDescriptions.set(currentMarkerIndex, desc);
+                updateInfo(markerShowingInfoWindow);
+                cmdd.updateTextViews();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                cmdd.updateTextViews();
+            }
+        });
+        builder.show();
+        updateInfo(m);
+    }
+
+    public void customMarkerRename()
+    {
+        Marker m = markerShowingInfoWindow;
+        currentMarkerIndex = customMarkers.indexOf(m);
+        updateInfo(m);
+        markerShowingInfoWindow = m;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Set Marker Title: " + m.getTitle());
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+        builder.setView(input);
+
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String title = input.getText().toString();
+                markerShowingInfoWindow.setTitle(title);
+                String uniqueTitle = genUniqueTitle(title);
+                markerShowingInfoWindow.setTitle(uniqueTitle);
+                m_Text.set(currentMarkerIndex, markerShowingInfoWindow.getTitle());
+
+                updateInfo(markerShowingInfoWindow);
+                cmdd.updateTextViews();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                cmdd.updateTextViews();
+            }
+        });
+        builder.setNeutralButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Open save dialog
+                CustomMarkerSaveDialog cmDialog = new CustomMarkerSaveDialog();
+                cmDialog.show(getFragmentManager(), "CustomMarkerSaveDialog");
+                dialog.cancel();
+            }
+        });
+        builder.show();
+        updateInfo(m);
+        cmdd.updateTextViews();
     }
 
     public void updateInfo(Marker m) {
@@ -290,7 +382,79 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(buildingFilter && buildingMarkers.size() == 0)
             loadBuildings();
+
+        if(uspotFilter)
+            loadUspots();
+
+        if(customFilter)
+            loadCustomMarkersDB();
     }
+
+    public void loadCustomMarkers() {
+        FileInputStream fis = null;
+
+        try {
+            fis = openFileInput(FILE_NAME);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String text;
+
+            while((text = br.readLine()) != null) {
+                sb.append(text).append("\n");
+            }
+            customMarkerFileText = sb.toString();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    public void placeCustomMarkers()
+    {
+        Scanner s = new Scanner(customMarkerFileText);
+        Scanner lineScanner;
+        String currentLine;
+        Marker markerToAdd;
+        double lat;
+        double lng;
+        String title;
+        String desc;
+        while(s.hasNextLine())
+        {
+            currentLine = s.nextLine();
+            lineScanner = new Scanner(currentLine);
+            title = lineScanner.next();
+            while(!lineScanner.hasNextDouble())
+            {
+                title += " " + lineScanner.next();
+            }
+            lat = lineScanner.nextDouble();
+            lng = lineScanner.nextDouble();
+            desc = s.nextLine();
+            markerToAdd = mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(lat, lng))
+                    .title(title)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_custom))
+                    .draggable(true));
+            markerToAdd.setTag("Custom");
+            m_Text.add(title);
+            customMarkers.add(markerToAdd);
+            cmDescriptions.add(desc);
+        }
+    }
+
+
 
     public boolean getBuildingFilter() {
         return buildingFilter;
@@ -314,9 +478,211 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivity(intent);
     }
 
+    public String genUniqueTitle(String oldTitle)
+    {
+        int identifier = 0;
+        for(Marker cm: customMarkers)
+        {
+            if(cm.getTitle().contains(oldTitle))
+                identifier++; // A unique title will have an identifier of 1 at the end of this loop.
+        }
+        if(identifier > 1)
+            return oldTitle + " " + identifier;
+
+        return oldTitle;
+    }
+
+    public void deleteCustomMarkers(boolean[] f)
+    {
+        boolean device = f[0];
+        boolean account = f[1];
+
+        if(device)
+        {
+            // Remove markers from internal storage
+
+        }
+
+        if(account)
+        {
+            // Remove markers from database.
+            //
+            studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+            // markerId
+            // get marker from database by name, http://coms-309-ss-4.misc.iastate.edu:8080/students/ studentId /customMarkers/name?param= markerShowingInfoWindow.getTitle()
+            // get cmID from JSON Object
+            // Delete by id, http://coms-309-ss-4.misc.iastate.edu:8080/students/{studentId}/customMarkers/delete/{id}
+
+            String getByNameurl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers/name?param=" + markerShowingInfoWindow.getTitle();
+
+            // Request a JSONObject response from the provided URL.
+            JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, getByNameurl, null,
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            try {
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject cm = response.getJSONObject(i);
+                                    int cmID = cm.getInt("cmID");
+                                    String deleteUrl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/"+studentId+"/customMarkers/delete/" + cmID;
+
+                                    StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, deleteUrl,  new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            //
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            error.printStackTrace();
+                                        }
+                                    }) {
+                                        @Override
+                                        public Map<String, String> getHeaders() throws AuthFailureError {
+                                            HashMap<String, String> headers = new HashMap<String, String>();
+                                            headers.put("Content-Type", "application/json; charset=utf-8");
+                                            return headers;
+                                        }
+                                    };
+                                    deleteRequest.setTag(TAG);
+                                    queue.add(deleteRequest);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                    System.out.println("failed");
+                }
+            });
+
+            markerShowingInfoWindow.setVisible(false);
+            customMarkers.remove(markerShowingInfoWindow);
+
+            //Set the tag on the request
+            jsonRequest.setTag(TAG);
+
+            // Add the request to the RequestQueue.
+            queue.add(jsonRequest);
+        }
+    }
+
+    public void saveCustomMarkers(boolean[] f) {
+        boolean device = f[0];
+        boolean account = f[1];
+
+        if(device)
+        {
+            // Save markers to internal storage.
+            loadCustomMarkers(); // updates string
+            String fileContent = "";
+            Marker m = customMarkers.get(currentMarkerIndex);
+            fileContent = m.getTitle() + " " + m.getPosition().latitude + " " + m.getPosition().longitude + "\n" + cmDescriptions.get(currentMarkerIndex) + "\n"; // lines we want to add.
+            Scanner cmScan = new Scanner(customMarkerFileText);
+            boolean markerSavedAlready = false;
+            String currentMarkerTitle;
+            while(cmScan.hasNextLine())
+            {
+                currentMarkerTitle = cmScan.next();
+                while(!cmScan.hasNextDouble())
+                {
+                    currentMarkerTitle += " " + cmScan.next();
+                }
+                double lat = cmScan.nextDouble();
+                double lng = cmScan.nextDouble();
+                if(currentMarkerTitle.equals(m.getTitle()) && lat==m.getPosition().latitude && lng==m.getPosition().longitude)
+                {
+                    markerSavedAlready = true; //Has same title as a marker already saved, and same coords
+                    break;
+                }
+                else if(currentMarkerTitle.equals(m.getTitle()))
+                {
+                    // Same marker info, but lat/lng needs to be changed.
+                    customMarkerFileText = customMarkerFileText.replace(""+m.getPosition().latitude, ""+lat);
+                    customMarkerFileText = customMarkerFileText.replace(""+m.getPosition().longitude, ""+lng);
+                    break;
+                }
+                cmScan.nextLine();//skip desc
+                cmScan.nextLine();
+            }
+
+            if(!markerSavedAlready) {
+                customMarkerFileText += fileContent;
+                FileOutputStream fos = null;
+                try {
+                    fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
+                    fos.write(customMarkerFileText.getBytes());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (fos != null) {
+                        try {
+                            fos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            }
+            System.out.println(fileContent);
+        }
+
+        if(account)
+        {
+            // Save markers to database.
+            JSONObject newCM = new JSONObject();
+            try {
+                newCM.put("name", markerShowingInfoWindow.getTitle());
+                newCM.put("desc", cmDescriptions.get(currentMarkerIndex));
+                newCM.put("cmLatit", markerShowingInfoWindow.getPosition().latitude);
+                newCM.put("cmLongit", markerShowingInfoWindow.getPosition().longitude);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            queue = Volley.newRequestQueue(this);
+            studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+            System.out.println("Student id for posting custom marker: " + studentId);
+            String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers";
+            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newCM, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    //
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            jsonRequest.setTag(TAG);
+            queue.add(jsonRequest);
+
+        }
+
+    }
+
+    public void setCustomMarkerList(ArrayList<Marker> cmList)
+    {
+        customMarkers = cmList;
+    }
+
     public void loadBuildings()
     {
-        queue = Volley.newRequestQueue(this);
+        //queue = Volley.newRequestQueue(this);
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/all";
 
         // Request a JSONObject response from the provided URL.
@@ -327,10 +693,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         try {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject building = response.getJSONObject(i);
-                                //System.out.println("Building Name: " + building.getString("buildingName"));
-                                //System.out.println("Lat: " + building.getDouble("latit"));
-                                //System.out.println("Lon: " + building.getDouble("longit"));
-                                //System.out.println();
 
                                 Marker currentBuilding = mMap.addMarker(new MarkerOptions()
                                         .position(new LatLng(building.getDouble("latit"), building.getDouble("longit")))
@@ -339,8 +701,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         .draggable(false));
                                 currentBuilding.setTag("Building");
                                 buildingMarkers.add(currentBuilding);
-                                //getResp.append("firstName: " + student.getString("firstName") + '\n');
-                                //getResp.append("lastName: " + student.getString("lastName") + '\n');
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -355,12 +715,93 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         //Set the tag on the request
-        //jsonRequest.setTag(TAG);
+        jsonRequest.setTag(TAG);
 
         // Add the request to the RequestQueue.
         queue.add(jsonRequest);
+    }
 
+    public void loadUspots()
+    {
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/all";
 
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject uspot = response.getJSONObject(i);
+
+                                Marker currentUspot = mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
+                                        .title(uspot.getString("usName"))
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
+                                        .draggable(false));
+                                currentUspot.setTag("USpot");
+                                uspotMarkers.add(currentUspot);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+    }
+
+    public void loadCustomMarkersDB()
+    {
+        studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers/all";
+
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject cm = response.getJSONObject(i);
+
+                                Marker currentCM = mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(cm.getDouble("cmLatit"), cm.getDouble("cmLongit")))
+                                        .title(cm.getString("name"))
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_custom))
+                                        .draggable(false));
+                                currentCM.setTag("Custom");
+                                customMarkers.add(currentCM);
+                                cmDescriptions.add(cm.getString("desc"));
+                                m_Text.add(cm.getString("name"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
 
 
