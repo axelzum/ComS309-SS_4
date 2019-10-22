@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/uspot_list_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        tools:text="USpot Name" />
+
+    <TextView
+        android:id="@+id/uspot_list_rating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Latitude" />
+
+    <TextView
+        android:id="@+id/uspot_list_latitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Latitude" />
+
+    <TextView
+        android:id="@+id/uspot_list_longitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Longitude" />
+
+    <TextView
+        android:id="@+id/uspot_list_category"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="USpot Category" />
+
+    <ImageView
+        android:id="@+id/uspot_list_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="@+id/uspot_list_image"
+        />
+
+</LinearLayout>

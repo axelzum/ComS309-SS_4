@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ss4.opencampus.mapViews.MapsActivity"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit a new USpot:"
+            android:textSize="18sp"
+            android:textColor="#000"
+            android:id="@+id/heading"/>
+
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:orientation="vertical">
+            <RadioButton android:id="@+id/radio_uspot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="USpot" />
+            <RadioButton android:id="@+id/radio_feature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Feature" />
+            <RadioButton android:id="@+id/radio_building"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Building" />
+        </RadioGroup>
+
+
+        <TextView
+            android:id="@+id/action_continue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="40dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="100dp"
+            android:text="Continue"
+            android:textColor="#33bbff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/action_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="100dp"
+            android:text="Cancel"
+            android:textColor="#33bbff"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

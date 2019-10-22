@@ -6,7 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.ss4.opencampus.dataViews.BuildingListActivity;
+import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
+import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
 
@@ -16,7 +17,9 @@ import com.ss4.opencampus.R;
  * Creates view methods to view different activities with onClick buttons
  **/
 
+
 public class DashboardActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +30,19 @@ public class DashboardActivity extends AppCompatActivity {
     public void viewMapsActivity(View view)
     {
         Intent intent = new Intent(this, MapsActivity.class);
+        String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 
     public void viewBuildingListActivity(View view)
     {
         Intent intent = new Intent(this, BuildingListActivity.class);
+        startActivity(intent);
+    }
+
+    public void viewUspotListActivity(View view) {
+        Intent intent = new Intent(this, USpotListActivity.class);
         startActivity(intent);
     }
 }

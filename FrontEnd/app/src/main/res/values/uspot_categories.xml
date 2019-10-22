@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="category_array">
+        <item>Bike Rack</item>
+        <item>Water Fountain</item>
+        <item>Restroom</item>
+        <item>Food</item>
+        <item>Study Spots</item>
+        <item>Misc</item>
+    </string-array>
+</resources>
