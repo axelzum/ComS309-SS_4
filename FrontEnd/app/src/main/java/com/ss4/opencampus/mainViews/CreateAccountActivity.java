@@ -85,7 +85,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                 newStudent.put("lastName", lastName.getText());
                 newStudent.put("userName", userName.getText());
                 newStudent.put("email", email.getText());
-                newStudent.put("password", password.getText());
+                newStudent.put("password", Crypto.encryptAndEncode(password.getText().toString()));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -55,6 +55,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void attemptSignIn(View view) {
+        signInError.setVisibility(View.INVISIBLE);
+
         queue = Volley.newRequestQueue(this);
         String url = String.format("http://coms-309-ss-4.misc.iastate.edu:8080/students/search/email?param1=%1$s", email.getText().toString());
 
@@ -91,8 +93,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void validatePassword(String password) {
-        System.out.println(password);
-        viewDashboardActivity();
+        try {
+            if (Crypto.decodeAndDecrypt(password).equals(this.password.getText().toString())) {
+                viewDashboardActivity();
+            }
+            else {
+                displayErrorMessage();
+            }
+        }
+        catch (Exception e) {
+
+        }
     }
 
     private void viewDashboardActivity()
