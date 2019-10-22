@@ -51,6 +51,7 @@
             android:id="@+id/textView_signin_error"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
+            android:text="@string/txt_view_signin_error"
             android:textAlignment="center"
             android:textColor="@color/colorWarningText"
             android:textSize="12sp"
