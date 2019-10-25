@@ -259,9 +259,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 ////            SingleUSpotActivity singleUSpotActivity = new SingleUSpotActivity();
 ////            Intent intent = new Intent(this, SingleUSpotActivity.class);
 ////            startActivity(intent);
+        }
 
-
-
+        if (tag.equals("Building")) {
+            markerShowingInfoWindow = m;
+            BuildingDialog bd = new BuildingDialog();
+            bd.show(getFragmentManager(), "BuildingDialog");
         }
 
         return false;
@@ -804,5 +807,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         queue.add(jsonRequest);
     }
 
+    public void showFloorplan()
+    {
+
+    }
 
 }
