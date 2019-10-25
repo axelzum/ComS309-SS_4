@@ -3,6 +3,7 @@ package com.ss4.opencampus.mapViews;
 import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,7 @@ import com.ss4.opencampus.mapViews.MapsActivity;
 
 public class BuildingDialog extends DialogFragment {
 
-    private TextView mActionCancel;
+    private TextView mActionCancel, heading, desc;
 
     private Button viewFloorplan;
 
@@ -28,7 +29,16 @@ public class BuildingDialog extends DialogFragment {
 
         mActionCancel = view.findViewById(R.id.action_cancel);
         viewFloorplan = view.findViewById(R.id.floorplan_button);
+        heading = view.findViewById(R.id.heading);
+        desc = view.findViewById(R.id.desc);
+        MapsActivity mapsActivity = (MapsActivity)getActivity();
+        heading.setText(mapsActivity.getMarkerShowingInfoWindow().getTitle());
 
+        if(heading.getText().toString().length() > 15)
+            heading.setTextSize(26);
+
+        if(heading.getText().toString().length() > 30)
+            heading.setTextSize(18);
         mActionCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

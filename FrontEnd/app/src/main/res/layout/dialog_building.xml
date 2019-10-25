@@ -44,6 +44,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="40dp"
             android:layout_marginLeft="10dp"
+            android:layout_below="@+id/heading"
             android:text="Building Description. "
             android:textColor="#000"
             android:textSize="22sp" />
