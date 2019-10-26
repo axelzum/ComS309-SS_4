@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -51,6 +52,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPolylineClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMarkerClickListener {
 
@@ -143,7 +146,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMarkerDragListener(this);
-        // Add a marker in Sydney and move the camera
+
         LatLng ames = new LatLng(42.025821, -93.646444);
 
         Marker feature_example = mMap.addMarker(new MarkerOptions()
@@ -153,15 +156,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .draggable(false));
         feature_example.setTag("Feature");
         featureMarkers.add(feature_example);
-
-
-//        Marker uspot_example = mMap.addMarker(new MarkerOptions()
-//                .position(new LatLng(42.026962, -93.649233))
-//                .title("Example USpot")
-//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
-//                .draggable(false));
-//        uspot_example.setTag("USpot");
-//        uspotMarkers.add(uspot_example);
 
         mMap.setOnMarkerDragListener(this);
 
@@ -809,7 +803,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void showFloorplan()
     {
+        Marker building = markerShowingInfoWindow;
 
+        GroundOverlayOptions background = new GroundOverlayOptions()
+                .image(BitmapDescriptorFactory.fromResource(R.drawable.dark_brick_background))
+                .position(building.getPosition(),800,600);
+        mMap.addGroundOverlay(background);
+
+        GroundOverlayOptions floorplan = new GroundOverlayOptions()
+                .image(BitmapDescriptorFactory.fromResource(R.drawable.floorplan_pearson_1))
+                .position(building.getPosition(),200,150);
+        mMap.addGroundOverlay(floorplan);
+        mMap.setMinZoomPreference(18);
+        LatLng bottomLeft = new LatLng(building.getPosition().latitude-.0005, building.getPosition().longitude -.0010);
+        LatLng topRight = new LatLng(building.getPosition().latitude+.0005, building.getPosition().longitude +.0010);
+        LatLngBounds floorplanBounds = new LatLngBounds(bottomLeft, topRight);
+        mMap.setLatLngBoundsForCameraTarget(floorplanBounds);
+        mMap.setMapType(MAP_TYPE_NONE);
     }
 
 }
