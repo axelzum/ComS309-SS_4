@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -65,6 +66,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Marker> buildingMarkers = new ArrayList<>();
     private ArrayList<String> m_Text = new ArrayList<>();
     private ArrayList<String> cmDescriptions = new ArrayList<>();
+    private Button floorplanButton;
     private Marker markerShowingInfoWindow;
     private int currentMarkerIndex = 0;
     private boolean buildingFilter;
@@ -73,6 +75,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean customFilter;
     public String customMarkerFileText;
     private CustomMarkerDetailsDialog cmdd;
+    GroundOverlay floorplan;
+    GroundOverlay background;
     private static final String TAG = "tag";
     String studentId;
 
@@ -90,6 +94,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        floorplanButton = findViewById(R.id.hideFloorplanButton);
 
         customMarkerFileText = "";
 
@@ -160,11 +166,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerDragListener(this);
 
         mMap.moveCamera(CameraUpdateFactory.newLatLng(ames));
-        mMap.setMinZoomPreference(15);
-        LatLng isuSW = new LatLng(42.001631, -93.658071);
-        LatLng isuNE = new LatLng(42.039406, -93.625058);
-        LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
-        mMap.setLatLngBoundsForCameraTarget(isuBoundry);
+        setMapBounds();
+//        mMap.setMinZoomPreference(15);
+//        LatLng isuSW = new LatLng(42.001631, -93.658071);
+//        LatLng isuNE = new LatLng(42.039406, -93.625058);
+//        LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
+//        mMap.setLatLngBoundsForCameraTarget(isuBoundry);
 
         mMap.setOnPolylineClickListener(this);
 
@@ -805,21 +812,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     {
         Marker building = markerShowingInfoWindow;
 
-        GroundOverlayOptions background = new GroundOverlayOptions()
+        background = mMap.addGroundOverlay(new GroundOverlayOptions()
                 .image(BitmapDescriptorFactory.fromResource(R.drawable.dark_brick_background))
-                .position(building.getPosition(),800,600);
-        mMap.addGroundOverlay(background);
+                .position(building.getPosition(),800,600));
 
-        GroundOverlayOptions floorplan = new GroundOverlayOptions()
+
+        floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                 .image(BitmapDescriptorFactory.fromResource(R.drawable.floorplan_pearson_1))
-                .position(building.getPosition(),200,150);
-        mMap.addGroundOverlay(floorplan);
+                .position(building.getPosition(),200,150));
+
         mMap.setMinZoomPreference(18);
         LatLng bottomLeft = new LatLng(building.getPosition().latitude-.0005, building.getPosition().longitude -.0010);
         LatLng topRight = new LatLng(building.getPosition().latitude+.0005, building.getPosition().longitude +.0010);
         LatLngBounds floorplanBounds = new LatLngBounds(bottomLeft, topRight);
         mMap.setLatLngBoundsForCameraTarget(floorplanBounds);
-        mMap.setMapType(MAP_TYPE_NONE);
+        floorplanButton.setVisibility(View.VISIBLE);
+    }
+
+    public void hideFloorplan(View view)
+    {
+
+        background.remove();
+        floorplan.remove();
+        setMapBounds();
+        floorplanButton.setVisibility(View.GONE);
+    }
+
+    private void setMapBounds()
+    {
+        mMap.setMinZoomPreference(15);
+        LatLng isuSW = new LatLng(42.001631, -93.658071);
+        LatLng isuNE = new LatLng(42.039406, -93.625058);
+        LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
+        mMap.setLatLngBoundsForCameraTarget(isuBoundry);
     }
 
 }
