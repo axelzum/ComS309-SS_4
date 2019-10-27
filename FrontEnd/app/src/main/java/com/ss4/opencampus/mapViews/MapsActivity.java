@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPolylineClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMarkerClickListener {
 
@@ -826,6 +827,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng topRight = new LatLng(building.getPosition().latitude+.0005, building.getPosition().longitude +.0010);
         LatLngBounds floorplanBounds = new LatLngBounds(bottomLeft, topRight);
         mMap.setLatLngBoundsForCameraTarget(floorplanBounds);
+        mMap.setMapType(MAP_TYPE_NONE);
         floorplanButton.setVisibility(View.VISIBLE);
     }
 
@@ -835,6 +837,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         background.remove();
         floorplan.remove();
         setMapBounds();
+        mMap.setMapType(MAP_TYPE_NORMAL);
         floorplanButton.setVisibility(View.GONE);
     }
 
