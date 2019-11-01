@@ -1,5 +1,10 @@
 package com.ss4.opencampus.backend.database.uspots;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ss4.opencampus.backend.database.buildings.Building;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 /**
@@ -34,14 +39,12 @@ public class USpot
   @Column(name = "Rating")
   private Double usRating;
 
-  //these might need to be saved...
   /**
    * NOT provided by Frontend. Backend determines what this will be. Not saved to DB
    */
   @Column(name = "Number_Ratings")
   private Integer ratingCount;
 
-  //these might need to be saved...
   /**
    * NOT provided by Frontend. Backend determines what this will be. Not saved to DB
    */
@@ -71,6 +74,24 @@ public class USpot
    */
   @Column(name = "Picture_Directory")
   private String usImagePath;
+
+  /**
+   * Needed to add Building because we will need to know WHICH SPECIFIC Building a USpot is in when we are inside a
+   * Building and ask to get it's USpots.
+   * <p>
+   * If the Building gets deleted, we can delete the USpot.
+   */
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "uspot_building_id")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @JsonIgnore
+  private Building building;
+
+  /**
+   * Provided by Frontend
+   */
+  @Column(name = "Floor Level")
+  private String floorLvl;
 
   /**
    * Provided by Frontend but not saved directly to database
@@ -217,6 +238,26 @@ public class USpot
   public void setRatingTotal(Double ratingTotal)
   {
     this.ratingTotal = ratingTotal;
+  }
+
+  public String getFloorLvl()
+  {
+    return floorLvl;
+  }
+
+  public void setFloorLvl(String floorLvl)
+  {
+    this.floorLvl = floorLvl;
+  }
+
+  public Building getBuilding()
+  {
+    return building;
+  }
+
+  public void setBuilding(Building building)
+  {
+    this.building = building;
   }
 
 }
