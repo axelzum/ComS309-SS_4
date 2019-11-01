@@ -43,7 +43,7 @@ public class FloorPlanController
       if (bytes != null)
       {
         floorPlan.setFpImagePath(path + "building" + building.getId() + "floor" + floorPlan.getLevel());
-        FileOutputStream fos = new FileOutputStream(floorPlan.getFpImagePath());
+        FileOutputStream fos = new FileOutputStream(floorPlan.getFpImagePath() + ".pdf");
         fos.write(bytes);
         fos.close();
       }
@@ -172,7 +172,7 @@ public class FloorPlanController
       if (floorPlan.getFpImagePath().equals("/target/images/noimage.png")) //no previous photo for floor, so make a
       // new one... don't want to overwrite noimage.png!
       {
-        floorPlan.setFpImagePath(path + "building" + floorPlan.getBuilding().getId() + "floor" + floorPlan.getLevel());
+        floorPlan.setFpImagePath(path + "building" + floorPlan.getBuilding().getId() + "floor" + floorPlan.getLevel() + ".pdf");
         fos = new FileOutputStream(floorPlan.getFpImagePath());
       }
       else // can overwrite old photo, so we don't have to make a new picture like we do above
