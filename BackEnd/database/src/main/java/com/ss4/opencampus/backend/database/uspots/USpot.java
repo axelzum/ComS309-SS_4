@@ -207,7 +207,10 @@ public class USpot
   }
 
   /**
+   * Sets the latitude of the USpot to a new value
+   *
    * @param usLatit
+   *         new latitude for the USpot
    */
   public void setUsLatit(Double usLatit)
   {
@@ -225,7 +228,10 @@ public class USpot
   }
 
   /**
+   * Sets the longitude of the USpot to a new value
+   *
    * @param usLongit
+   *         new longitude for the USpot
    */
   public void setUsLongit(Double usLongit)
   {
@@ -243,7 +249,10 @@ public class USpot
   }
 
   /**
+   * Sets the category to another category
+   *
    * @param usCategory
+   *         new category for the USpot
    */
   public void setUsCategory(String usCategory)
   {
@@ -261,7 +270,10 @@ public class USpot
   }
 
   /**
+   * Sets the image path to a new value
+   *
    * @param usImagePath
+   *         New path the the image for the USpot
    */
   public void setUsImagePath(String usImagePath)
   {
@@ -279,7 +291,10 @@ public class USpot
   }
 
   /**
+   * Sets the byte[] to a new value. Changes the picture
+   *
    * @param arr
+   *         New byte[] for the USpot
    */
   public void setPicBytes(byte[] arr)
   {
@@ -297,7 +312,10 @@ public class USpot
   }
 
   /**
+   * Sets the number of times a USpot has been rated.
+   *
    * @param ratingCount
+   *         New number of times the USpot has been rated
    */
   public void setRatingCount(Integer ratingCount)
   {
@@ -315,7 +333,10 @@ public class USpot
   }
 
   /**
+   * Sets the sum of all ratings of the USpot
+   *
    * @param ratingTotal
+   *         New sum for the ratings.
    */
   public void setRatingTotal(Double ratingTotal)
   {
@@ -333,7 +354,10 @@ public class USpot
   }
 
   /**
+   * Sets the floor level to a new value
+   *
    * @param floorLvl
+   *         New floor level that the USpot is in
    */
   public void setFloorLvl(String floorLvl)
   {
@@ -351,7 +375,10 @@ public class USpot
   }
 
   /**
+   * Sets the Building the USpot is in to a new value
+   *
    * @param building
+   *         new Building for the USpot. Can be set to null
    */
   public void setBuilding(Building building)
   {

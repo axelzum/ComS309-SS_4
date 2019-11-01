@@ -40,7 +40,7 @@ public interface USpotRepository extends JpaRepository<USpot, Integer>
   Iterable<USpot> findAllByUsNameStartingWith(String nameStart);
 
   /**
-   * Returns a list of USpots with ratings >= to the given rating
+   * Returns a list of USpots with ratings greater than equal to the given rating
    *
    * @param minRating
    *         Minimum rating to search for
