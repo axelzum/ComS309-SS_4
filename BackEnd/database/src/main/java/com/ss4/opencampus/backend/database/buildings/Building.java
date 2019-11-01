@@ -32,6 +32,9 @@ public class Building
   @Column(name = "Longitude")
   private Double longit;
 
+  @Column(name = "Floor Count")
+  private Integer floorCount;
+
   public Building()
   {
 
@@ -95,5 +98,15 @@ public class Building
   public void setLongit(Double longit)
   {
     this.longit = longit;
+  }
+
+  public Integer getFloorCount()
+  {
+    return floorCount;
+  }
+
+  public void setFloorCount(Integer floorCount)
+  {
+    this.floorCount = floorCount;
   }
 }
