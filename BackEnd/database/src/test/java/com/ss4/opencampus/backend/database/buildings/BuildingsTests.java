@@ -37,6 +37,9 @@ public class BuildingsTests
   @InjectMocks
   private BuildingController buildingController;
 
+  /**
+   * Initializes 3 fake buildings to test with before each test is ran
+   */
   @Before
   public void init()
   {
@@ -65,6 +68,9 @@ public class BuildingsTests
     building3.setLongit(-93.6633696);
   }
 
+  /**
+   * Test to make sure if no buildings are added, the buildingController returns an empty list
+   */
   @Test
   public void findAllNoBuildings()
   {
@@ -75,6 +81,10 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findAll(new Sort(Sort.Direction.ASC, "buildingName"));
   }
 
+  /**
+   * Test to make sure if Buildings are added and the findAll() method is called, the BuildingController returns a list
+   * of all Buildings sorted by their names.
+   */
   @Test
   public void findAllWithBuildings()
   {
@@ -87,6 +97,9 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findAll(new Sort(Sort.Direction.ASC, "buildingName"));
   }
 
+  /**
+   * Tests to make sure the BuildingController correctly uses findByBuildingName()
+   */
   @Test
   public void findByName()
   {
@@ -97,6 +110,9 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findByBuildingName("West St Lofts");
   }
 
+  /**
+   * Tests to make sure the BuildingController correctly uses findByBuildingNameStartingWith()
+   */
   @Test
   public void findByNameStart()
   {
@@ -107,6 +123,9 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findAllByBuildingNameStartingWith("West");
   }
 
+  /**
+   * Tests to make sure the BuildingController correctly uses findByAddress()
+   */
   @Test
   public void findByAddress()
   {
@@ -116,6 +135,9 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findByAddress("1732 S 4th St");
   }
 
+  /**
+   * Tests to make sure the BuildingController correctly uses findByAbbreviation()
+   */
   @Test
   public void findByAbbrev()
   {
@@ -125,6 +147,9 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findByAbbreviation("JTS");
   }
 
+  /**
+   * Tests to make sure the BuildingController correctly uses findByAbbreviationStartingWith()
+   */
   @Test
   public void findByAbbrevStart()
   {
@@ -135,6 +160,9 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findAllByAbbreviationStartingWith("W");
   }
 
+  /**
+   * Tests to make sure the BuildingController correctly uses findByLatitAndLongit()
+   */
   @Test
   public void findByLatLong()
   {
@@ -145,6 +173,9 @@ public class BuildingsTests
     Mockito.verify(buildingRepository, Mockito.times(2)).findByLatitAndLongit(42.0187128, -93.6633696);
   }
 
+  /**
+   * Tests to make sure the BuildingController correctly uses findById()
+   */
   @Test
   public void findById()
   {

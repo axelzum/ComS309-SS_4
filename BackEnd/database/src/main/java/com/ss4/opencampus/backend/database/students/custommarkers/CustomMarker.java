@@ -9,9 +9,9 @@ import javax.persistence.*;
 
 /**
  * @author Willis Knox
- *
- * Table for CustomMarkers. These are tied to specific Students. A Student's CustomMarkers will NOT
- * be shared with other Students.
+ * <p>
+ * Table for CustomMarkers. These are tied to specific Students. A Student's CustomMarkers will NOT be shared with other
+ * Students.
  */
 @Entity
 @Table(name = "CustomMarkers")
@@ -34,8 +34,8 @@ public class CustomMarker
   private Double cmLongit;
 
   /**
-   * Foreign key to the Student Table. Links the Student_ID to this CustomMarker.
-   * If the Student is deleted, so will this CustomMarker.
+   * Foreign key to the Student Table. Links the Student_ID to this CustomMarker. If the Student is deleted, so will
+   * this CustomMarker.
    */
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "student_id", nullable = false)
@@ -43,61 +43,127 @@ public class CustomMarker
   @JsonIgnore
   private Student student;
 
+  /**
+   * Gets the ID of the CustomMarker
+   *
+   * @return ID of the CustomMarker
+   */
   public Integer getCmID()
   {
     return cmId;
   }
 
+  /**
+   * Sets the ID to a new value
+   *
+   * @param cmId
+   *         New ID for the CustomMarker
+   */
   public void setCmID(Integer cmId)
   {
     this.cmId = cmId;
   }
 
+  /**
+   * Gets the name of the CustomMarker
+   *
+   * @return Name of the CustomMarker
+   */
   public String getName()
   {
     return name;
   }
 
+  /**
+   * Sets the name to a new value
+   *
+   * @param name
+   *         new name for the CustomMarker
+   */
   public void setName(String name)
   {
     this.name = name;
   }
 
+  /**
+   * Gets the description of the CustomMarker
+   *
+   * @return Description of the CustomMarker
+   */
   public String getDesc()
   {
     return desc;
   }
 
+  /**
+   * Sets the description of the CustomMarker
+   *
+   * @param desc
+   *         New description for the CustomMarker
+   */
   public void setDesc(String desc)
   {
     this.desc = desc;
   }
 
+  /**
+   * Gets the latitude of the CustomMarker
+   *
+   * @return The latitude of the CustomMarker
+   */
   public Double getCmLatit()
   {
     return cmLatit;
   }
 
+  /**
+   * Sets the latitude of the CustomMarker
+   *
+   * @param cmLatit
+   *         New latitude for the CustomMarker
+   */
   public void setCmLatit(Double cmLatit)
   {
     this.cmLatit = cmLatit;
   }
 
+  /**
+   * Gets the longitude of the CustomMarker
+   *
+   * @return longitude of the CustomMarker
+   */
   public Double getCmLongit()
   {
     return cmLongit;
   }
 
+  /**
+   * Sets the longitude to a new value
+   *
+   * @param cmLongit
+   *         new longitude for the CustomMarker
+   */
   public void setCmLongit(Double cmLongit)
   {
     this.cmLongit = cmLongit;
   }
 
+  /**
+   * Gets the Student that this CustomMarker is for
+   *
+   * @return Student that made this CustomMarker
+   */
   public Student getStudent()
   {
     return student;
   }
 
+  /**
+   * Sets the Student to a new Student
+   *
+   * @param student
+   *         New Student for the CustomMarker... shouldn't really happen
+   */
   public void setStudent(Student student)
   {
     this.student = student;

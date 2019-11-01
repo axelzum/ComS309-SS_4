@@ -35,6 +35,9 @@ public class Student
   @Column(name = "Password")
   private String password;
 
+  /**
+   * Constructor for the Student class
+   */
   public Student()
   {
 

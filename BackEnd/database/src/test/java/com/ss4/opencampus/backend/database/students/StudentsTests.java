@@ -12,15 +12,13 @@ import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Axel Zumwalt
  * <p>
- * Test Class for Studnets. Tests that the StudentController is correctly working by using a combination of JUnit4 and
+ * Test Class for Students. Tests that the StudentController is correctly working by using a combination of JUnit4 and
  * Mockito
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -38,6 +36,9 @@ public class StudentsTests
   @InjectMocks
   private StudentController studentController;
 
+  /**
+   * Initializes 4 fake Students before every test
+   */
   @Before
   public void init()
   {
@@ -74,6 +75,9 @@ public class StudentsTests
     student4.setPassword("123456");
   }
 
+  /**
+   * Tests to make sure if no Students have been saved, then the StudentController returns an empty list.
+   */
   @Test
   public void findAllNoStudents()
   {
@@ -84,6 +88,10 @@ public class StudentsTests
     Mockito.verify(studentRepository, Mockito.times(2)).findAll(new Sort(Sort.Direction.ASC, "lastName"));
   }
 
+  /**
+   * Tests to make if the specs for findAll() are met, the StudentController returns a list of Students sorted by their
+   * lastNames.
+   */
   @Test
   public void findAllWithBuildings()
   {
@@ -95,6 +103,10 @@ public class StudentsTests
     Mockito.verify(studentRepository, Mockito.times(2)).findAll(new Sort(Sort.Direction.ASC, "lastName"));
   }
 
+  /**
+   * Tests to make if the specs for findByUserName() are met, the StudentController returns a list with the singular
+   * Student with that userName
+   */
   @Test
   public void findByName()
   {
@@ -105,13 +117,21 @@ public class StudentsTests
     Mockito.verify(studentRepository, Mockito.times(2)).findByUserName("wpknox");
   }
 
+  /**
+   * As of now, does nothing
+   */
   @Test
-  public void addDuplicateUsername() {
+  public void addDuplicateUsername()
+  {
 
   }
 
+  /**
+   * As of now, does nothing
+   */
   @Test
-  public void addDuplicateEmail() {
+  public void addDuplicateEmail()
+  {
 
   }
 }

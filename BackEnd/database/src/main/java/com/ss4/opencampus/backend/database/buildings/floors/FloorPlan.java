@@ -36,66 +36,135 @@ public class FloorPlan
   @JsonIgnore
   private Building building;
 
+  /**
+   * Constructor for the FloorPlan class
+   */
   public FloorPlan()
   {
 
   }
 
+  /**
+   * Gets the ID for the Floor Plan
+   *
+   * @return The Floor Plan's ID
+   */
   public Integer getFpId()
   {
     return fpId;
   }
 
+  /**
+   * Sets the Floor Plan's ID to a new value
+   *
+   * @param fpId
+   *         New ID for the Floor Plan
+   */
   public void setFpId(Integer fpId)
   {
     this.fpId = fpId;
   }
 
+  /**
+   * Gets the Floor Plan's name
+   *
+   * @return Name of the Floor Plan
+   */
   public String getName()
   {
     return name;
   }
 
+  /**
+   * Sets the Floor Plan's name to a new value
+   *
+   * @param name
+   *         New name of the Floor Plan
+   */
   public void setName(String name)
   {
     this.name = name;
   }
 
+  /**
+   * Gets the level in a Building the Floor Plan is of
+   *
+   * @return Level that the Floor Plan represents
+   */
   public String getLevel()
   {
     return level;
   }
 
+  /**
+   * Sets the level of the Floor Plan to a new value
+   *
+   * @param level
+   *         New level for the Floor Plan
+   */
   public void setLevel(String level)
   {
     this.level = level;
   }
 
+  /**
+   * Gets the image path where the picture of the Floor Plan is stored
+   *
+   * @return The directory where the image is stored.
+   */
   public String getFpImagePath()
   {
     return fpImagePath;
   }
 
+  /**
+   * Sets the directory where the Floor Plan is saved to a new value
+   *
+   * @param fpImagePath
+   *         New directory location for the Floor Plan's image
+   */
   public void setFpImagePath(String fpImagePath)
   {
     this.fpImagePath = fpImagePath;
   }
 
+  /**
+   * Gets the byte[] of the Floor Plan picture
+   *
+   * @return byte[] of the Floor Plan
+   */
   public byte[] getFpBytes()
   {
     return fpBytes;
   }
 
+  /**
+   * Sets the Floor Plan byte[] to a new value. This means the picture is being updated/changed.
+   *
+   * @param fpBytes
+   *         New byte[] for the Floor Plan
+   */
   public void setFpBytes(byte[] fpBytes)
   {
     this.fpBytes = fpBytes;
   }
 
+  /**
+   * Gets the Building that the Floor Plan is associated with
+   *
+   * @return Building the Floor Plan is in
+   */
   public Building getBuilding()
   {
     return building;
   }
 
+  /**
+   * Sets the Building to a new Building
+   *
+   * @param building
+   *         New Building the Floor Plan is in
+   */
   public void setBuilding(Building building)
   {
     this.building = building;

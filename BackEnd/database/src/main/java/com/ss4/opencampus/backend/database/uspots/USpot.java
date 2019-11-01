@@ -99,35 +99,61 @@ public class USpot
   @Transient
   private byte[] picBytes;
 
+  /**
+   * Constructs a default USpot
+   */
   public USpot()
   {
 
   }
 
-  /*
-   * Unless noted, everything below is a basic Getter/Setter method
+  /**
+   * Gets the ID of the current USpot
+   *
+   * @return the id of the USpot
    */
-
   public Integer getUsID()
   {
     return usID;
   }
 
+  /**
+   * Sets the ID of the current USpot
+   *
+   * @param usID
+   *         new ID for the USpot to have
+   */
   public void setUsID(Integer usID)
   {
     this.usID = usID;
   }
 
+  /**
+   * Gets the name of the current USpot
+   *
+   * @return the name of the USpot
+   */
   public String getUsName()
   {
     return usName;
   }
 
+  /**
+   * Sets the name of the USpot to the given value
+   *
+   * @param usName
+   *         Value of new name
+   */
   public void setUsName(String usName)
   {
     this.usName = usName;
   }
 
+  /**
+   * Gets the overall rating of the current USpot
+   *
+   * @return the rating of the USpot
+   */
   public Double getUsRating()
   {
     return usRating;
@@ -170,91 +196,163 @@ public class USpot
     usRating = ratingTotal / (double) ratingCount;
   }
 
+  /**
+   * Gets the latitude of the current USpot
+   *
+   * @return the latitude of the USpot
+   */
   public Double getUsLatit()
   {
     return usLatit;
   }
 
+  /**
+   * @param usLatit
+   */
   public void setUsLatit(Double usLatit)
   {
     this.usLatit = usLatit;
   }
 
+  /**
+   * Gets the longitude of the current USpot
+   *
+   * @return the longitude of the USpot
+   */
   public Double getUsLongit()
   {
     return usLongit;
   }
 
+  /**
+   * @param usLongit
+   */
   public void setUsLongit(Double usLongit)
   {
     this.usLongit = usLongit;
   }
 
+  /**
+   * Gets the category of the current USpot
+   *
+   * @return the category of the USpot
+   */
   public String getUsCategory()
   {
     return usCategory;
   }
 
+  /**
+   * @param usCategory
+   */
   public void setUsCategory(String usCategory)
   {
     this.usCategory = usCategory;
   }
 
+  /**
+   * Gets the image path of the current USpot
+   *
+   * @return the image path of the USpot
+   */
   public String getUsImagePath()
   {
     return usImagePath;
   }
 
+  /**
+   * @param usImagePath
+   */
   public void setUsImagePath(String usImagePath)
   {
     this.usImagePath = usImagePath;
   }
 
+  /**
+   * Gets the byte[] of the current USpot
+   *
+   * @return the byte[] of the USpot
+   */
   public byte[] getPicBytes()
   {
     return picBytes;
   }
 
+  /**
+   * @param arr
+   */
   public void setPicBytes(byte[] arr)
   {
     picBytes = arr;
   }
 
+  /**
+   * Gets the number of times the USpot has been rated. Used in avg calculation
+   *
+   * @return the number of ratings for the USpot
+   */
   public Integer getRatingCount()
   {
     return ratingCount;
   }
 
+  /**
+   * @param ratingCount
+   */
   public void setRatingCount(Integer ratingCount)
   {
     this.ratingCount = ratingCount;
   }
 
+  /**
+   * Gets the total number of the ratings added together. Used in avg calculation
+   *
+   * @return the rating total of the USpot
+   */
   public Double getRatingTotal()
   {
     return ratingTotal;
   }
 
+  /**
+   * @param ratingTotal
+   */
   public void setRatingTotal(Double ratingTotal)
   {
     this.ratingTotal = ratingTotal;
   }
 
+  /**
+   * Gets the floor the current USpot is on
+   *
+   * @return the USpots Floor value. Can be null
+   */
   public String getFloorLvl()
   {
     return floorLvl;
   }
 
+  /**
+   * @param floorLvl
+   */
   public void setFloorLvl(String floorLvl)
   {
     this.floorLvl = floorLvl;
   }
 
+  /**
+   * Gets the Building the USpot is in. Can be null
+   *
+   * @return the Building the USpot is in
+   */
   public Building getBuilding()
   {
     return building;
   }
 
+  /**
+   * @param building
+   */
   public void setBuilding(Building building)
   {
     this.building = building;
