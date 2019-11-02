@@ -38,11 +38,15 @@ public class DashboardActivity extends AppCompatActivity {
     public void viewBuildingListActivity(View view)
     {
         Intent intent = new Intent(this, BuildingListActivity.class);
+        String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 
     public void viewUspotListActivity(View view) {
         Intent intent = new Intent(this, USpotListActivity.class);
+        String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 }

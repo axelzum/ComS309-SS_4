@@ -105,6 +105,8 @@ public class USpotListActivity extends AppCompatActivity {
     public void viewDashboard(View view)
     {
         Intent intent = new Intent(this, DashboardActivity.class);
+        String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 

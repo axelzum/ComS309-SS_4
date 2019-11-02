@@ -591,6 +591,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void viewDashboard(View view)
     {
         Intent intent = new Intent(this, DashboardActivity.class);
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 
@@ -984,7 +985,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void hideFloorplan(View view)
     {
-
         background.remove();
         floorplan.remove();
         setMapBounds();
@@ -1011,7 +1011,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private void selectFloor(View v)
     {
-        
+
     }
 
 }
