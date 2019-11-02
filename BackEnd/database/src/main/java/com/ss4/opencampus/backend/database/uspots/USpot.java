@@ -1,10 +1,5 @@
 package com.ss4.opencampus.backend.database.uspots;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ss4.opencampus.backend.database.buildings.Building;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 
 /**
@@ -82,13 +77,17 @@ public class USpot
   private String floor;
 
   /**
-   * Foreign Key to Building table. Used if USpot is located inside a building
+   * References Building table. Used if USpot is located inside a building
    */
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "uspot_building_id")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  @JsonIgnore
-  private Building building;
+  @Column(name = "uspot_building_id")
+  private Integer buildingId;
+
+  /**
+   * References the Student that made the USpot
+   */
+  @Column(name = "uspot_student_id")
+  private Integer studentId;
+
 
   /**
    * Provided by Frontend but not saved directly to database
@@ -102,6 +101,16 @@ public class USpot
   public USpot()
   {
 
+  }
+
+  public Integer getStudentId()
+  {
+    return studentId;
+  }
+
+  public void setStudentId(Integer studentId)
+  {
+    this.studentId = studentId;
   }
 
   /**
@@ -351,14 +360,14 @@ public class USpot
     this.floor = floor;
   }
 
-  public Building getBuilding()
+  public Integer getBuildingId()
   {
-    return building;
+    return buildingId;
   }
 
-  public void setBuilding(Building building)
+  public void setBuildingId(Integer buildingId)
   {
-    this.building = building;
+    this.buildingId = buildingId;
   }
 
 
