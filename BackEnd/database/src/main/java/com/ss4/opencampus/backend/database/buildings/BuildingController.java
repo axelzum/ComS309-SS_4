@@ -161,6 +161,7 @@ public class BuildingController
       b.setAbbreviation(building.getAbbreviation());
       b.setLatit(building.getLatit());
       b.setLongit(building.getLongit());
+      b.setFloorCnt(building.getFloorCnt());
       buildingRepository.save(b);
     }
     catch (Exception e)
@@ -209,6 +210,10 @@ public class BuildingController
       if (patch.containsKey("longit"))
       {
         building.setLongit(((Double) patch.get("longit")));
+      }
+      if(patch.containsKey("floorCnt"))
+      {
+        building.setFloorCnt(((Integer) patch.get("floorCnt")));
       }
       buildingRepository.save(building);
     }

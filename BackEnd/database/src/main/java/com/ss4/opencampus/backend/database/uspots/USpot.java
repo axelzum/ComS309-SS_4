@@ -1,5 +1,10 @@
 package com.ss4.opencampus.backend.database.uspots;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ss4.opencampus.backend.database.buildings.Building;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 /**
@@ -69,6 +74,21 @@ public class USpot
    */
   @Column(name = "Picture_Directory")
   private String usImagePath;
+
+  /**
+   * Provided by Frontend
+   */
+  @Column(name = "Floor")
+  private String floor;
+
+  /**
+   * Foreign Key to Building table. Used if USpot is located inside a building
+   */
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "uspot_building_id")
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @JsonIgnore
+  private Building building;
 
   /**
    * Provided by Frontend but not saved directly to database
@@ -318,6 +338,27 @@ public class USpot
   public void setRatingTotal(Double ratingTotal)
   {
     this.ratingTotal = ratingTotal;
+  }
+
+
+  public String getFloor()
+  {
+    return floor;
+  }
+
+  public void setFloor(String floor)
+  {
+    this.floor = floor;
+  }
+
+  public Building getBuilding()
+  {
+    return building;
+  }
+
+  public void setBuilding(Building building)
+  {
+    this.building = building;
   }
 
 

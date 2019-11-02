@@ -119,6 +119,13 @@ public class USpotController
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
+      case "building":
+        Integer building = Integer.parseInt((String) param1);
+        String floor = (String) param2;
+        uList = uSpotRepository.findAllByBuildingIdAndFloor(building, floor);
+        for (USpot u : uList)
+          u.setPicBytes(pathToBytes(u.getUsImagePath()));
+        return uList;
       default:
         uList = uSpotRepository.findAll(new Sort(Sort.Direction.ASC, "usName"));
         for (USpot u : uList)
@@ -174,6 +181,7 @@ public class USpotController
       u.setUsLatit(newUSpot.getUsLatit());
       u.setUsLongit(newUSpot.getUsLongit());
       u.setUsRating(newUSpot.getUsRating());
+      u.setFloor(newUSpot.getFloor());
       byte[] bytes = newUSpot.getPicBytes();
       u = newUSpotImage(u, bytes);
       uSpotRepository.save(u);
@@ -223,6 +231,10 @@ public class USpotController
       if (patch.containsKey("usCategory"))
       {
         u.setUsCategory((String) patch.get("usCategory"));
+      }
+      if (patch.containsKey("floor"))
+      {
+        u.setFloor((String) patch.get("floor"));
       }
       if (patch.containsKey("picBytes"))
       {
