@@ -61,7 +61,8 @@ import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
  *  This class is responsible for connecting to the google maps API and displaying the map, as well as
  *  managing all the markers associated with the map.
  */
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener {
 
     /**
      *  The map that is being displayed to the user

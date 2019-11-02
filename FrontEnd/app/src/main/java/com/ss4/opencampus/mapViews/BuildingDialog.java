@@ -1,9 +1,7 @@
 package com.ss4.opencampus.mapViews;
 
-import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +10,45 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.mapViews.MapsActivity;
 
-
+/**
+ *  This dialog appears when clicking a building marker. Has a title and description, with a button for showing floorplan.
+ */
 public class BuildingDialog extends DialogFragment {
 
-    private TextView mActionCancel, heading, desc;
+    /**
+     *  When clicked, exits the dialog.
+     */
+    private TextView mActionCancel;
 
+    /**
+     * Heading which shows the title of the building.
+     */
+    private TextView heading;
+
+    /**
+     * Shows the description for the building.
+     */
+    private TextView desc;
+
+    /**
+     * When clicked, shows the floorplan for the building.
+     */
     private Button viewFloorplan;
 
+    /**
+     * Method is called when the fragment is created.
+     * @param inflater
+     *  Inflater which inflates the building dialog XML.
+     *
+     * @param container
+     *  ViewGroup passed to inflater.inflate
+     *
+     * @param savedInstanceState
+     *  Bundle used for persistent storage.
+     *
+     * @return view returned by inflater.inflate
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_building, container, false);
