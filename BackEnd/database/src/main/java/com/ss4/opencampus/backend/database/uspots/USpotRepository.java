@@ -59,5 +59,5 @@ public interface USpotRepository extends JpaRepository<USpot, Integer>
    *
    * @return Iterable List of USpots
    */
-  Iterable<USpot> findAllByBuildingIdAndFloorLvl(Integer buildingId, String floor);
+  //Iterable<USpot> findAllByBuildingIdAndFloorLvl(Integer buildingId, String floor);
 }

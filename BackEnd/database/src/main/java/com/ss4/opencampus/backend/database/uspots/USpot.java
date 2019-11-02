@@ -1,10 +1,5 @@
 package com.ss4.opencampus.backend.database.uspots;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ss4.opencampus.backend.database.buildings.Building;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 
 /**
@@ -81,11 +76,11 @@ public class USpot
    * <p>
    * If the Building gets deleted, we can delete the USpot.
    */
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "uspot_building_id")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  @JsonIgnore
-  private Building building;
+//  @ManyToOne(fetch = FetchType.LAZY)
+//  @JoinColumn(name = "uspot_building_id")
+//  @OnDelete(action = OnDeleteAction.CASCADE)
+//  @JsonIgnore
+//  private Building building;
 
   /**
    * Provided by Frontend
@@ -364,25 +359,25 @@ public class USpot
     this.floorLvl = floorLvl;
   }
 
-  /**
-   * Gets the Building the USpot is in. Can be null
-   *
-   * @return the Building the USpot is in
-   */
-  public Building getBuilding()
-  {
-    return building;
-  }
-
-  /**
-   * Sets the Building the USpot is in to a new value
-   *
-   * @param building
-   *         new Building for the USpot. Can be set to null
-   */
-  public void setBuilding(Building building)
-  {
-    this.building = building;
-  }
+//  /**
+//   * Gets the Building the USpot is in. Can be null
+//   *
+//   * @return the Building the USpot is in
+//   */
+//  public Building getBuilding()
+//  {
+//    return building;
+//  }
+//
+//  /**
+//   * Sets the Building the USpot is in to a new value
+//   *
+//   * @param building
+//   *         new Building for the USpot. Can be set to null
+//   */
+//  public void setBuilding(Building building)
+//  {
+//    this.building = building;
+//  }
 
 }

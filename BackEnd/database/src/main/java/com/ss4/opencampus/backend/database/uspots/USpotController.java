@@ -124,13 +124,13 @@ public class USpotController
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
-      case "building":
-        Integer buildingId = Integer.parseInt((String) param1);
-        String floorLvl = (String) param2;
-        uList = uSpotRepository.findAllByBuildingIdAndFloorLvl(buildingId, floorLvl);
-        for (USpot u : uList)
-          u.setPicBytes(pathToBytes(u.getUsImagePath()));
-        return uList;
+//      case "building":
+//        Integer buildingId = Integer.parseInt((String) param1);
+//        String floorLvl = (String) param2;
+//        uList = uSpotRepository.findAllByBuildingIdAndFloorLvl(buildingId, floorLvl);
+//        for (USpot u : uList)
+//          u.setPicBytes(pathToBytes(u.getUsImagePath()));
+//        return uList;
       default:
         uList = uSpotRepository.findAll(new Sort(Sort.Direction.ASC, "usName"));
         for (USpot u : uList)
