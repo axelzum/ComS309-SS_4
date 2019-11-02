@@ -67,4 +67,184 @@
         android:padding="8dp"
         android:text="Hide Floorplan" />
 
+    <Button
+        android:id="@+id/button_floor1"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="80dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="1" />
+
+    <Button
+        android:id="@+id/button_floor2"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="140dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="2" />
+
+    <Button
+        android:id="@+id/button_floor3"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="200dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="3" />
+
+    <Button
+        android:id="@+id/button_floor4"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="260dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="4" />
+
+    <Button
+        android:id="@+id/button_floor5"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="320dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="5" />
+
+    <Button
+        android:id="@+id/button_floor6"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="380dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="6" />
+
+    <Button
+        android:id="@+id/button_floor7"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="80dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="7" />
+
+    <Button
+        android:id="@+id/button_floor8"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="140dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="8" />
+
+    <Button
+        android:id="@+id/button_floor9"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="200dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="9" />
+
+    <Button
+        android:id="@+id/button_floor10"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="260dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="10" />
+
+    <Button
+        android:id="@+id/button_floor11"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="320dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="11" />
+
+    <Button
+        android:id="@+id/button_floor12"
+
+        android:visibility="gone"
+        android:onClick="selectFloor"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginBottom="380dp"
+        android:background="@color/colorPrimaryDark"
+        android:padding="8dp"
+        android:text="12" />
+
 </RelativeLayout>

@@ -175,6 +175,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private RequestQueue queue;
 
     /**
+     * Array of floorplan buttons
+     */
+    private ArrayList<Button> floorButtons;
+    /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
      * @param savedInstanceState
      *  Bundle that can be used for persistent storage.
@@ -188,7 +192,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        floorButtons = new ArrayList<>();
         floorplanButton = findViewById(R.id.hideFloorplanButton);
+        for(int i = 1; i<13; i++)
+        {
+            String btnId = "button_floor" + i;
+            int resId = getResources().getIdentifier(btnId, "id", getPackageName());
+            Button btnToAdd = findViewById(resId);
+            floorButtons.add(btnToAdd);
+        }
 
         customMarkerFileText = "";
 
@@ -990,6 +1002,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng isuNE = new LatLng(42.039406, -93.625058);
         LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
         mMap.setLatLngBoundsForCameraTarget(isuBoundry);
+    }
+
+    /**
+     * changes floorplan view to the selected floor.
+     * @param v
+     *  View associated with the button that was pressed
+     */
+    private void selectFloor(View v)
+    {
+        
     }
 
 }
