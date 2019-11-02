@@ -38,27 +38,23 @@ public class StudentController
   public @ResponseBody
   Map<String, Boolean> addNewStudent(@RequestBody Student student)
   {
-    boolean dupUsername = false;
-    boolean dupEmail = false;
     try
     {
       studentRepository.save(student);
     }
     catch (Exception e)
     {
+        /*
       if (e.getMessage().equals("could not execute statement; SQL [n/a]; constraint [Username_UNIQUE]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement")) {
         dupUsername = true;
       }
       else if (e.getMessage().equals("could not execute statement; SQL [n/a]; constraint [Email_UNIQUE]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement")) {
         dupEmail = true;
       }
-
+         */
+      return Collections.singletonMap("response", false);
     }
-    Map<String, Boolean> errorResponse = new HashMap<String, Boolean>();
-    errorResponse.put("duplicateUsername", dupUsername);
-    errorResponse.put("duplicateEmail", dupEmail);
-
-    return errorResponse;
+    return Collections.singletonMap("response", true);
   }
 
   /**
