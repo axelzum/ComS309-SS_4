@@ -32,9 +32,6 @@ public class Building
   @Column(name = "Longitude")
   private Double longit;
 
-  @Column(name = "Floor Count")
-  private Integer floorCount;
-
   /**
    * Constructor for the Building class
    */
@@ -169,24 +166,4 @@ public class Building
     this.longit = longit;
   }
 
-  /**
-   * Gets the number of floors in the Building
-   *
-   * @return The number of floors the Building has
-   */
-  public Integer getFloorCount()
-  {
-    return floorCount;
-  }
-
-  /**
-   * Sets the number of floors to a new value
-   *
-   * @param floorCount
-   *         New number of floors for the Building
-   */
-  public void setFloorCount(Integer floorCount)
-  {
-    this.floorCount = floorCount;
-  }
 }

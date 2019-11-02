@@ -71,24 +71,6 @@ public class USpot
   private String usImagePath;
 
   /**
-   * Needed to add Building because we will need to know WHICH SPECIFIC Building a USpot is in when we are inside a
-   * Building and ask to get it's USpots.
-   * <p>
-   * If the Building gets deleted, we can delete the USpot.
-   */
-//  @ManyToOne(fetch = FetchType.LAZY)
-//  @JoinColumn(name = "uspot_building_id")
-//  @OnDelete(action = OnDeleteAction.CASCADE)
-//  @JsonIgnore
-//  private Building building;
-
-  /**
-   * Provided by Frontend
-   */
-  @Column(name = "Floor Level")
-  private String floorLvl;
-
-  /**
    * Provided by Frontend but not saved directly to database
    */
   @Transient
@@ -338,46 +320,5 @@ public class USpot
     this.ratingTotal = ratingTotal;
   }
 
-  /**
-   * Gets the floor the current USpot is on
-   *
-   * @return the USpots Floor value. Can be null
-   */
-  public String getFloorLvl()
-  {
-    return floorLvl;
-  }
-
-  /**
-   * Sets the floor level to a new value
-   *
-   * @param floorLvl
-   *         New floor level that the USpot is in
-   */
-  public void setFloorLvl(String floorLvl)
-  {
-    this.floorLvl = floorLvl;
-  }
-
-//  /**
-//   * Gets the Building the USpot is in. Can be null
-//   *
-//   * @return the Building the USpot is in
-//   */
-//  public Building getBuilding()
-//  {
-//    return building;
-//  }
-//
-//  /**
-//   * Sets the Building the USpot is in to a new value
-//   *
-//   * @param building
-//   *         new Building for the USpot. Can be set to null
-//   */
-//  public void setBuilding(Building building)
-//  {
-//    this.building = building;
-//  }
 
 }

@@ -64,11 +64,6 @@ public class USpotController
         uSpot.setUsImagePath("/target/images/noimage.png");
       uSpot.setRatingCount(1);
       uSpot.setRatingTotal(uSpot.getUsRating());
-      // Don't need to make a BuildingRepo because we KNOW that we are getting a valid building_id
-      // from the FRONTEND. It will come in as (I hope): { "building_id": X }
-      // and then the USpot will be able to parse it and save the info.
-      // it might come in as: { "building": X } with X being the ID.
-      // At worst, I just change this method to be like the POST in FloorPlanController.java
       uSpotRepository.save(uSpot);
     }
     catch (IOException | DataAccessException ex)
@@ -124,13 +119,6 @@ public class USpotController
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
-//      case "building":
-//        Integer buildingId = Integer.parseInt((String) param1);
-//        String floorLvl = (String) param2;
-//        uList = uSpotRepository.findAllByBuildingIdAndFloorLvl(buildingId, floorLvl);
-//        for (USpot u : uList)
-//          u.setPicBytes(pathToBytes(u.getUsImagePath()));
-//        return uList;
       default:
         uList = uSpotRepository.findAll(new Sort(Sort.Direction.ASC, "usName"));
         for (USpot u : uList)
@@ -186,7 +174,6 @@ public class USpotController
       u.setUsLatit(newUSpot.getUsLatit());
       u.setUsLongit(newUSpot.getUsLongit());
       u.setUsRating(newUSpot.getUsRating());
-      u.setFloorLvl(newUSpot.getFloorLvl());
       byte[] bytes = newUSpot.getPicBytes();
       u = newUSpotImage(u, bytes);
       uSpotRepository.save(u);
@@ -237,16 +224,11 @@ public class USpotController
       {
         u.setUsCategory((String) patch.get("usCategory"));
       }
-      if (patch.containsKey("floorLvl"))
-      {
-        u.setFloorLvl((String) patch.get("floorLvl"));
-      }
       if (patch.containsKey("picBytes"))
       {
         byte[] bytes = Base64.decodeBase64((String) patch.get("picBytes"));
         u = newUSpotImage(u, bytes);
       }
-      // add way to update Building
       uSpotRepository.save(u);
     }
     catch (Exception e)

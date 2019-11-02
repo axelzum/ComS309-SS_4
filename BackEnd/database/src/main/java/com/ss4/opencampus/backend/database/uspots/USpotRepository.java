@@ -49,15 +49,4 @@ public interface USpotRepository extends JpaRepository<USpot, Integer>
    */
   Iterable<USpot> findAllByUsRatingGreaterThanEqual(Double minRating);
 
-  /**
-   * Finds all USpots in a given Building on a given Floor
-   *
-   * @param buildingId
-   *         id of building to look in
-   * @param floor
-   *         floor of building to look in
-   *
-   * @return Iterable List of USpots
-   */
-  //Iterable<USpot> findAllByBuildingIdAndFloorLvl(Integer buildingId, String floor);
 }
