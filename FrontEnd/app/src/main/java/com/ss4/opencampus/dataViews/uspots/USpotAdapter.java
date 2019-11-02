@@ -44,6 +44,7 @@ public class USpotAdapter extends RecyclerView.Adapter<USpotAdapter.ViewHolder> 
         holder.textLong.setText(uSpot.getLongString());
         holder.textCategory.setText(uSpot.getUsCategory());
         holder.imagePicBytes.setImageBitmap(uSpot.setBitmap());
+        holder.itemView.setTag(uSpot);
     }
 
     @Override

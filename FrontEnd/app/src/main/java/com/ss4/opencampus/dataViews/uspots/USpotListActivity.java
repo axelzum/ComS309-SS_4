@@ -39,6 +39,7 @@ public class USpotListActivity extends AppCompatActivity {
     private RequestQueue queue;
     private List<USpot> uspotList;
     private RecyclerView.Adapter adapter;
+    private static USpot uspotToBeShown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { // Start when page opens
@@ -47,6 +48,24 @@ public class USpotListActivity extends AppCompatActivity {
 
         RecyclerView uList;
         uList = findViewById(R.id.uspot_list);
+        uList.addOnItemTouchListener(new RecyclerItemClickListener(this, uList ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        view.getId();
+                        USpot singleUSpot = (USpot)view.getTag();
+                        System.out.println(singleUSpot.toString());
+                        Intent intent = new Intent(view.getContext(), SingleUSpotActivity.class);
+                        //String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+                        //intent.putExtra("EXTRA_STUDENT_ID", studentId);
+                        //intent.putExtra("EXTRA_USPOT", singleUSpot);
+                        USpotListActivity.setUspotToBeShown(singleUSpot);
+                        startActivity(intent);
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                }));
+
 
         uspotList = new ArrayList<>();
         adapter = new USpotAdapter(getApplicationContext(),uspotList);
@@ -116,6 +135,16 @@ public class USpotListActivity extends AppCompatActivity {
         if (queue != null) {
             queue.cancelAll(TAG);
         }
+    }
+
+    public static USpot getUspotToBeShown()
+    {
+        return uspotToBeShown;
+    }
+
+    public static void setUspotToBeShown(USpot us)
+    {
+        uspotToBeShown = us;
     }
 
 }
