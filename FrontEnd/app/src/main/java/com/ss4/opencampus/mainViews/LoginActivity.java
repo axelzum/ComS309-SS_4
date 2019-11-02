@@ -46,6 +46,11 @@ public class LoginActivity extends AppCompatActivity {
         password = (EditText)findViewById(R.id.editText_Password);
         signInError = (TextView)findViewById(R.id.textView_signin_error);
         signInError.setVisibility(View.INVISIBLE);
+
+        if (PreferenceUtils.getUserId(this) != -1 ){
+            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void viewCreateAccountActivity(View view)
@@ -66,12 +71,12 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         if (response.isNull(0)) {
-                            displayErrorMessage();
+                            signInError.setVisibility(View.VISIBLE);
                         }
                         else {
                             try {
                                 JSONObject student = response.getJSONObject(0);
-                                validatePassword(student.getString("password"), student.getString("id"));
+                                validatePassword(student.getString("password"), student.getInt("id"));
                             }
                             catch (JSONException e) {
                                 e.printStackTrace();
@@ -92,29 +97,20 @@ public class LoginActivity extends AppCompatActivity {
         queue.add(jsonRequest);
     }
 
-    private void validatePassword(String password, String studentId) {
+    private void validatePassword(String password, int studentId) {
         try {
             if (Crypto.decodeAndDecrypt(password).equals(this.password.getText().toString())) {
-                viewDashboardActivity(studentId);
+                PreferenceUtils.saveUserId(studentId, this);
+                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                startActivity(intent);
             }
             else {
-                displayErrorMessage();
+                signInError.setVisibility(View.VISIBLE);
             }
         }
         catch (Exception e) {
 
         }
-    }
-
-    private void viewDashboardActivity(String studentId)
-    {
-        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-        intent.putExtra("EXTRA_STUDENT_ID", studentId);
-        startActivity(intent);
-    }
-
-    private void displayErrorMessage() {
-        signInError.setVisibility(View.VISIBLE);
     }
 
     @Override
