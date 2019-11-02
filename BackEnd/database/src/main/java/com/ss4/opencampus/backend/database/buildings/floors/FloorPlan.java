@@ -18,13 +18,13 @@ public class FloorPlan
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer fpId;
 
-  @Column(name = "Name")
+  @Column(name = "name")
   private String name;
 
-  @Column(name = "Floor Level")
+  @Column(name = "floorLevel")
   private String level;
 
-  @Column(name = "Picture_Directory")
+  @Column(name = "picDirectory")
   private String fpImagePath;
 
   @Transient
