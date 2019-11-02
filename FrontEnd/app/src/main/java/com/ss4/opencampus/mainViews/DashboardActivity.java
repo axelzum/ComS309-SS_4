@@ -15,7 +15,7 @@ import com.ss4.opencampus.R;
 /**
  * @Author: Axel Zumwalt
  *
- * Main class for the DashboardActivity List Activity
+ * Class that provides functionality for the DashboardActivity List Activity
  * Creates view methods to view different activities with onClick buttons
  **/
 public class DashboardActivity extends AppCompatActivity implements View.OnClickListener {
