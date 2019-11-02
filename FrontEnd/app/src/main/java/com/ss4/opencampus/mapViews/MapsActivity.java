@@ -57,36 +57,127 @@ import java.util.Scanner;
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPolylineClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMarkerClickListener {
+/**
+ *  This class is responsible for connecting to the google maps API and displaying the map, as well as
+ *  managing all the markers associated with the map.
+ */
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
+    /**
+     *  The map that is being displayed to the user
+     */
     private GoogleMap mMap;
-    private float markerRotation = 0;
+
+    /**
+     * A list of custom markers that are to be displayed on the map.
+     */
     private ArrayList<Marker> customMarkers = new ArrayList<>();
+
+    /**
+     * A list of feature markers which are to be displayed on the map.
+     */
     private ArrayList<Marker> featureMarkers = new ArrayList<>();
+
+    /**
+     * A list of USpot markers which are to be displayed on the map.
+     */
     private ArrayList<Marker> uspotMarkers = new ArrayList<>();
+
+    /**
+     * A list of building markers which are to be displayed on the map.
+     */
     private ArrayList<Marker> buildingMarkers = new ArrayList<>();
+
+    /**
+     * A list of titles associated with custom markers. Used for renaming markers. Necessary for appropriately updating marker titles.
+     */
     private ArrayList<String> m_Text = new ArrayList<>();
+
+    /**
+     * A list of descriptions associated with custom markers. Necessary for appropriately updating marker descriptions
+     */
     private ArrayList<String> cmDescriptions = new ArrayList<>();
+
+    /**
+     * Button for hiding the floorplan. Only visible when a floorplan is present.
+     */
     private Button floorplanButton;
+
+    /**
+     * The marker currently showing a dialog or info window. The most recently selected marker.
+     */
     private Marker markerShowingInfoWindow;
+
+    /**
+     * Marker index associated with the currently selected marker, used for renaming/saving custom markers.
+     */
     private int currentMarkerIndex = 0;
+
+    /**
+     * True when the building filter is selected.
+     */
     private boolean buildingFilter;
+
+    /**
+     * True when the feature filter is selected.
+     */
     private boolean featureFilter;
+
+    /**
+     * True when the uspot filter is selected.
+     */
     private boolean uspotFilter;
+
+    /**
+     * True when the custom marker filter is selected.
+     */
     private boolean customFilter;
+
+    /**
+     * Text associated with a custom marker when saving markers to the device.
+     */
     public String customMarkerFileText;
+
+    /**
+     * A reference to the details dialog for setting titles/descriptions.
+     */
     private CustomMarkerDetailsDialog cmdd;
+
+    /**
+     * floorplan image currently being displayed on the map.
+     */
     GroundOverlay floorplan;
+
+    /**
+     * background image displayed behind a floorplan, whenever a floorplan is being displayed on the map.
+     */
     GroundOverlay background;
+
+    /**
+     * Tag used for json requests
+     */
     private static final String TAG = "tag";
+
+    /**
+     * Student ID for the student that is logged in.
+     */
     String studentId;
 
-
+    /**
+     * File name for the text file containing custom marker data associated with the device.
+     */
     private static final String FILE_NAME = "CustomMarkers.txt";
+
+    /**
+     * Request queue used for json requests
+     */
     private RequestQueue queue;
 
-
-
+    /**
+     * Method is called whenever activity is created. Sets up layout and initializes variables.
+     * @param savedInstanceState
+     *  Bundle that can be used for persistent storage.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,8 +231,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * This is where we can add markers or lines, add listeners or move the camera.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -152,7 +242,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_retro_simple));
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
-        mMap.setOnMarkerDragListener(this);
 
         LatLng ames = new LatLng(42.025821, -93.646444);
 
@@ -164,87 +253,54 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         feature_example.setTag("Feature");
         featureMarkers.add(feature_example);
 
-        mMap.setOnMarkerDragListener(this);
-
         mMap.moveCamera(CameraUpdateFactory.newLatLng(ames));
         setMapBounds();
-//        mMap.setMinZoomPreference(15);
-//        LatLng isuSW = new LatLng(42.001631, -93.658071);
-//        LatLng isuNE = new LatLng(42.039406, -93.625058);
-//        LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
-//        mMap.setLatLngBoundsForCameraTarget(isuBoundry);
-
-        mMap.setOnPolylineClickListener(this);
 
         //loadCustomMarkers();
         //placeCustomMarkers();
     }
 
-
+    /**
+     * Sets the CustomMarkerDetailsDialog
+     * @param newcmdd
+     *  The CustomMarkerDetailsDialog to be set.
+     */
     public void setCmdd(CustomMarkerDetailsDialog newcmdd)
     {
         cmdd = newcmdd;
     }
 
+    /**
+     * Returns the marker currently showing a dialog or info window.
+     * @return
+     * The marker currently showing a dialog or info window.
+     */
     public Marker getMarkerShowingInfoWindow()
     {
         return markerShowingInfoWindow;
     }
 
+    /**
+     * Returns the description for a custom marker.
+     * @param m
+     *  The marker for which to grab the description
+     * @return
+     *  The decription for the marker
+     */
     public String getCustomMarkerDescription(Marker m)
     {
         int markerIndex = customMarkers.indexOf(m);
         return cmDescriptions.get(markerIndex);
     }
 
-
-    @Override
-    public void onPolylineClick(Polyline polyline) {
-        if (polyline.getColor() != 0xff00ffff)
-            polyline.setColor(0xff00ffff);
-        else
-            polyline.setColor(0xff000000);
-    }
-
-    @Override
-    public void onMarkerDragStart(Marker m) {
-        String tag = (String) m.getTag();
-        if (tag.equals("Scribble")) {
-            m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble_highlighted));
-            m.setAlpha((float) 0.5);
-            m.setSnippet("Moving Marker...");
-        }
-        if (tag.equals("Custom")) {
-
-        }
-    }
-
-
-    @Override
-    public void onMarkerDragEnd(Marker m) {
-        String tag = (String) m.getTag();
-        if (tag.equals("Scribble")) {
-            m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble));
-            m.setSnippet("");
-            m.setAlpha((float) 1.0);
-        }
-        if (tag.equals("Custom")) {
-
-        }
-    }
-
-    @Override
-    public void onMarkerDrag(Marker m) {
-        String tag = (String) m.getTag();
-        if (tag.equals("Scribble")) {
-            markerRotation += 6;
-            m.setRotation(markerRotation);
-        }
-        if (tag.equals("Custom")) {
-
-        }
-    }
-
+    /**
+     *  OnClick listener for markers. Different types of markers are distinguished by their tag. Opens proper dialogs and detail screens for each
+     *  different type of marker.
+     * @param m
+     *  The marker which was clicked
+     * @return
+     *  false.
+     */
     @Override
     public boolean onMarkerClick(Marker m) {
         String tag = (String) m.getTag();
@@ -257,10 +313,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         if (tag.equals("USpot")) {
-//            markerShowingInfoWindow = m;
-////            SingleUSpotActivity singleUSpotActivity = new SingleUSpotActivity();
-////            Intent intent = new Intent(this, SingleUSpotActivity.class);
-////            startActivity(intent);
+
         }
 
         if (tag.equals("Building")) {
@@ -272,6 +325,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return false;
     }
 
+    /**
+     *  Prompts the user to enter a new description for a custom marker.
+     */
     public void customMarkerChangeDescription()
     {
         Marker m = markerShowingInfoWindow;
@@ -309,6 +365,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         updateInfo(m);
     }
 
+    /**
+     *  Prompts the user to enter a new title for a custom marker.
+     */
     public void customMarkerRename()
     {
         Marker m = markerShowingInfoWindow;
@@ -360,6 +419,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         cmdd.updateTextViews();
     }
 
+    /**
+     *  Refreshes the info window for a custom marker.
+     * @param m
+     * Marker to be updated
+     */
     public void updateInfo(Marker m) {
         currentMarkerIndex = customMarkers.indexOf(m);
         m.setTitle(m_Text.get(currentMarkerIndex));
@@ -367,6 +431,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         m.showInfoWindow();
     }
 
+    /**
+     *  Sets values for buildingFilter, featureFilter, uspot filter, and custom marker filter.
+     * @param f
+     *  An array containing true/false values for each filter.
+     */
     public void setFilters(boolean[] f) {
         buildingFilter = f[0];
         featureFilter = f[1];
@@ -395,6 +464,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             loadCustomMarkersDB();
     }
 
+    /**
+     *  Loads custom markers from the device into the custom marker array.
+     */
     public void loadCustomMarkers() {
         FileInputStream fis = null;
 
@@ -424,7 +496,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
+    /**
+     *  Places custom markers from the device onto the map.
+     */
     public void placeCustomMarkers()
     {
         Scanner s = new Scanner(customMarkerFileText);
@@ -460,29 +534,61 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
+    /**
+     * Gets the true/false value for the building filter.
+     * @return
+     *  The true/false value for the building filter.
+     */
     public boolean getBuildingFilter() {
         return buildingFilter;
     }
 
+    /**
+     * Gets the true/false value for the feature filter.
+     * @return
+     *  The true/false value for the feature filter.
+     */
     public boolean getFeatureFilter() {
         return featureFilter;
     }
 
+    /**
+     * Gets the true/false value for the uspot filter.
+     * @return
+     *  The true/false value for the uspot filter.
+     */
     public boolean getUSpotFilter() {
         return uspotFilter;
     }
 
+    /**
+     * Gets the true/false value for the custom marker filter.
+     * @return
+     *  The true/false value for the custom marker filter.
+     */
     public boolean getCustomFilter() {
         return customFilter;
     }
 
+    /**
+     * Returns to the dashboard screen
+     * @param view
+     *
+     */
     public void viewDashboard(View view)
     {
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * Generates unique titles for duplicate custom markers.
+     * For example, My Marker will be renamed to My Marker 2 if My Marker already exists.
+     * @param oldTitle
+     *  Title to be replaced.
+     * @return
+     *  New, unique title.
+     */
     public String genUniqueTitle(String oldTitle)
     {
         int identifier = 0;
@@ -497,6 +603,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return oldTitle;
     }
 
+    /**
+     * Deletes custom markers from the device and/or from the database.
+     * @param f
+     *  A boolean array, index 0 corresponding to device and index 1 corresponding to account
+     */
     public void deleteCustomMarkers(boolean[] f)
     {
         boolean device = f[0];
@@ -575,6 +686,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    /**
+     * Saves custom markers to the device and/or the database.
+     * @param f
+     *  A boolean array, index 0 corresponding to device and index 1 corresponding to account
+     */
     public void saveCustomMarkers(boolean[] f) {
         boolean device = f[0];
         boolean account = f[1];
@@ -680,11 +796,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    /**
+     * Sets the custom marker list.
+     * @param cmList
+     *  A new list of custom markers to replace the previous one.
+     */
     public void setCustomMarkerList(ArrayList<Marker> cmList)
     {
         customMarkers = cmList;
     }
 
+    /**
+     * Loads building data from the database and places it in the buildingMarkers arrayList.
+     */
     public void loadBuildings()
     {
         //queue = Volley.newRequestQueue(this);
@@ -726,6 +850,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         queue.add(jsonRequest);
     }
 
+    /**
+     * Loads USpot data from the database and places it in the uspots arrayList.
+     */
     public void loadUspots()
     {
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/all";
@@ -766,6 +893,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         queue.add(jsonRequest);
     }
 
+    /**
+     * Loads custom markers from the database.
+     */
     public void loadCustomMarkersDB()
     {
         studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
@@ -809,6 +939,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         queue.add(jsonRequest);
     }
 
+    /**
+     * Shows the floorplan view for the currently selected building.
+     */
     public void showFloorplan()
     {
         Marker building = markerShowingInfoWindow;
@@ -831,6 +964,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         floorplanButton.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Hides the floorplan, returning to the standard map screen.
+     * @param view
+     *
+     */
     public void hideFloorplan(View view)
     {
 
@@ -841,6 +979,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         floorplanButton.setVisibility(View.GONE);
     }
 
+    /**
+     * Sets the proper boundaries for the map, used when map is created and when switching back from floorplan view.
+     */
     private void setMapBounds()
     {
         mMap.setMinZoomPreference(15);
