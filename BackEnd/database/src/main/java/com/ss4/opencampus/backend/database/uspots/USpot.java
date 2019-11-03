@@ -88,7 +88,6 @@ public class USpot
   @Column(name = "uspot_student_id")
   private Integer studentId;
 
-
   /**
    * Provided by Frontend but not saved directly to database
    */
@@ -349,22 +348,43 @@ public class USpot
     this.ratingTotal = ratingTotal;
   }
 
-
+  /**
+   * Gets the floor that the USpot is on. Can be null
+   *
+   * @return Floor the USpot is on.
+   */
   public String getFloor()
   {
     return floor;
   }
 
+  /**
+   * Sets the floor the USpot is on.
+   *
+   * @param floor
+   *         New floor for the USpot
+   */
   public void setFloor(String floor)
   {
     this.floor = floor;
   }
 
+  /**
+   * Gets the ID of the Building the USpot is in
+   *
+   * @return ID of Building that the USpot is in
+   */
   public Integer getBuildingId()
   {
     return buildingId;
   }
 
+  /**
+   * Sets the ID of the Building that the USpot is in. Would be used if the USpot was incorrectly placed in a building.
+   *
+   * @param buildingId
+   *         New ID for Building
+   */
   public void setBuildingId(Integer buildingId)
   {
     this.buildingId = buildingId;
