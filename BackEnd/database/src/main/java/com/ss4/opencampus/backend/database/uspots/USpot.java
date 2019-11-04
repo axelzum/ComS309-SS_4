@@ -1,10 +1,5 @@
 package com.ss4.opencampus.backend.database.uspots;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ss4.opencampus.backend.database.buildings.Building;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 
 /**
@@ -76,22 +71,22 @@ public class USpot
   private String usImagePath;
 
   /**
-   * Needed to add Building because we will need to know WHICH SPECIFIC Building a USpot is in when we are inside a
-   * Building and ask to get it's USpots.
-   * <p>
-   * If the Building gets deleted, we can delete the USpot.
-   */
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "uspot_building_id")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  @JsonIgnore
-  private Building building;
-
-  /**
    * Provided by Frontend
    */
-  @Column(name = "Floor Level")
-  private String floorLvl;
+  @Column(name = "Floor")
+  private String floor;
+
+  /**
+   * References Building table. Used if USpot is located inside a building
+   */
+  @Column(name = "uspot_building_id")
+  private Integer buildingId;
+
+  /**
+   * References the Student that made the USpot
+   */
+  @Column(name = "uspot_student_id")
+  private Integer studentId;
 
   /**
    * Provided by Frontend but not saved directly to database
@@ -105,6 +100,16 @@ public class USpot
   public USpot()
   {
 
+  }
+
+  public Integer getStudentId()
+  {
+    return studentId;
+  }
+
+  public void setStudentId(Integer studentId)
+  {
+    this.studentId = studentId;
   }
 
   /**
@@ -344,45 +349,46 @@ public class USpot
   }
 
   /**
-   * Gets the floor the current USpot is on
+   * Gets the floor that the USpot is on. Can be null
    *
-   * @return the USpots Floor value. Can be null
+   * @return Floor the USpot is on.
    */
-  public String getFloorLvl()
+  public String getFloor()
   {
-    return floorLvl;
+    return floor;
   }
 
   /**
-   * Sets the floor level to a new value
+   * Sets the floor the USpot is on.
    *
-   * @param floorLvl
-   *         New floor level that the USpot is in
+   * @param floor
+   *         New floor for the USpot
    */
-  public void setFloorLvl(String floorLvl)
+  public void setFloor(String floor)
   {
-    this.floorLvl = floorLvl;
+    this.floor = floor;
   }
 
   /**
-   * Gets the Building the USpot is in. Can be null
+   * Gets the ID of the Building the USpot is in
    *
-   * @return the Building the USpot is in
+   * @return ID of Building that the USpot is in
    */
-  public Building getBuilding()
+  public Integer getBuildingId()
   {
-    return building;
+    return buildingId;
   }
 
   /**
-   * Sets the Building the USpot is in to a new value
+   * Sets the ID of the Building that the USpot is in. Would be used if the USpot was incorrectly placed in a building.
    *
-   * @param building
-   *         new Building for the USpot. Can be set to null
+   * @param buildingId
+   *         New ID for Building
    */
-  public void setBuilding(Building building)
+  public void setBuildingId(Integer buildingId)
   {
-    this.building = building;
+    this.buildingId = buildingId;
   }
+
 
 }

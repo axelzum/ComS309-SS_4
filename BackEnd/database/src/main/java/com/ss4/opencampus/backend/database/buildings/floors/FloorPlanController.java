@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -43,7 +45,7 @@ public class FloorPlanController
       if (bytes != null)
       {
         floorPlan.setFpImagePath(path + "building" + building.getId() + "floor" + floorPlan.getLevel());
-        FileOutputStream fos = new FileOutputStream(floorPlan.getFpImagePath() + ".pdf");
+        FileOutputStream fos = new FileOutputStream(floorPlan.getFpImagePath() + ".png");
         fos.write(bytes);
         fos.close();
       }
@@ -61,18 +63,24 @@ public class FloorPlanController
 
   @GetMapping(path = "/buildings/{buildingId}/floorPlans/all")
   public @ResponseBody
-  Iterable<FloorPlan> getFloorPlans(@PathVariable(value = "buildingId") Integer buildingId)
+  Iterable<FloorPlan> getFloorPlans(@PathVariable(value = "buildingId") Integer buildingId) throws IOException
   {
-    return floorPlanRepository.findAllByBuildingId(buildingId, new Sort(Sort.Direction.ASC, "level"));
+    Iterable<FloorPlan> fpList = floorPlanRepository.findAllByBuildingId(buildingId, new Sort(Sort.Direction.ASC, "level"));
+    for(FloorPlan fp : fpList)
+      fp.setFpBytes(pathToBytes(fp.getFpImagePath()));
+    return fpList;
     // might need to change because basement will be last? Could say 0 = basement... tiers will be weird but
     // if im being honest, i dont care about them
   }
 
   @GetMapping(path = "/buildings/{buildingId}/floorPlans/id/{id}")
   public @ResponseBody
-  Optional<FloorPlan> getFloorPlanById(@PathVariable(value = "buildingId") Integer buildingId, @PathVariable(value = "id") Integer fpId)
+  Optional<FloorPlan> getFloorPlanById(@PathVariable(value = "buildingId") Integer buildingId, @PathVariable(value = "id") Integer fpId) throws IOException
   {
-    return floorPlanRepository.findByFpIdAndBuildingId(fpId, buildingId);
+    Optional<FloorPlan> fp = floorPlanRepository.findByFpIdAndBuildingId(fpId, buildingId);
+    if(fp.isPresent())
+      fp.get().setFpBytes(pathToBytes(fp.get().getFpImagePath()));
+    return fp;
   }
 
   @PutMapping(path = "/buildings/{buildingId}/floorPlans/update/{id}")
@@ -147,6 +155,22 @@ public class FloorPlanController
   }
 
   /**
+   * Helper method to retrieve the image bytes of an image that is tied to a USpot. Used in GET Requests
+   *
+   * @param picPath
+   *         Path in DB to look into to find the image
+   *
+   * @return byte array that is the image data
+   *
+   * @throws IOException
+   *         Could potentially through an error if given a non-valid path.
+   */
+  private byte[] pathToBytes(String picPath) throws IOException
+  {
+    return Files.readAllBytes(Paths.get(picPath));
+  }
+
+  /**
    * Helper method that is used by PUT and PATCH when trying to update the FloorPlan picture. If the FloorPlan is using
    * "noimage.png" as the image, we DON'T want to replace it and if it is using another image, we can go ahead and
    * overwrite it.
@@ -172,7 +196,7 @@ public class FloorPlanController
       if (floorPlan.getFpImagePath().equals("/target/images/noimage.png")) //no previous photo for floor, so make a
       // new one... don't want to overwrite noimage.png!
       {
-        floorPlan.setFpImagePath(path + "building" + floorPlan.getBuilding().getId() + "floor" + floorPlan.getLevel() + ".pdf");
+        floorPlan.setFpImagePath(path + "building" + floorPlan.getBuilding().getId() + "floor" + floorPlan.getLevel() + ".png");
         fos = new FileOutputStream(floorPlan.getFpImagePath());
       }
       else // can overwrite old photo, so we don't have to make a new picture like we do above

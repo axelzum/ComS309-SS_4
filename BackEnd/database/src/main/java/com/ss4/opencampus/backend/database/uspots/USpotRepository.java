@@ -1,5 +1,6 @@
 package com.ss4.opencampus.backend.database.uspots;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -50,14 +51,27 @@ public interface USpotRepository extends JpaRepository<USpot, Integer>
   Iterable<USpot> findAllByUsRatingGreaterThanEqual(Double minRating);
 
   /**
-   * Finds all USpots in a given Building on a given Floor
+   * Returns a list of USpots in a Building and on a specific floor
    *
    * @param buildingId
-   *         id of building to look in
+   *         Building to look in
    * @param floor
-   *         floor of building to look in
+   *         Floor of Building to look in
    *
    * @return Iterable List of USpots
    */
-  Iterable<USpot> findAllByBuildingIdAndFloorLvl(Integer buildingId, String floor);
+  Iterable<USpot> findAllByBuildingIdAndFloor(Integer buildingId, String floor);
+
+  /**
+   * Returns a list of USpots that a specific Student has created. Can be sorted in multiple ways. For example,
+   * alphabetical
+   *
+   * @param studentId
+   *         Id of Student who's USpots are being returned
+   * @param sort
+   *         way the USpots will be sorted
+   *
+   * @return Iterable List of USpots
+   */
+  Iterable<USpot> findAllByStudentId(Integer studentId, Sort sort);
 }

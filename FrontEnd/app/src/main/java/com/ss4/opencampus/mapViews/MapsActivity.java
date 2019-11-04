@@ -39,6 +39,7 @@ import com.ss4.opencampus.R;
 import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
 import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.mainViews.DashboardActivity;
+import com.ss4.opencampus.mainViews.PreferenceUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -160,6 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Tag used for json requests
      */
     private static final String TAG = "tag";
+    private int studentId;
 
     /**
      * Student ID for the student that is logged in.
@@ -196,15 +198,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        floorButtons = new ArrayList<>();
-        floorplanButton = findViewById(R.id.hideFloorplanButton);
-        for(int i = 1; i<13; i++)
-        {
-            String btnId = "button_floor" + i;
-            int resId = getResources().getIdentifier(btnId, "id", getPackageName());
-            Button btnToAdd = findViewById(resId);
-            floorButtons.add(btnToAdd);
-        }
+        studentId = PreferenceUtils.getUserId(this);
 
         customMarkerFileText = "";
 
@@ -643,13 +637,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             // Remove markers from database.
             //
-            studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
             // markerId
             // get marker from database by name, http://coms-309-ss-4.misc.iastate.edu:8080/students/ studentId /customMarkers/name?param= markerShowingInfoWindow.getTitle()
             // get cmID from JSON Object
             // Delete by id, http://coms-309-ss-4.misc.iastate.edu:8080/students/{studentId}/customMarkers/delete/{id}
 
-            String getByNameurl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers/name?param=" + markerShowingInfoWindow.getTitle();
+            String getByNameurl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + Integer.toString(studentId) + "/customMarkers/name?param=" + markerShowingInfoWindow.getTitle();
 
             // Request a JSONObject response from the provided URL.
             JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, getByNameurl, null,
@@ -660,7 +653,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 for (int i = 0; i < response.length(); i++) {
                                     JSONObject cm = response.getJSONObject(i);
                                     int cmID = cm.getInt("cmID");
-                                    String deleteUrl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/"+studentId+"/customMarkers/delete/" + cmID;
+                                    String deleteUrl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/"+ Integer.toString(studentId) +"/customMarkers/delete/" + cmID;
 
                                     StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, deleteUrl,  new Response.Listener<String>() {
                                         @Override
@@ -788,9 +781,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
             queue = Volley.newRequestQueue(this);
-            studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
-            System.out.println("Student id for posting custom marker: " + studentId);
-            String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers";
+            System.out.println("Student id for posting custom marker: " + Integer.toString(studentId));
+            String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + Integer.toString(studentId) + "/customMarkers";
             JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newCM, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -928,8 +920,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void loadCustomMarkersDB()
     {
-        studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
-        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers/all";
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + Integer.toString(studentId) + "/customMarkers/all";
 
         // Request a JSONObject response from the provided URL.
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,

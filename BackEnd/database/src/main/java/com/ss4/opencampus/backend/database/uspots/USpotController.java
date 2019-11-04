@@ -64,11 +64,6 @@ public class USpotController
         uSpot.setUsImagePath("/target/images/noimage.png");
       uSpot.setRatingCount(1);
       uSpot.setRatingTotal(uSpot.getUsRating());
-      // Don't need to make a BuildingRepo because we KNOW that we are getting a valid building_id
-      // from the FRONTEND. It will come in as (I hope): { "building_id": X }
-      // and then the USpot will be able to parse it and save the info.
-      // it might come in as: { "building": X } with X being the ID.
-      // At worst, I just change this method to be like the POST in FloorPlanController.java
       uSpotRepository.save(uSpot);
     }
     catch (IOException | DataAccessException ex)
@@ -126,8 +121,14 @@ public class USpotController
         return uList;
       case "building":
         Integer buildingId = Integer.parseInt((String) param1);
-        String floorLvl = (String) param2;
-        uList = uSpotRepository.findAllByBuildingIdAndFloorLvl(buildingId, floorLvl);
+        String floor = (String) param2;
+        uList = uSpotRepository.findAllByBuildingIdAndFloor(buildingId, floor);
+        for (USpot u : uList)
+          u.setPicBytes(pathToBytes(u.getUsImagePath()));
+        return uList;
+      case "student":
+        Integer studentId = Integer.parseInt((String) param1);
+        uList = uSpotRepository.findAllByStudentId(studentId, new Sort(Sort.Direction.ASC, "usName"));
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
@@ -179,14 +180,15 @@ public class USpotController
   {
     try
     {
-      // add way to update Building
       USpot u = uSpotRepository.findById(id).get();
       u.setUsName(newUSpot.getUsName());
       u.setUsCategory(newUSpot.getUsCategory());
       u.setUsLatit(newUSpot.getUsLatit());
       u.setUsLongit(newUSpot.getUsLongit());
       u.setUsRating(newUSpot.getUsRating());
-      u.setFloorLvl(newUSpot.getFloorLvl());
+      u.setFloor(newUSpot.getFloor());
+      u.setStudentId(newUSpot.getStudentId());
+      u.setBuildingId(newUSpot.getBuildingId());
       byte[] bytes = newUSpot.getPicBytes();
       u = newUSpotImage(u, bytes);
       uSpotRepository.save(u);
@@ -237,16 +239,23 @@ public class USpotController
       {
         u.setUsCategory((String) patch.get("usCategory"));
       }
-      if (patch.containsKey("floorLvl"))
+      if (patch.containsKey("floor"))
       {
-        u.setFloorLvl((String) patch.get("floorLvl"));
+        u.setFloor((String) patch.get("floor"));
+      }
+      if (patch.containsKey("buildingId"))
+      {
+        u.setBuildingId(((Integer) patch.get("buildingId")));
+      }
+      if (patch.containsKey("studentId"))
+      {
+        u.setStudentId(((Integer) patch.get("studentId")));
       }
       if (patch.containsKey("picBytes"))
       {
         byte[] bytes = Base64.decodeBase64((String) patch.get("picBytes"));
         u = newUSpotImage(u, bytes);
       }
-      // add way to update Building
       uSpotRepository.save(u);
     }
     catch (Exception e)
