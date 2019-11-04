@@ -161,7 +161,7 @@ public class BuildingController
       b.setAbbreviation(building.getAbbreviation());
       b.setLatit(building.getLatit());
       b.setLongit(building.getLongit());
-      b.setFloorCount(building.getFloorCount());
+      b.setFloorCnt(building.getFloorCnt());
       buildingRepository.save(b);
     }
     catch (Exception e)
@@ -211,9 +211,9 @@ public class BuildingController
       {
         building.setLongit(((Double) patch.get("longit")));
       }
-      if (patch.containsKey("floorCount"))
+      if(patch.containsKey("floorCnt"))
       {
-        building.setFloorCount(((Integer) patch.get("floorCount")));
+        building.setFloorCnt(((Integer) patch.get("floorCnt")));
       }
       buildingRepository.save(building);
     }

@@ -13,11 +13,24 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * @author Axel Zumwalt
+ *
+ * Class containting functions for cryptography. Can both encrypt and decrypt strings with an AES encoding algorithm.
+ */
 public class Crypto {
     private static String IV = "IV_VALUE_16_BYTE";
     private static String PASSWORD = "some-hash-password";
     private static String SALT = "some-hash-salt";
 
+    /**
+     * Encrypts and encodes a raw string.
+     *
+     * @param raw
+     *  String to be encrypted.
+     * @return
+     *  Encrypted string.
+     */
     public static String encryptAndEncode(String raw) {
         try {
             Cipher c = getCipher(Cipher.ENCRYPT_MODE);
@@ -29,6 +42,16 @@ public class Crypto {
         }
     }
 
+    /**
+     * Decrypts and decodes an encrypted string.
+     *
+     * @param encrypted
+     *  The encrypted string to be decrypted.
+     * @return
+     *  Decrypted paintext string.
+     *
+     * @throws Exception
+     */
     public static String decodeAndDecrypt(String encrypted) throws Exception {
         byte[] decodedValue = Base64.decode(getBytes(encrypted),Base64.DEFAULT);
         Cipher c = getCipher(Cipher.DECRYPT_MODE);

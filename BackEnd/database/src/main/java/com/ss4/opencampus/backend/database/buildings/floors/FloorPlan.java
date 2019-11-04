@@ -9,6 +9,9 @@ import javax.persistence.*;
 
 /**
  * @author Willis Knox
+ * <p>
+ * FloorPlans will store information about the floor of the different Buildings on campus. A FloorPlan is a Weak Entity
+ * Set of a Building. FloorPlans have pictures that will be stored on the remote server
  */
 @Entity
 @Table(name = "FloorPlans")
@@ -18,13 +21,13 @@ public class FloorPlan
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer fpId;
 
-  @Column(name = "Name")
+  @Column(name = "name")
   private String name;
 
-  @Column(name = "Floor Level")
+  @Column(name = "floorLevel")
   private String level;
 
-  @Column(name = "Picture_Directory")
+  @Column(name = "picDirectory")
   private String fpImagePath;
 
   @Transient
