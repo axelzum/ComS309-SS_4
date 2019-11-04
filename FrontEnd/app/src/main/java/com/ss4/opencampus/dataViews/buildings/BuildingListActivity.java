@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Author: Morgan Smith
+ * @author Morgan Smith
  * Main class for the Building List Activity
  * Reads in JSON data and outputs to recycler viewer
  **/
@@ -37,7 +37,11 @@ public class BuildingListActivity extends AppCompatActivity {
     private RequestQueue queue;
     private List<Building> buildingList;
     private RecyclerView.Adapter adapter;
-
+    
+    /**
+     * Creates the ListView page. Loads all Buildings from database
+     * @param savedInstanceState state of app before this Activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) { // Start when page opens
         super.onCreate(savedInstanceState);
@@ -66,6 +70,11 @@ public class BuildingListActivity extends AppCompatActivity {
 
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {    // Reads in JSON data for the buildings from the server
+                    /**
+                     * Makes a GET Request to Backend to get all Buildings in the database and stores the
+                     * information into Building objects
+                     * @param response JSON format of information from Backend
+                     */
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
@@ -87,6 +96,10 @@ public class BuildingListActivity extends AppCompatActivity {
                         }
                     }
                 }, new Response.ErrorListener() {
+            /**
+             * Prints an the error if something goes wrong
+             * @param error Type of error that occurred
+             */
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
@@ -97,7 +110,11 @@ public class BuildingListActivity extends AppCompatActivity {
         // Add the request to the RequestQueue.
         queue.add(jsonRequest);
     }
-
+    
+    /**
+     * Returns the app to the dashboard screen
+     * @param view given view
+     */
     public void viewDashboard(View view)
     {
         Intent intent = new Intent(this, DashboardActivity.class);
@@ -105,7 +122,10 @@ public class BuildingListActivity extends AppCompatActivity {
         intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
-
+    
+    /**
+     * Stops displaying the ListView page
+     */
     @Override
     protected void onStop () {
         super.onStop();

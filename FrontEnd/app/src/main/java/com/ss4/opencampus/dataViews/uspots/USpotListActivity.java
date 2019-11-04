@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Author: Morgan Smith
+ * @author Morgan Smith
  * Main class for the USpot List
  * Reads in JSON data and outputs to recycler viewer
  **/
@@ -40,7 +40,11 @@ public class USpotListActivity extends AppCompatActivity {
     private List<USpot> uspotList;
     private RecyclerView.Adapter adapter;
     private static USpot uspotToBeShown;
-
+    
+    /**
+     * Creates the ListView page. Loads all USpots from database
+     * @param savedInstanceState state of app before this Activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) { // Start when page opens
         super.onCreate(savedInstanceState);
@@ -49,6 +53,11 @@ public class USpotListActivity extends AppCompatActivity {
         RecyclerView uList;
         uList = findViewById(R.id.uspot_list);
         uList.addOnItemTouchListener(new RecyclerItemClickListener(this, uList ,new RecyclerItemClickListener.OnItemClickListener() {
+            /**
+             * Left over code that is not used anymore. Switched to .selectedItem() for next sprint
+             * @param view view
+             * @param position position of USpot
+             */
                     @Override public void onItemClick(View view, int position) {
                         view.getId();
                         USpot singleUSpot = (USpot)view.getTag();
@@ -60,7 +69,12 @@ public class USpotListActivity extends AppCompatActivity {
                         USpotListActivity.setUspotToBeShown(singleUSpot);
                         startActivity(intent);
                     }
-
+    
+            /**
+             * Left over code that is not used anymore. Switched to .selectedItem() for next sprint
+             * @param view view
+             * @param position position of USpot
+             */
                     @Override public void onLongItemClick(View view, int position) {
                         // do whatever
                     }
@@ -87,6 +101,11 @@ public class USpotListActivity extends AppCompatActivity {
 
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {    // Reads in JSON data for the uspots from the server
+                    /**
+                     * Makes a GET Request to Backend to get all USpots in the database and stores the
+                     * information into USpot objects
+                     * @param response JSON format of information from Backend
+                     */
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
@@ -110,6 +129,10 @@ public class USpotListActivity extends AppCompatActivity {
                         }
                     }
                 }, new Response.ErrorListener() {
+            /**
+             * Prints an the error if something goes wrong
+             * @param error Type of error that occurred
+             */
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
@@ -120,7 +143,11 @@ public class USpotListActivity extends AppCompatActivity {
         // Add the request to the RequestQueue.
         queue.add(jsonRequest);
     }
-
+    
+    /**
+     * Returns the app to the dashboard screen
+     * @param view given view
+     */
     public void viewDashboard(View view)
     {
         Intent intent = new Intent(this, DashboardActivity.class);
@@ -128,7 +155,10 @@ public class USpotListActivity extends AppCompatActivity {
         intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
-
+    
+    /**
+     * Stops displaying the ListView page
+     */
     @Override
     protected void onStop () {
         super.onStop();
@@ -136,12 +166,20 @@ public class USpotListActivity extends AppCompatActivity {
             queue.cancelAll(TAG);
         }
     }
-
+    
+    /**
+     * not used code. switching to .selectedItem() needs to be deleted
+     * @return a single USpot to show in in SingleUSpotActivity
+     */
     public static USpot getUspotToBeShown()
     {
         return uspotToBeShown;
     }
-
+    
+    /**
+     * not used code. switching to .selectedItem() needs to be deleted
+     * @param us new USpot to be shown in SingleUSpotActivity
+     */
     public static void setUspotToBeShown(USpot us)
     {
         uspotToBeShown = us;

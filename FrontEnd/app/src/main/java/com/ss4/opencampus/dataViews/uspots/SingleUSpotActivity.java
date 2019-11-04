@@ -25,7 +25,7 @@ import org.json.JSONObject;
 import com.ss4.opencampus.R;
 
 /**
- * @Author: Morgan Smith
+ * @author Morgan Smith
  * Main class for the USpot List
  * Reads in JSON data and outputs to recycler viewer
  **/
@@ -41,7 +41,11 @@ public class SingleUSpotActivity extends AppCompatActivity {
     private TextView usLongit;
     private TextView usCategories;
     private ImageView usPicBytes;
-
+    
+    /**
+     * Grabs all of the Information of a Single USpot that was selected and displays it
+     * @param savedInstanceState state of app before this Activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) { // Start when page opens
         //Bundle b = getIntent().getExtras();
@@ -106,19 +110,30 @@ public class SingleUSpotActivity extends AppCompatActivity {
 
 
     }
-
+    
+    /**
+     * Switches app to Dashboard screen
+     * @param view given view
+     */
     public void viewDashboard(View view)
     {
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
-
+    
+    /**
+     * Switches app to the List of ALL USpots
+     * @param view given view
+     */
     public void viewUSpotListActivity(View view)
     {
         Intent intent = new Intent(this, USpotListActivity.class);
         startActivity(intent);
     }
-
+    
+    /**
+     * Stops displaying the page
+     */
     public void onStop () {
         super.onStop();
         if (queue != null) {
