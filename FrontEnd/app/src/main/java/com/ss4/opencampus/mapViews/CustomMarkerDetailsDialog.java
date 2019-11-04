@@ -1,7 +1,6 @@
 package com.ss4.opencampus.mapViews;
 
 import android.app.DialogFragment;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +10,29 @@ import android.widget.TextView;
 import com.google.android.gms.maps.model.Marker;
 import com.ss4.opencampus.R;
 
-
+/**
+ * This class appears when the user selects "details" from the CustomMarkerDialog.
+ */
 public class CustomMarkerDetailsDialog extends DialogFragment {
 
+    /**
+     * Clickable TextViews for done, save, delete, rename, edit description. TextViews for title and description.
+     */
     private TextView mActionDone, mActionSave, mActionDelete, mActionRename, mActionEditdesc, markerTitle, markerDesc;
 
+    /**
+     * Method is called when the fragment is created.
+     * @param inflater
+     *  Inflater which inflates the dialog_custom_marker_details XML.
+     *
+     * @param container
+     *  ViewGroup passed to inflater.inflate
+     *
+     * @param savedInstanceState
+     *  Bundle used for persistent storage.
+     *
+     * @return view returned by inflater.inflate
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_custom_marker_details, container, false);
@@ -71,6 +88,10 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
         return view;
     }
 
+    /**
+     * Sets variable which indicates whether or not the dialog is visible to the user.
+     * @param isVisibleToUser
+     */
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser)
     {
@@ -78,42 +99,34 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
         updateTextViews();
     }
 
+    /**
+     * Updates TextViews for title and custom marker description so that they update properly when editing title or desc.
+     */
     public void updateTextViews()
     {
         Marker m = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow();
         getTitleTextView().setText(m.getTitle());
         getDescTextView().setText(((MapsActivity)getActivity()).getCustomMarkerDescription(m));
-
-        //setTVText(getTitleTextView(), m.getTitle());
-        //setTVText(getDescTextView(), ((MapsActivity)getActivity()).getCustomMarkerDescription(m));
     }
 
+    /**
+     * Returns the TextView for marker title
+     * @return
+     * TextView for marker title
+     */
     public TextView getTitleTextView()
     {
         return markerTitle;
     }
 
+    /**
+     * Returns the TextView for marker description
+     * @return
+     * TextView for marker description
+     */
     public TextView getDescTextView()
     {
         return markerDesc;
     }
-
-    public String getMarkerTitleText()
-    {
-        return markerTitle.getText().toString();
-    }
-
-    public String getMarkerDescText()
-    {
-        return markerDesc.getText().toString();
-    }
-
-    public String setTVText(TextView tv, String s)
-    {
-        tv.setText(s);
-        return s;
-    }
-
-
 
 }

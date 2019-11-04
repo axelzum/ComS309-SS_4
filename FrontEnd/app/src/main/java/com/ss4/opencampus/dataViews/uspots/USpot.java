@@ -4,6 +4,8 @@ import android.graphics.BitmapFactory;
 
 import android.graphics.Bitmap;
 
+import java.io.Serializable;
+
 /**
  * @Author: Morgan Smith
  * USpot class to store USpot object data
@@ -11,7 +13,7 @@ import android.graphics.Bitmap;
  * Conversion of Rating, Lat, and Long to string type.
  **/
 
-public class USpot {
+public class USpot implements Serializable {
 
     public int usID;
 
@@ -111,5 +113,10 @@ public class USpot {
         return BitmapFactory.decodeByteArray(picBytes, 0, picBytes.length);
     }
 
+    @Override
+    public String toString()
+    {
+        return "Title: " + usName + "\nID: " + usID;
+    }
 }
 

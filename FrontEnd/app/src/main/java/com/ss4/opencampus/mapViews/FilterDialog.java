@@ -10,13 +10,34 @@ import android.widget.TextView;
 
 import com.ss4.opencampus.R;
 
-
+/**
+ * Dialog appears when selecting the filters button from the map screen.
+ */
 public class FilterDialog extends DialogFragment{
 
+    /**
+     * Clickable TextViews for cancel and ok.
+     */
     private TextView mActionCancel, mActionOK;
 
+    /**
+     * Checkboxes for each category of marker.
+     */
     private CheckBox checkBuildings, checkFeatures, checkUSpots, checkCustom;
 
+    /**
+     * Method is called when the fragment is created.
+     * @param inflater
+     *  Inflater which inflates the map_dialog_filters XML.
+     *
+     * @param container
+     *  ViewGroup passed to inflater.inflate
+     *
+     * @param savedInstanceState
+     *  Bundle used for persistent storage.
+     *
+     * @return view returned by inflater.inflate
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.map_dialog_filters, container, false);
@@ -51,8 +72,6 @@ public class FilterDialog extends DialogFragment{
                 getDialog().dismiss();
             }
         });
-
-
 
         return view;
     }

@@ -89,6 +89,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private void viewBuildingListActivity()
     {
         Intent intent = new Intent(this, BuildingListActivity.class);
+        String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 
@@ -97,6 +99,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
      */
     private void viewUspotListActivity() {
         Intent intent = new Intent(this, USpotListActivity.class);
+        String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 
