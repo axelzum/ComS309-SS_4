@@ -162,6 +162,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private static final String TAG = "tag";
 
+
+
     /**
      * Student ID for the student that is logged in.
      */
