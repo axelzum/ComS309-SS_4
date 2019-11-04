@@ -95,7 +95,7 @@ public class SingleUSpotActivity extends AppCompatActivity {
         usPicBytes = findViewById(R.id.uspot_single_image);
 
         //String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
-        
+
         uspotItem = USpotListActivity.getUspotToBeShown();
         usName.setText(uspotItem.getUsName());
         usRating.setText(uspotItem.getRatingString());
