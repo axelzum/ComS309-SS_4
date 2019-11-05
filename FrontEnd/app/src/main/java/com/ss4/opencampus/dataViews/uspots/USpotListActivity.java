@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
 
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -17,6 +18,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.mainViews.DashboardActivity;
+
+import com.google.android.gms.common.internal.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,12 +36,13 @@ import java.util.List;
  * Reads in JSON data and outputs to recycler viewer
  **/
 
-public class USpotListActivity extends AppCompatActivity {
+public class USpotListActivity extends AppCompatActivity implements OnUSpotSelectedListener {
 
     public static final String TAG = "tag";
     private RequestQueue queue;
     private List<USpot> uspotList;
     private RecyclerView.Adapter adapter;
+    private Integer uspotPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { // Start when page opens
@@ -49,7 +53,7 @@ public class USpotListActivity extends AppCompatActivity {
         uList = findViewById(R.id.uspot_list);
 
         uspotList = new ArrayList<>();
-        adapter = new USpotAdapter(getApplicationContext(),uspotList);
+//        adapter = new USpotAdapter(getApplicationContext(),uspotList);
 
         LinearLayoutManager linearLayoutManager;
         DividerItemDecoration dividerItemDecoration;
@@ -102,6 +106,17 @@ public class USpotListActivity extends AppCompatActivity {
         queue.add(jsonRequest);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (uspotPosition != null && uspotList != null) {
+            outState.putInt(Constants.EXTRA_KEY_POSITION, uspotPosition);
+            outState.putParcelable(Constants.EXTRA_KEY_RESTAURANTS, Parcels.wrap(uspotList));
+        }
+
+    }
+
     public void viewDashboard(View view)
     {
         Intent intent = new Intent(this, DashboardActivity.class);
@@ -116,4 +131,9 @@ public class USpotListActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onUSpotSelected(Integer position, List<USpot> uspotList) {
+        uspotPosition = position;
+        this.uspotList = uspotList;
+    }
 }

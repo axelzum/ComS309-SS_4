@@ -2,6 +2,7 @@ package com.ss4.opencampus.dataViews.uspots;
 
 import android.content.Context;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,25 +19,29 @@ import java.util.List;
  * Formats USpot object data for Recycler View layout
  **/
 
-public class USpotAdapter extends RecyclerView.Adapter<USpotAdapter.ViewHolder> {
+public class USpotAdapter extends RecyclerView.Adapter<USpotAdapter.USpotViewHolder> {
 
-    private Context context;
-    private List<USpot> list;
+    private Context uspotContext;
+    private List<USpot> uspotList;
 
-    public USpotAdapter(Context context, List<USpot> list) {
-        this.context = context;
-        this.list = list;
+    private OnUSpotSelectedListener onUSpotSelectedListener;
+
+    public USpotAdapter(Context context, List<USpot> list, OnUSpotSelectedListener uspotSelectedListener) {
+        uspotContext = context;
+        uspotList = list;
+        onUSpotSelectedListener = uspotSelectedListener;
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.data_fragment_uspots, parent, false);
-        return new ViewHolder(v);
+    public USpotAdapter.USpotViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.data_fragment_uspots, parent, false);
+        USpotViewHolder uViewHolder = new USpotViewHolder(v, uspotList, onUSpotSelectedListener);
+        return uViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        USpot uSpot = list.get(position);
+    public void onBindViewHolder(USpotViewHolder holder, int position) {
+        USpot uSpot = uspotList.get(position);
 
         holder.textName.setText(uSpot.getUsName());
         holder.textRating.setText(uSpot.getRatingString());
@@ -48,14 +53,14 @@ public class USpotAdapter extends RecyclerView.Adapter<USpotAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return uspotList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public class USpotViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView textName, textRating, textLat, textLong, textCategory;
         ImageView imagePicBytes;
 
-        ViewHolder(View itemView) {
+        public USpotViewHolder(View itemView, List<USpot> uSpots, OnUSpotSelectedListener uspotSelectedListener) {
             super(itemView);
 
             textName = itemView.findViewById(R.id.uspot_list_name);
@@ -64,6 +69,9 @@ public class USpotAdapter extends RecyclerView.Adapter<USpotAdapter.ViewHolder> 
             textLong = itemView.findViewById(R.id.uspot_list_longitude);
             textCategory = itemView.findViewById(R.id.uspot_list_category);
             imagePicBytes = itemView.findViewById(R.id.uspot_list_image);
+
+            onUSpotSelectedListener = uspotSelectedListener;
         }
+        itemView.setOnClickListener(this);
     }
 }
