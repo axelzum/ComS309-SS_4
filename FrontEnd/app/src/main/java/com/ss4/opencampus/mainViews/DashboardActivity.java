@@ -72,6 +72,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 viewUspotListActivity();
                 break;
             case R.id.button_socket:
+                viewSocketActivity();
+                break;
             case R.id.button_logout:
                 logout();
                 break;
@@ -109,7 +111,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
      */
     private void viewSocketActivity() {
         Intent intent = new Intent(this, SocketTestActivity.class);
-
+        startActivity(intent);
     }
 
     /**

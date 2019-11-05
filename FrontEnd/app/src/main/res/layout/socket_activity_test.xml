@@ -6,59 +6,61 @@
     android:layout_height="match_parent"
     tools:context=".socketTest.SocketTestActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/textView_DashTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/title_dashboard"
-            android:textSize="30sp" />
-
-        <Button
-            android:id="@+id/button_OpenMap"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/btn_open_map" />
-
-        <Button
-            android:id="@+id/button_BuildingList"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/btn_building_list" />
-
-        <Button
-            android:id="@+id/button_USpotList"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/show_uspot_list" />
-
-        <Button
-            android:id="@+id/button_socket"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/btn_socket_test" />
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/button_logout"
-        android:layout_width="100dp"
+    <TextView
+        android:id="@+id/textView_SocketTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:importantForAutofill="no"
+        android:text="@string/title_socket"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toStartOf="@+id/button_Dash"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_SocketChat"
+        android:layout_width="350dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:text="@string/btn_logout"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/editText_SocketMsg"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_SocketTitle" />
+
+    <EditText
+        android:id="@+id/editText_SocketMsg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
+        android:ems="10"
+        android:hint="@string/txt_view_enter_msg"
+        android:inputType="textPersonName"
+        android:importantForAutofill="no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_SocketSend"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/button_SocketSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/btn_send_msg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/button_Dash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/btn_dashboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

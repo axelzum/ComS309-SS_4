@@ -48,4 +48,9 @@
     <string name="tip_latitue">Latitude</string>
     <string name="tip_longitude">Longitude</string>
     <string name="show_uspot_list">Show USpot List</string>
+
+    <!-- WebSocket Test Strings -->
+    <string name="title_socket">Web Socket Chat</string>
+    <string name="txt_view_enter_msg">Enter Message Here</string>
+    <string name="btn_send_msg">Send</string>
 </resources>
