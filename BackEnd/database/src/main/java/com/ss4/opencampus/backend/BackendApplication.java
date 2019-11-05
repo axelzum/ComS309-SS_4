@@ -1,13 +1,13 @@
-package com.ss4.opencampus.backend.database;
+package com.ss4.opencampus.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DatabaseApplication
+public class BackendApplication
 {
   public static void main(String[] args)
   {
-    SpringApplication.run(DatabaseApplication.class, args);
+    SpringApplication.run(BackendApplication.class, args);
   }
 }
