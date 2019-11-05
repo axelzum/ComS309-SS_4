@@ -11,6 +11,7 @@ import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.socketTest.SocketTestActivity;
 
 /**
  * @Author: Axel Zumwalt
@@ -24,6 +25,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private Button btnViewBuildingList;
     private Button btnViewUspotList;
     private Button btnLogout;
+    private Button btnSocketTest;
 
     /**
      * OnCreate method for the DashboardActivity.
@@ -37,16 +39,18 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.main_activity_dashboard);
 
         /* Init Objects */
-        btnViewMap = (Button) findViewById(R.id.button_OpenMap);
-        btnViewBuildingList = (Button) findViewById(R.id.button_BuildingList);
-        btnViewUspotList = (Button) findViewById(R.id.button_USpotList);
-        btnLogout = (Button) findViewById(R.id.button_logout);
+        btnViewMap = (Button)findViewById(R.id.button_OpenMap);
+        btnViewBuildingList = (Button)findViewById(R.id.button_BuildingList);
+        btnViewUspotList = (Button)findViewById(R.id.button_USpotList);
+        btnLogout = (Button)findViewById(R.id.button_logout);
+        btnSocketTest = (Button)findViewById(R.id.button_socket);
 
         /* Init Listeners */
         btnViewMap.setOnClickListener(this);
         btnViewBuildingList.setOnClickListener(this);
         btnViewUspotList.setOnClickListener(this);
         btnLogout.setOnClickListener(this);
+        btnSocketTest.setOnClickListener(this);
     }
 
     /**
@@ -67,10 +71,10 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             case R.id.button_USpotList:
                 viewUspotListActivity();
                 break;
+            case R.id.button_socket:
             case R.id.button_logout:
                 logout();
                 break;
-
         }
     }
 
@@ -89,8 +93,6 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private void viewBuildingListActivity()
     {
         Intent intent = new Intent(this, BuildingListActivity.class);
-        String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
-        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 
@@ -99,9 +101,15 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
      */
     private void viewUspotListActivity() {
         Intent intent = new Intent(this, USpotListActivity.class);
-        String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
-        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
+    }
+
+    /**
+     * Open Web SocketTestActivty
+     */
+    private void viewSocketActivity() {
+        Intent intent = new Intent(this, SocketTestActivity.class);
+
     }
 
     /**

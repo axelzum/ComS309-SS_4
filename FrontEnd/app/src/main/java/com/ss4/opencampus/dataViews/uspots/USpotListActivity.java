@@ -63,9 +63,6 @@ public class USpotListActivity extends AppCompatActivity {
                         USpot singleUSpot = (USpot)view.getTag();
                         System.out.println(singleUSpot.toString());
                         Intent intent = new Intent(view.getContext(), SingleUSpotActivity.class);
-                        //String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
-                        //intent.putExtra("EXTRA_STUDENT_ID", studentId);
-                        //intent.putExtra("EXTRA_USPOT", singleUSpot);
                         USpotListActivity.setUspotToBeShown(singleUSpot);
                         startActivity(intent);
                     }
@@ -151,8 +148,6 @@ public class USpotListActivity extends AppCompatActivity {
     public void viewDashboard(View view)
     {
         Intent intent = new Intent(this, DashboardActivity.class);
-        String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
-        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
     

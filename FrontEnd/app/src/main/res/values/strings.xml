@@ -26,6 +26,7 @@
     <string name="title_dashboard">Content Dashboard</string>
     <string name="btn_open_map">Open Map</string>
     <string name="btn_building_list">Show Building List</string>
+    <string name="btn_socket_test">Web Socket Test</string>
     <string name="btn_logout">Logout</string>
 
     <!-- Map Views Strings -->
