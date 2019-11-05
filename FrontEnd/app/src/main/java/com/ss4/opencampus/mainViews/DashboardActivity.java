@@ -13,7 +13,7 @@ import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
 
 /**
- * @Author: Axel Zumwalt
+ * @author Axel Zumwalt
  *
  * Class that provides functionality for the DashboardActivity List Activity
  * Creates view methods to view different activities with onClick buttons
