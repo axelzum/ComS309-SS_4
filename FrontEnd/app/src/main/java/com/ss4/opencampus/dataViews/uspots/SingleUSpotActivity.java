@@ -98,7 +98,7 @@ public class SingleUSpotActivity extends AppCompatActivity {
         usCategories = findViewById(R.id.uspot_single_category);
         usPicBytes = findViewById(R.id.uspot_single_image);
 
-        //String studentId = getIntent().getStringExtra("EXTRA_STUDENT_ID");
+        //int studentId = PreferenceUtils.getUserId(this);
 
         uspotItem = USpotListActivity.getUspotToBeShown();
         usName.setText(uspotItem.getUsName());

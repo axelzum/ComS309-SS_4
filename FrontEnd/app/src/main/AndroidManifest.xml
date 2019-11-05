@@ -23,7 +23,6 @@
         <activity android:name=".mainViews.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -33,6 +32,7 @@
         <activity android:name=".mapViews.MapsActivity" />
         <activity android:name=".dataViews.uspots.USpotListActivity" />
         <activity android:name=".dataViews.uspots.SingleUSpotActivity" />
+        <activity android:name=".socketTest.SocketTestActivity" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
