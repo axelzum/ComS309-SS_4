@@ -57,9 +57,7 @@ public class CustomMarkerSaveDialog extends DialogFragment{
         mActionOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MapsActivity)getActivity()).saveCustomMarkers(new boolean[] {
-                        checkDevice.isChecked(),
-                        checkAccount.isChecked()});
+                ((MapsActivity)getActivity()).saveCustomMarkers();
                 getDialog().dismiss();
             }
         });
