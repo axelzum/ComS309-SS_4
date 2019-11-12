@@ -17,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.ss4.opencampus.dataViews.reviews.CreateReviewActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 import com.ss4.opencampus.dataViews.reviews.ReviewListActivity;
 
@@ -130,13 +131,28 @@ public class SingleUSpotActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void viewReviews(View view)
+    /**
+     * Switches app to the list of all reviews for a given USpot
+     * @param view given view
+     */
+    public void viewReviewListActivity(View view)
     {
         Intent intent = new Intent(this, ReviewListActivity.class);
         intent.putExtra("USpotID", uspotItem.getUsID());
         startActivity(intent);
     }
-    
+
+    /**
+     * Switches app to the list of all reviews for a given USpot
+     * @param view given view
+     */
+    public void createReview(View view)
+    {
+        Intent intent = new Intent(this, CreateReviewActivity.class);
+        intent.putExtra("USpotID", uspotItem.getUsID());
+        startActivity(intent);
+    }
+
     /**
      * Stops displaying the page
      */
