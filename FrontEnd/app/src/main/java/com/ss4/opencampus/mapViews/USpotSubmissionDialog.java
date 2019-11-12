@@ -34,6 +34,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.mainViews.PreferenceUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -181,13 +182,10 @@ public class USpotSubmissionDialog extends DialogFragment{
                     newUSpot.put("usLongit", lng);
                     newUSpot.put("usCategory", category.getSelectedItem().toString());
                     newUSpot.put("picBytes", byteString);
+                    newUSpot.put("studentId", PreferenceUtils.getUserId(getActivity()));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                /*
-                picBytes: "lkdfjlkdsfjfdslkj"
-                 */
 
                 queue = Volley.newRequestQueue(getActivity());
                 String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/add";
