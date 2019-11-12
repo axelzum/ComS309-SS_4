@@ -5,6 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+/**
+ * @author Willis Knox
+ * <p>
+ * Repository that handles ways to query the Database for Reviews. Implements two special ways to find Reviews that are
+ * needed for our project.
+ */
 public interface ReviewRepository extends JpaRepository<Review, Integer>
 {
   Iterable<Review> findAllByUSpotUsID(Integer u, Sort sort);

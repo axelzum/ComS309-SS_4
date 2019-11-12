@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +20,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -34,6 +37,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
+import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 import com.ss4.opencampus.mainViews.PreferenceUtils;
 
@@ -53,33 +57,139 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnPolylineClickListener, GoogleMap.OnMarkerDragListener, GoogleMap.OnMarkerClickListener {
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
 
+/**
+ *  This class is responsible for connecting to the google maps API and displaying the map, as well as
+ *  managing all the markers associated with the map.
+ */
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener {
+
+    /**
+     *  The map that is being displayed to the user
+     */
     private GoogleMap mMap;
-    private float markerRotation = 0;
+
+    /**
+     * A list of custom markers that are to be displayed on the map.
+     */
     private ArrayList<Marker> customMarkers = new ArrayList<>();
+
+    /**
+     * A list of feature markers which are to be displayed on the map.
+     */
     private ArrayList<Marker> featureMarkers = new ArrayList<>();
+
+    /**
+     * A list of USpot markers which are to be displayed on the map.
+     */
     private ArrayList<Marker> uspotMarkers = new ArrayList<>();
+
+    /**
+     * A list of building markers which are to be displayed on the map.
+     */
     private ArrayList<Marker> buildingMarkers = new ArrayList<>();
+
+    /**
+     * A list of titles associated with custom markers. Used for renaming markers. Necessary for appropriately updating marker titles.
+     */
     private ArrayList<String> m_Text = new ArrayList<>();
+
+    /**
+     * A list of descriptions associated with custom markers. Necessary for appropriately updating marker descriptions
+     */
     private ArrayList<String> cmDescriptions = new ArrayList<>();
+
+    /**
+     * Button for hiding the floorplan. Only visible when a floorplan is present.
+     */
+    private Button floorplanButton;
+
+    /**
+     * The marker currently showing a dialog or info window. The most recently selected marker.
+     */
     private Marker markerShowingInfoWindow;
+
+    /**
+     * Marker index associated with the currently selected marker, used for renaming/saving custom markers.
+     */
     private int currentMarkerIndex = 0;
+
+    /**
+     * True when the building filter is selected.
+     */
     private boolean buildingFilter;
+
+    /**
+     * True when the feature filter is selected.
+     */
     private boolean featureFilter;
+
+    /**
+     * True when the uspot filter is selected.
+     */
     private boolean uspotFilter;
+
+    /**
+     * True when the custom marker filter is selected.
+     */
     private boolean customFilter;
+
+    /**
+     * Text associated with a custom marker when saving markers to the device.
+     */
     public String customMarkerFileText;
+
+    /**
+     * A reference to the details dialog for setting titles/descriptions.
+     */
     private CustomMarkerDetailsDialog cmdd;
+
+    /**
+     * floorplan image currently being displayed on the map.
+     */
+    GroundOverlay floorplan;
+
+    /**
+     * background image displayed behind a floorplan, whenever a floorplan is being displayed on the map.
+     */
+    GroundOverlay background;
+
+    /**
+     * Tag used for json requests
+     */
     private static final String TAG = "tag";
+
+
+
+    /**
+     * Student ID for the student that is logged in.
+     */
     private int studentId;
 
-
+    /**
+     * File name for the text file containing custom marker data associated with the device.
+     */
     private static final String FILE_NAME = "CustomMarkers.txt";
+
+    /**
+     * Request queue used for json requests
+     */
     private RequestQueue queue;
 
+    /**
+     * Array of floorplan buttons
+     */
+    private ArrayList<Button> floorButtons;
 
-
+    private ArrayList<Integer> floorImages;
+    /**
+     * Method is called whenever activity is created. Sets up layout and initializes variables.
+     * @param savedInstanceState
+     *  Bundle that can be used for persistent storage.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +198,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        floorButtons = new ArrayList<>();
+        floorplanButton = findViewById(R.id.hideFloorplanButton);
+        for(int i = 1; i<13; i++)
+        {
+            String btnId = "button_floor" + i;
+            int resId = getResources().getIdentifier(btnId, "id", getPackageName());
+            Button btnToAdd = findViewById(resId);
+            floorButtons.add(btnToAdd);
+        }
 
         studentId = PreferenceUtils.getUserId(this);
 
@@ -133,8 +253,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     * This is where we can add markers or lines, add listeners or move the camera.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -145,8 +264,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_retro_simple));
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
-        mMap.setOnMarkerDragListener(this);
-        // Add a marker in Sydney and move the camera
+
         LatLng ames = new LatLng(42.025821, -93.646444);
 
         Marker feature_example = mMap.addMarker(new MarkerOptions()
@@ -157,95 +275,54 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         feature_example.setTag("Feature");
         featureMarkers.add(feature_example);
 
-
-//        Marker uspot_example = mMap.addMarker(new MarkerOptions()
-//                .position(new LatLng(42.026962, -93.649233))
-//                .title("Example USpot")
-//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
-//                .draggable(false));
-//        uspot_example.setTag("USpot");
-//        uspotMarkers.add(uspot_example);
-
-        mMap.setOnMarkerDragListener(this);
-
         mMap.moveCamera(CameraUpdateFactory.newLatLng(ames));
-        mMap.setMinZoomPreference(15);
-        LatLng isuSW = new LatLng(42.001631, -93.658071);
-        LatLng isuNE = new LatLng(42.039406, -93.625058);
-        LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
-        mMap.setLatLngBoundsForCameraTarget(isuBoundry);
-
-        mMap.setOnPolylineClickListener(this);
+        setMapBounds();
 
         //loadCustomMarkers();
         //placeCustomMarkers();
     }
 
-
+    /**
+     * Sets the CustomMarkerDetailsDialog
+     * @param newcmdd
+     *  The CustomMarkerDetailsDialog to be set.
+     */
     public void setCmdd(CustomMarkerDetailsDialog newcmdd)
     {
         cmdd = newcmdd;
     }
 
+    /**
+     * Returns the marker currently showing a dialog or info window.
+     * @return
+     * The marker currently showing a dialog or info window.
+     */
     public Marker getMarkerShowingInfoWindow()
     {
         return markerShowingInfoWindow;
     }
 
+    /**
+     * Returns the description for a custom marker.
+     * @param m
+     *  The marker for which to grab the description
+     * @return
+     *  The decription for the marker
+     */
     public String getCustomMarkerDescription(Marker m)
     {
         int markerIndex = customMarkers.indexOf(m);
         return cmDescriptions.get(markerIndex);
     }
 
-
-    @Override
-    public void onPolylineClick(Polyline polyline) {
-        if (polyline.getColor() != 0xff00ffff)
-            polyline.setColor(0xff00ffff);
-        else
-            polyline.setColor(0xff000000);
-    }
-
-    @Override
-    public void onMarkerDragStart(Marker m) {
-        String tag = (String) m.getTag();
-        if (tag.equals("Scribble")) {
-            m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble_highlighted));
-            m.setAlpha((float) 0.5);
-            m.setSnippet("Moving Marker...");
-        }
-        if (tag.equals("Custom")) {
-
-        }
-    }
-
-
-    @Override
-    public void onMarkerDragEnd(Marker m) {
-        String tag = (String) m.getTag();
-        if (tag.equals("Scribble")) {
-            m.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_scribble));
-            m.setSnippet("");
-            m.setAlpha((float) 1.0);
-        }
-        if (tag.equals("Custom")) {
-
-        }
-    }
-
-    @Override
-    public void onMarkerDrag(Marker m) {
-        String tag = (String) m.getTag();
-        if (tag.equals("Scribble")) {
-            markerRotation += 6;
-            m.setRotation(markerRotation);
-        }
-        if (tag.equals("Custom")) {
-
-        }
-    }
-
+    /**
+     *  OnClick listener for markers. Different types of markers are distinguished by their tag. Opens proper dialogs and detail screens for each
+     *  different type of marker.
+     * @param m
+     *  The marker which was clicked
+     * @return
+     *  false.
+     */
     @Override
     public boolean onMarkerClick(Marker m) {
         String tag = (String) m.getTag();
@@ -258,18 +335,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         if (tag.equals("USpot")) {
-//            markerShowingInfoWindow = m;
-////            SingleUSpotActivity singleUSpotActivity = new SingleUSpotActivity();
-////            Intent intent = new Intent(this, SingleUSpotActivity.class);
-////            startActivity(intent);
+            markerShowingInfoWindow = m;
+            USpotDialog usd = new USpotDialog();
+            usd.show(getFragmentManager(), "USpotDialog");
+        }
 
-
-
+        if (tag.equals("Building")) {
+            markerShowingInfoWindow = m;
+            BuildingDialog bd = new BuildingDialog();
+            bd.show(getFragmentManager(), "BuildingDialog");
         }
 
         return false;
     }
 
+    /**
+     *  Prompts the user to enter a new description for a custom marker.
+     */
     public void customMarkerChangeDescription()
     {
         Marker m = markerShowingInfoWindow;
@@ -307,6 +389,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         updateInfo(m);
     }
 
+    /**
+     *  Prompts the user to enter a new title for a custom marker.
+     */
     public void customMarkerRename()
     {
         Marker m = markerShowingInfoWindow;
@@ -358,6 +443,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         cmdd.updateTextViews();
     }
 
+    /**
+     *  Refreshes the info window for a custom marker.
+     * @param m
+     * Marker to be updated
+     */
     public void updateInfo(Marker m) {
         currentMarkerIndex = customMarkers.indexOf(m);
         m.setTitle(m_Text.get(currentMarkerIndex));
@@ -365,6 +455,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         m.showInfoWindow();
     }
 
+    /**
+     *  Sets values for buildingFilter, featureFilter, uspot filter, and custom marker filter.
+     * @param f
+     *  An array containing true/false values for each filter.
+     */
     public void setFilters(boolean[] f) {
         buildingFilter = f[0];
         featureFilter = f[1];
@@ -393,6 +488,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             loadCustomMarkersDB();
     }
 
+    /**
+     *  Loads custom markers from the device into the custom marker array.
+     */
     public void loadCustomMarkers() {
         FileInputStream fis = null;
 
@@ -422,7 +520,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
+    /**
+     *  Places custom markers from the device onto the map.
+     */
     public void placeCustomMarkers()
     {
         Scanner s = new Scanner(customMarkerFileText);
@@ -458,29 +558,62 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-
+    /**
+     * Gets the true/false value for the building filter.
+     * @return
+     *  The true/false value for the building filter.
+     */
     public boolean getBuildingFilter() {
         return buildingFilter;
     }
 
+    /**
+     * Gets the true/false value for the feature filter.
+     * @return
+     *  The true/false value for the feature filter.
+     */
     public boolean getFeatureFilter() {
         return featureFilter;
     }
 
+    /**
+     * Gets the true/false value for the uspot filter.
+     * @return
+     *  The true/false value for the uspot filter.
+     */
     public boolean getUSpotFilter() {
         return uspotFilter;
     }
 
+    /**
+     * Gets the true/false value for the custom marker filter.
+     * @return
+     *  The true/false value for the custom marker filter.
+     */
     public boolean getCustomFilter() {
         return customFilter;
     }
 
+    /**
+     * Returns to the dashboard screen
+     * @param view
+     *
+     */
     public void viewDashboard(View view)
     {
         Intent intent = new Intent(this, DashboardActivity.class);
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 
+    /**
+     * Generates unique titles for duplicate custom markers.
+     * For example, My Marker will be renamed to My Marker 2 if My Marker already exists.
+     * @param oldTitle
+     *  Title to be replaced.
+     * @return
+     *  New, unique title.
+     */
     public String genUniqueTitle(String oldTitle)
     {
         int identifier = 0;
@@ -495,6 +628,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return oldTitle;
     }
 
+    /**
+     * Deletes custom markers from the device and/or from the database.
+     * @param f
+     *  A boolean array, index 0 corresponding to device and index 1 corresponding to account
+     */
     public void deleteCustomMarkers(boolean[] f)
     {
         boolean device = f[0];
@@ -572,6 +710,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    /**
+     * Saves custom markers to the device and/or the database.
+     * @param f
+     *  A boolean array, index 0 corresponding to device and index 1 corresponding to account
+     */
     public void saveCustomMarkers(boolean[] f) {
         boolean device = f[0];
         boolean account = f[1];
@@ -676,11 +819,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    /**
+     * Sets the custom marker list.
+     * @param cmList
+     *  A new list of custom markers to replace the previous one.
+     */
     public void setCustomMarkerList(ArrayList<Marker> cmList)
     {
         customMarkers = cmList;
     }
 
+    /**
+     * Loads building data from the database and places it in the buildingMarkers arrayList.
+     */
     public void loadBuildings()
     {
         //queue = Volley.newRequestQueue(this);
@@ -722,6 +873,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         queue.add(jsonRequest);
     }
 
+    /**
+     * Loads USpot data from the database and places it in the uspots arrayList.
+     */
     public void loadUspots()
     {
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/all";
@@ -734,6 +888,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         try {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject uspot = response.getJSONObject(i);
+
+                                USpot uspotInfo = new USpot();
+
+                                uspotInfo.setUsID(uspot.getInt("usID"));
+                                uspotInfo.setUsName(uspot.getString("usName"));
+                                uspotInfo.setUsRating(uspot.getDouble("usRating"));
+                                uspotInfo.setUsLatit(uspot.getDouble("usLatit"));
+                                uspotInfo.setUsLongit(uspot.getDouble("usLongit"));
+                                uspotInfo.setUspotCategory(uspot.getString("usCategory"));
+                                uspotInfo.setPicBytes(Base64.decode(uspot.getString("picBytes"), Base64.DEFAULT));
 
                                 Marker currentUspot = mMap.addMarker(new MarkerOptions()
                                         .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
@@ -762,6 +926,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         queue.add(jsonRequest);
     }
 
+    /**
+     * Loads custom markers from the database.
+     */
     public void loadCustomMarkersDB()
     {
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + Integer.toString(studentId) + "/customMarkers/all";
@@ -804,5 +971,137 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         queue.add(jsonRequest);
     }
 
+    /**
+     * Shows the floorplan view for the currently selected building.
+     */
+    public void showFloorplan()
+    {
+        Marker building = markerShowingInfoWindow;
+
+        background = mMap.addGroundOverlay(new GroundOverlayOptions()
+                .image(BitmapDescriptorFactory.fromResource(R.drawable.dark_brick_background))
+                .position(building.getPosition(),800,600));
+
+
+        floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                .image(BitmapDescriptorFactory.fromResource(R.drawable.floorplan_pearson_1))
+                .position(building.getPosition(),200,150));
+
+        mMap.setMinZoomPreference(18);
+        LatLng bottomLeft = new LatLng(building.getPosition().latitude-.0005, building.getPosition().longitude -.0010);
+        LatLng topRight = new LatLng(building.getPosition().latitude+.0005, building.getPosition().longitude +.0010);
+        LatLngBounds floorplanBounds = new LatLngBounds(bottomLeft, topRight);
+        mMap.setLatLngBoundsForCameraTarget(floorplanBounds);
+        mMap.setMapType(MAP_TYPE_NONE);
+        floorplanButton.setVisibility(View.VISIBLE);
+
+        floorImages = new ArrayList<>();
+        // TODO: Load all floorplans for this building
+        // Load all 2-character floors
+        // Show buttons for floors
+    }
+
+    /**
+     * Hides the floorplan, returning to the standard map screen.
+     * @param view
+     *
+     */
+    public void hideFloorplan(View view)
+    {
+        background.remove();
+        floorplan.remove();
+        setMapBounds();
+        mMap.setMapType(MAP_TYPE_NORMAL);
+        floorplanButton.setVisibility(View.GONE);
+    }
+
+    /**
+     * Sets the proper boundaries for the map, used when map is created and when switching back from floorplan view.
+     */
+    private void setMapBounds()
+    {
+        mMap.setMinZoomPreference(15);
+        LatLng isuSW = new LatLng(42.001631, -93.658071);
+        LatLng isuNE = new LatLng(42.039406, -93.625058);
+        LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
+        mMap.setLatLngBoundsForCameraTarget(isuBoundry);
+    }
+
+    /**
+     * changes floorplan view to the selected floor.
+     * @param v
+     *  View associated with the button that was pressed
+     */
+    private void selectFloor(View v)
+    {
+        Marker building = markerShowingInfoWindow;
+        int id = v.getId();
+        switch(id)
+        {
+            case R.id.button_floor1:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(0)))
+                        .position(building.getPosition(),200,150));
+                // TODO: Load USpots for this floor
+                break;
+            case R.id.button_floor2:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(1)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor3:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(2)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor4:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(3)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor5:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(4)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor6:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(5)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor7:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(6)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor8:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(7)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor9:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(8)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor10:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(9)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor11:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(10)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor12:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(11)))
+                        .position(building.getPosition(),200,150));
+                break;
+            default:
+                break;
+        }
+    }
 
 }

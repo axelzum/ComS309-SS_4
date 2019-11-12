@@ -120,9 +120,15 @@ public class USpotController
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
       case "building":
-        Integer building = Integer.parseInt((String) param1);
+        Integer buildingId = Integer.parseInt((String) param1);
         String floor = (String) param2;
-        uList = uSpotRepository.findAllByBuildingIdAndFloor(building, floor);
+        uList = uSpotRepository.findAllByBuildingIdAndFloor(buildingId, floor);
+        for (USpot u : uList)
+          u.setPicBytes(pathToBytes(u.getUsImagePath()));
+        return uList;
+      case "student":
+        Integer studentId = Integer.parseInt((String) param1);
+        uList = uSpotRepository.findAllByStudentId(studentId, new Sort(Sort.Direction.ASC, "usName"));
         for (USpot u : uList)
           u.setPicBytes(pathToBytes(u.getUsImagePath()));
         return uList;
@@ -174,7 +180,6 @@ public class USpotController
   {
     try
     {
-      // add way to update Building
       USpot u = uSpotRepository.findById(id).get();
       u.setUsName(newUSpot.getUsName());
       u.setUsCategory(newUSpot.getUsCategory());
@@ -182,6 +187,8 @@ public class USpotController
       u.setUsLongit(newUSpot.getUsLongit());
       u.setUsRating(newUSpot.getUsRating());
       u.setFloor(newUSpot.getFloor());
+      u.setStudentId(newUSpot.getStudentId());
+      u.setBuildingId(newUSpot.getBuildingId());
       byte[] bytes = newUSpot.getPicBytes();
       u = newUSpotImage(u, bytes);
       uSpotRepository.save(u);
@@ -235,6 +242,14 @@ public class USpotController
       if (patch.containsKey("floor"))
       {
         u.setFloor((String) patch.get("floor"));
+      }
+      if (patch.containsKey("buildingId"))
+      {
+        u.setBuildingId(((Integer) patch.get("buildingId")));
+      }
+      if (patch.containsKey("studentId"))
+      {
+        u.setStudentId(((Integer) patch.get("studentId")));
       }
       if (patch.containsKey("picBytes"))
       {

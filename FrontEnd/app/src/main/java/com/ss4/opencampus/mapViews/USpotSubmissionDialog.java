@@ -33,7 +33,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.model.Marker;
 import com.ss4.opencampus.R;
 
 import org.json.JSONException;
@@ -43,25 +42,79 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.app.Activity.RESULT_OK;
-
-
+/**
+ * Dialog appears when advancing from the CustomMarkerConvertDialog
+ */
 public class USpotSubmissionDialog extends DialogFragment{
 
+    /**
+     * Clickable TextViews for cancel, submit.
+     */
     private TextView mActionCancel, mActionSubmit;
+
+    /**
+     *  EditText for editing the title for the USpot.
+     */
     private EditText title;
+
+    /**
+     *  Dropdown menu that allows the user to select a category for the USpot.
+     */
     private Spinner category;
+
+    /**
+     * A rating bar which allows the user to select an initial rating for the USpot.
+     */
     private RatingBar rating;
+
+    /**
+     *  The button that allows the user to take a photo for the USpot.
+     */
     private Button photoButton;
+
+    /**
+     * The ImageView which gets filled with the new photo when a user takes a photo.
+     */
     private ImageView imgView;
+
+    /**
+     * Image URI for the photo that the user takes.
+     */
     private Uri photo_uri;
 
+    /**
+     * RequestQueue to be used for JSON requests.
+     */
     private RequestQueue queue;
+
+    /**
+     * Tag to be used for JSON requests.
+     */
     private static final String TAG = "tag";
 
+    /**
+     * Permission code for requesting external storage permission.
+     */
     private static final int PERMISSION_CODE = 1000;
+
+    /**
+     * Permission code for requesting camera permission.
+     */
     private static final int IMAGE_CAPTURE_CODE = 1001;
 
+    /**
+     * Method is called when the fragment is created.
+     * @param inflater
+     *  Inflater which inflates the dialog_uspot_submission XML.
+     *
+     * @param container
+     *  ViewGroup passed to inflater.inflate
+     *
+     * @param savedInstanceState
+     *  Bundle used for persistent storage.
+     *
+     * @return view returned by inflater.inflate
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_uspot_submission, container, false);
@@ -168,6 +221,9 @@ public class USpotSubmissionDialog extends DialogFragment{
         return view;
     }
 
+    /**
+     *  Opens the camera, prompting the user to take a photo for the USpot.
+     */
     private void openCamera()
     {
         ContentValues values = new ContentValues();
@@ -179,11 +235,29 @@ public class USpotSubmissionDialog extends DialogFragment{
         startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE);
     }
 
+    /**
+     * Method is called when results are received after requesting permissions.
+     * @param requestCode
+     *  The request code passed in requestPermissions
+     * @param permissions
+     * The requested permissions. Never null.
+     * @param grantResults
+     * The grant results for the corresponding permissions which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    /**
+     * Sets the ImageView to the user-taken photo if resultCode is correct.
+     * @param requestCode
+     *  requestCode given from the camera
+     * @param resultCode
+     *  result from the camera
+     * @param data
+     *  data from the camera
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
