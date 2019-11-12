@@ -1,4 +1,4 @@
-package com.ss4.opencampus.dataViews.uspots;
+package com.ss4.opencampus.dataViews.reviews;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,7 +18,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.mainViews.DashboardActivity;
-import com.ss4.opencampus.dataViews.reviews.ReviewListActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,18 +30,14 @@ import com.ss4.opencampus.R;
  * Reads in JSON data and outputs to recycler viewer
  **/
 
-public class SingleUSpotActivity extends AppCompatActivity {
+public class SingleReviewActivity extends AppCompatActivity {
 
     public static final String TAG = "tag";
     private RequestQueue queue;
-    private USpot uspotItem;
-    private TextView usName;
-    private TextView usRating;
-    private TextView usLatit;
-    private TextView usLongit;
-    private TextView usCategories;
-    private ImageView usPicBytes;
-    
+    private Review reviewItem;
+    private TextView reviewTitle;
+    private TextView reviewDetails;
+
     /**
      * Grabs all of the Information of a Single USpot that was selected and displays it
      * @param savedInstanceState state of app before this Activity
@@ -55,9 +50,9 @@ public class SingleUSpotActivity extends AppCompatActivity {
         //    value = b.getInt("usID");
         //final int usIDVal = value;
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.data_activity_single_uspot);
+        setContentView(R.layout.data_activity_single_review);
 
-        uspotItem = new USpot();
+        reviewItem = new Review();
 
 //        queue = Volley.newRequestQueue(this);
 //        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/";
@@ -92,24 +87,16 @@ public class SingleUSpotActivity extends AppCompatActivity {
 //        // Add the request to the RequestQueue.
 //        queue.add(jsonRequest);
 
-        usName = findViewById(R.id.uspot_single_name);
-        usRating = findViewById(R.id.uspot_single_rating);
-        usLatit = findViewById(R.id.uspot_single_latitude);
-        usLongit = findViewById(R.id.uspot_single_longitude);
-        usCategories = findViewById(R.id.uspot_single_category);
-        usPicBytes = findViewById(R.id.uspot_single_image);
+        reviewTitle = findViewById(R.id.review_single_title);
+        reviewDetails = findViewById(R.id.review_single_details);
 
         //int studentId = PreferenceUtils.getUserId(this);
 
-        uspotItem = USpotListActivity.getUspotToBeShown();
-        usName.setText(uspotItem.getUsName());
-        usRating.setText(uspotItem.getRatingString());
-        usLatit.setText(uspotItem.getLatString());
-        usLongit.setText(uspotItem.getLongString());
-        usCategories.setText(uspotItem.getUsCategory());
-        usPicBytes.setImageBitmap(uspotItem.setBitmap());
+        reviewItem = ReviewListActivity.getReviewToBeShown();
+        reviewTitle.setText(reviewItem.getReviewTitle());
+        reviewDetails.setText(reviewItem.getReviewDetails());
     }
-    
+
     /**
      * Switches app to Dashboard screen
      * @param view given view
@@ -119,24 +106,23 @@ public class SingleUSpotActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
-    
+
     /**
      * Switches app to the List of ALL USpots
      * @param view given view
      */
     public void viewUSpotListActivity(View view)
     {
-        Intent intent = new Intent(this, USpotListActivity.class);
+        Intent intent = new Intent(this, ReviewListActivity.class);
         startActivity(intent);
     }
 
     public void viewReviews(View view)
     {
         Intent intent = new Intent(this, ReviewListActivity.class);
-        intent.putExtra("USpotID", uspotItem.getUsID());
         startActivity(intent);
     }
-    
+
     /**
      * Stops displaying the page
      */

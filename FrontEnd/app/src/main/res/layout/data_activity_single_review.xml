@@ -8,42 +8,18 @@
     android:padding="10dp">
 
     <TextView
-        android:id="@+id/uspot_single_name"
+        android:id="@+id/review_single_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        tools:text="USpot Name" />
+        tools:text="Review Title" />
 
     <TextView
-        android:id="@+id/uspot_single_rating"
+        android:id="@+id/review_single_details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Latitude" />
+        tools:text="Details" />
 
-    <TextView
-        android:id="@+id/uspot_single_latitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Latitude" />
-
-    <TextView
-        android:id="@+id/uspot_single_longitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="Longitude" />
-
-    <TextView
-        android:id="@+id/uspot_single_category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:text="USpot Category" />
-
-    <ImageView
-        android:id="@+id/uspot_single_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription="@+id/uspot_list_image"
-        />
     <Button
         android:id="@+id/button_Dashboard"
         android:layout_width="200dp"
@@ -61,11 +37,19 @@
         android:text="@string/show_uspot_list" />
 
     <Button
-        android:id="@+id/button_ReviewList"
+        android:id="@+id/button_Review"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:onClick="viewReviewListActivity"
+        android:onClick="viewReviews"
         android:text="Show Review List" />
+
+    <Button
+        android:id="@+id/button_createReview"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:onClick="createReview"
+        android:text="Create A Review" />
 
 </LinearLayout>
