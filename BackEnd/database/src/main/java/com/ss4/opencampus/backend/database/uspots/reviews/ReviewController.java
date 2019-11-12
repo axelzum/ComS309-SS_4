@@ -2,6 +2,7 @@ package com.ss4.opencampus.backend.database.uspots.reviews;
 
 import com.ss4.opencampus.backend.database.uspots.USpot;
 import com.ss4.opencampus.backend.database.uspots.USpotRepository;
+import com.ss4.opencampus.backend.websocket.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,7 @@ public class ReviewController
       USpot u = uSpotRepository.findById(uspotId).get();
       review.setuSpot(u);
       reviewRepository.save(review);
+      WebSocketServer.onMessage(u.getUsID());
     }
     catch (Exception e)
     {
