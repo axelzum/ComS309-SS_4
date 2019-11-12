@@ -31,11 +31,17 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.PreferenceUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -104,6 +110,11 @@ public class USpotSubmissionDialog extends DialogFragment{
     private static final int IMAGE_CAPTURE_CODE = 1001;
 
     /**
+     * Building ID corresponding to the building that the USpot is in. -1 if not in a building.
+     */
+    private int buildingId;
+
+    /**
      * Method is called when the fragment is created.
      * @param inflater
      *  Inflater which inflates the dialog_uspot_submission XML.
@@ -127,7 +138,7 @@ public class USpotSubmissionDialog extends DialogFragment{
         rating = view.findViewById(R.id.ratingbar);
         photoButton = view.findViewById(R.id.photo_button);
         imgView = view.findViewById(R.id.image_view);
-
+        buildingId = getBuildingId(((MapsActivity)getActivity()).getMarkerShowingInfoWindow());
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.category_array, R.layout.support_simple_spinner_dropdown_item);
         category.setAdapter(adapter);
 
@@ -183,6 +194,8 @@ public class USpotSubmissionDialog extends DialogFragment{
                     newUSpot.put("usCategory", category.getSelectedItem().toString());
                     newUSpot.put("picBytes", byteString);
                     newUSpot.put("studentId", PreferenceUtils.getUserId(getActivity()));
+                    if(buildingId != -1 && ((MapsActivity)getActivity()).getFloorplanVisible())
+                        newUSpot.put("buildingId", buildingId);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -263,5 +276,50 @@ public class USpotSubmissionDialog extends DialogFragment{
         {
             imgView.setImageURI(photo_uri);
         }
+    }
+
+    /**
+     * Used to access a buildingId from the database, using a Marker's name.
+     * @param building
+     *  The marker for the building.
+     * @return
+     *  The id from the database corresponding to the building.
+     */
+    public int getBuildingId(Marker building)
+    {
+        if(!building.getTag().equals("Building"))
+            return -1;
+
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/nameStartsWith?param1=" + building.getTitle();
+
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                                JSONObject building = response.getJSONObject(0);
+                            ((MapsActivity)getActivity()).setCurrentBuildingId(building.getInt("id"));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+                ((MapsActivity)getActivity()).setCurrentBuildingId(-1);
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+
+        return ((MapsActivity)getActivity()).getCurrentBuildingId();
     }
 }

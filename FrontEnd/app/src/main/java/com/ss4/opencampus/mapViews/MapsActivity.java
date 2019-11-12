@@ -155,6 +155,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      *  Resource IDs for floorplans (Used for testing purposes, since we're not yet loading floorplans from database).
      */
     private ArrayList<Integer> floorImages;
+
+    /**
+     * Id for the building currently showing a floorplan.
+     */
+    private int currentBuildingId;
+
+    /**
+     * True when a floorplan view is visible.
+     */
+    private boolean floorplanVisible;
+
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
      * @param savedInstanceState
@@ -698,6 +709,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void showFloorplan()
     {
+        floorplanVisible = true;
         Marker building = markerShowingInfoWindow;
 
         background = mMap.addGroundOverlay(new GroundOverlayOptions()
@@ -730,6 +742,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void hideFloorplan(View view)
     {
+        floorplanVisible = false;
         background.remove();
         floorplan.remove();
         setMapBounds();
@@ -748,6 +761,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLngBounds isuBoundry = new LatLngBounds(isuSW, isuNE);
         mMap.setLatLngBoundsForCameraTarget(isuBoundry);
     }
+
+    /**
+     * Used for keeping track of the building ID in the database for the marker showing info window.
+     * Necessary for posting USpots indoors.
+     */
+    public void setCurrentBuildingId(int id)
+    {
+        currentBuildingId = id;
+    }
+
+    public int getCurrentBuildingId()
+    {
+        return currentBuildingId;
+    }
+
+    public boolean getFloorplanVisible()
+    {
+        return floorplanVisible;
+    }
+
 
     /**
      * changes floorplan view to the selected floor.
