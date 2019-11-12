@@ -1,20 +1,18 @@
 package com.ss4.opencampus.mapViews;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import com.ss4.opencampus.R;
+import com.ss4.opencampus.dataViews.uspots.USpot;
+import com.ss4.opencampus.mainViews.DashboardActivity;
+import com.ss4.opencampus.mainViews.PreferenceUtils;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,38 +25,28 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.ss4.opencampus.R;
-import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
-import com.ss4.opencampus.dataViews.uspots.USpot;
-import com.ss4.opencampus.mainViews.DashboardActivity;
-import com.ss4.opencampus.mainViews.PreferenceUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
-import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
-import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
 
 /**
  *  This class is responsible for connecting to the google maps API and displaying the map, as well as
@@ -89,6 +77,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     /**
      * A list of titles associated with custom markers. Used for renaming markers. Necessary for appropriately updating marker titles.
+     * Without this, changing the title for a marker can cause the old title to still appear.
      */
     private ArrayList<String> m_Text = new ArrayList<>();
 
@@ -133,11 +122,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean customFilter;
 
     /**
-     * Text associated with a custom marker when saving markers to the device.
-     */
-    public String customMarkerFileText;
-
-    /**
      * floorplan image currently being displayed on the map.
      */
     GroundOverlay floorplan;
@@ -163,10 +147,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private RequestQueue queue;
 
     /**
-     * Array of floorplan buttons
+     * Array of floorplan buttons used to switch between floors. Visible only when in a floorplan view.
      */
     private ArrayList<Button> floorButtons;
 
+    /**
+     *  Resource IDs for floorplans (Used for testing purposes, since we're not yet loading floorplans from database).
+     */
     private ArrayList<Integer> floorImages;
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
@@ -182,6 +169,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        /*up to 12 floor bottons are used to switch between floors when looking at a floorplan view.
+        / They are hidden when not in a floorplan.
+        / The 12 buttons are initialized in a loop with resource IDs button_floor1-12 and stored in
+        / an ArrayList so they can be shown/hidden with each corresponding building later on.
+        */
         floorButtons = new ArrayList<>();
         floorplanButton = findViewById(R.id.hideFloorplanButton);
         for(int i = 1; i<13; i++)
@@ -194,10 +186,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         studentId = PreferenceUtils.getUserId(this);
 
-        customMarkerFileText = "";
-
-        final Button button = findViewById(R.id.customMarkerButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        // Sets up button in the top right for placing markers onto the map.
+        final Button placeMarkerButton = findViewById(R.id.customMarkerButton);
+        placeMarkerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
 
@@ -210,23 +201,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 customMarkers.add(m);
                 cmDescriptions.add("My description");
                 String uniqueTitle = "";
+                //genUniqueTitle renames markers to "My Marker 2", "My Marker 3", etc. so there aren't loads of markers with the same name.
                 uniqueTitle = genUniqueTitle("My Marker");
                 m.setTitle(uniqueTitle);
                 m_Text.add(uniqueTitle);
             }
         });
 
-
+        // Sets up filter button. Filters are used to switch which types of markers are being shown on the map (Buildings, Custom Markers, USpots).
         final Button filterButton = findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
 
                 // Display filter screen
-
                 FilterDialog dialog = new FilterDialog();
                 dialog.show(getFragmentManager(), "FragmentDialog");
-
             }
         });
 
@@ -243,16 +233,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_retro_simple));
         mMap = googleMap;
+
+        //Set the map style
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.style_retro_simple));
+
+        //This classes OnClick methods will be used when a marker is clicked.
         mMap.setOnMarkerClickListener(this);
 
+        //Sets up the camera, with the center in Ames, and boundaries/min zoom around campus.
         LatLng ames = new LatLng(42.025821, -93.646444);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(ames));
         setMapBounds();
     }
 
     /**
+     * An info window refers to the default tiny info box showing a marker's title when you click it.
+     * This method returns the most recent marker which has had its info window shown, or essentially
+     * the most recent marker which has been clicked.
      * Returns the marker currently showing a dialog or info window.
      * @return
      * The marker currently showing a dialog or info window.
