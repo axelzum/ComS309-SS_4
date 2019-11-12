@@ -24,6 +24,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<com.ss4.opencampus.dataV
 
     /**
      * Constructs a Review with a given Context and List of Review objects
+     *
      * @param context given context
      * @param list List of Review objects to use
      */
@@ -39,9 +40,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<com.ss4.opencampus.dataV
      * @return a new ViewHolder to hold the list
      */
     @Override
-    public com.ss4.opencampus.dataViews.reviews.ReviewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.data_fragment_reviews, parent, false);
-        return new com.ss4.opencampus.dataViews.reviews.ReviewAdapter.ViewHolder(v);
+        return new ViewHolder(v);
     }
 
     /**
@@ -53,9 +54,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<com.ss4.opencampus.dataV
     public void onBindViewHolder(com.ss4.opencampus.dataViews.reviews.ReviewAdapter.ViewHolder holder, int position) {
         Review review = list.get(position);
 
-        holder.textTitle.setText(review.getReviewTitle());
         holder.textDetails.setText(review.getReviewDetails());
-        holder.itemView.setTag(review);
     }
 
     /**
@@ -68,7 +67,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<com.ss4.opencampus.dataV
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textTitle, textDetails;
+        TextView textDetails;
 
         /**
          * Sets xml properties for each item in the Review list to be displayed in the adapter
@@ -77,9 +76,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<com.ss4.opencampus.dataV
         ViewHolder(View itemView) {
             super(itemView);
 
-            textTitle = itemView.findViewById(R.id.review_list_title);
             textDetails = itemView.findViewById(R.id.review_list_details);
-
         }
     }
 }

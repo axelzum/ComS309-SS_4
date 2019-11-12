@@ -39,8 +39,7 @@ public class ReviewListActivity extends AppCompatActivity {
     private List<Review> reviewList;
     private RecyclerView.Adapter adapter;
 
-    Intent intent =  getIntent();
-    int usID = intent.getIntExtra("usID", 0);
+    int usID;
 
     /**
      * Creates the ListView page. Loads all Reviews from database
@@ -50,6 +49,9 @@ public class ReviewListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) { // Start when page opens
         super.onCreate(savedInstanceState);
         setContentView(R.layout.data_activity_review_list);
+
+        Intent intent =  getIntent();
+        usID = intent.getExtras().getInt("USpotID", 0);
 
         RecyclerView rList;
         rList = findViewById(R.id.review_list);
@@ -86,8 +88,7 @@ public class ReviewListActivity extends AppCompatActivity {
                                 JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
                                 Review reviewInfo = new Review();                 // Makes Review object from the JSONObject
 
-                                reviewInfo.setReviewTitle(jsonObject.getString("reviewTitle"));
-                                reviewInfo.setReviewDetails(jsonObject.getString("reviewDetails"));
+                                reviewInfo.setReviewDetails(jsonObject.getString("text"));
 
                                 reviewList.add(reviewInfo);
                             }

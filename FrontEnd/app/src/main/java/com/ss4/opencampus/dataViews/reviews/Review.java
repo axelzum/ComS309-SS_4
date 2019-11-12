@@ -9,8 +9,6 @@ import java.io.Serializable;
      **/
     public class Review implements Serializable {
 
-        public String reviewTitle;
-
         public String reviewDetails;
 
         /**
@@ -21,19 +19,11 @@ import java.io.Serializable;
 
         /**
          * Constructs a Review with the given parameters
-         * @param reviewTitle title of Review
          * @param reviewDetails details of Review
          */
-        public Review(String reviewTitle, String reviewDetails) {
-            this.reviewTitle = reviewTitle;
-            this.reviewTitle = reviewDetails;
+        public Review(String reviewDetails) {
+            this.reviewDetails = reviewDetails;
         }
-
-        /**
-         * Gets Title of the Review
-         * @return reviewTitle
-         */
-        public String getReviewTitle() { return reviewTitle; }
 
         /**
          * Gets the Details of the Review
@@ -41,14 +31,6 @@ import java.io.Serializable;
          */
         public String getReviewDetails() {
             return reviewDetails;
-        }
-
-        /**
-         * Sets the Title of the Review to a new value
-         * @param reviewTitle new id for the Review
-         */
-        public void setReviewTitle(String reviewTitle) {
-            this.reviewTitle = reviewTitle;
         }
 
         /**

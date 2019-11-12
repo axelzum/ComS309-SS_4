@@ -40,8 +40,6 @@ public class CreateReviewActivity extends AppCompatActivity {
 
     private static final String TAG = "tag";
 
-    private EditText reviewTitle;
-
     private EditText reviewDetails;
 
     private TextView emptyError;
@@ -52,8 +50,7 @@ public class CreateReviewActivity extends AppCompatActivity {
 
     private RequestQueue queue;
 
-    Intent intent =  getIntent();
-    int usID = intent.getIntExtra("usID", 0);
+    int usID;
 
     /**
      * On create method for the CreateReviewActivity. Initilizes instance variables
@@ -62,11 +59,14 @@ public class CreateReviewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent =  getIntent();
+        usID = intent.getExtras().getInt("USpotID", 0);
+
         setContentView(R.layout.data_activity_review_create);
 
         context = this;
 
-        reviewTitle = (EditText)findViewById(R.id.editText_reviewTitle);
         reviewDetails = (EditText)findViewById(R.id.editText_reviewDetails);
 
         emptyError = (TextView)findViewById(R.id.textView_empty_error);
@@ -86,13 +86,12 @@ public class CreateReviewActivity extends AppCompatActivity {
         if (validateFields()) {
             JSONObject newReview = new JSONObject();
             try {
-                newReview.put("reviewTitle", reviewTitle.getText());
-                newReview.put("reviewDetails", reviewDetails.getText());
+                newReview.put("text", reviewDetails.getText());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             queue = Volley.newRequestQueue(this);
-            String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/" + usID + "/reviews/add";
+            String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/" + usID + "/reviews";
 
             /* Request a JSON response from the provided URL. If response is true the review was added to the database */
             JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newReview, new Response.Listener<JSONObject>() {
@@ -130,8 +129,8 @@ public class CreateReviewActivity extends AppCompatActivity {
     private boolean validateFields() {
         emptyError.setVisibility(View.INVISIBLE);
 
-        /* Show emptyError message if any of the editText boxes are empty */
-        if (reviewTitle.getText().toString().equals("")) {
+        /* Show emptyError message if the editText box for reviewDetails is empty */
+        if (reviewDetails.getText().toString().equals("")) {
             emptyError.setVisibility(View.VISIBLE);
             return false;
         }

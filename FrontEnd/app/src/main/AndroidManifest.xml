@@ -32,6 +32,8 @@
         <activity android:name=".mapViews.MapsActivity" />
         <activity android:name=".dataViews.uspots.USpotListActivity" />
         <activity android:name=".dataViews.uspots.SingleUSpotActivity" />
+        <activity android:name=".dataViews.reviews.CreateReviewActivity" />
+        <activity android:name=".dataViews.reviews.ReviewListActivity" />
         <activity android:name=".socketTest.SocketTestActivity" />
 
         <!--

@@ -138,6 +138,7 @@ public class SingleUSpotActivity extends AppCompatActivity {
     public void viewReviewListActivity(View view)
     {
         Intent intent = new Intent(this, ReviewListActivity.class);
+        uspotItem = USpotListActivity.getUspotToBeShown();
         intent.putExtra("USpotID", uspotItem.getUsID());
         startActivity(intent);
     }
