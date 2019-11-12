@@ -12,6 +12,7 @@ import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.socketTest.SocketTestActivity;
+import com.ss4.opencampus.socketTest.WebSocket;
 
 /**
  * @author Axel Zumwalt
@@ -120,6 +121,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
      */
     public void logout() {
         PreferenceUtils.saveUserId(-1, this);
+        WebSocket.closeWebSocket();
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }

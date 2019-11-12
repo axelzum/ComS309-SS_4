@@ -16,6 +16,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.socketTest.WebSocket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -132,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         try {
             if (Crypto.decodeAndDecrypt(password).equals(this.password.getText().toString())) {
                 PreferenceUtils.saveUserId(studentId, this);
+                WebSocket.openWebSocket(studentId);
                 Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                 startActivity(intent);
             }
