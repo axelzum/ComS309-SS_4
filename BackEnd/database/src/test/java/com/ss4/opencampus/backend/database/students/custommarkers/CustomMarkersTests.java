@@ -1,7 +1,6 @@
 package com.ss4.opencampus.backend.database.students.custommarkers;
 
 import com.ss4.opencampus.backend.database.students.Student;
-import com.ss4.opencampus.backend.database.students.StudentRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +13,10 @@ import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Willis Knox
@@ -34,9 +35,6 @@ public class CustomMarkersTests
 
   private static Student s1;
   private static Student s2;
-
-  @Mock
-  private StudentRepository studentRepository;
 
   @Mock
   private CustomMarkerRepository customMarkerRepository;
@@ -134,27 +132,57 @@ public class CustomMarkersTests
                                                                                 new Sort(Sort.Direction.ASC, "name"));
   }
 
+  /**
+   * Test to see if the Controller returns an empty list if given a StudentID that isn't in the database
+   */
   @Test
   public void findAllInvalidStudent()
   {
-
+    Mockito.when(customMarkerRepository.findAllByStudentId(3, new Sort(Sort.Direction.ASC, "name")))
+            .thenReturn(Collections.emptyList());
+    Iterable<CustomMarker> cm = controller.getCustomMarkers(3, "all", null);
+    assertEquals(customMarkerRepository.findAllByStudentId(3, new Sort(Sort.Direction.ASC, "name")), cm);
+    Mockito.verify(customMarkerRepository, Mockito.times(2)).findAllByStudentId(3,
+                                                                                new Sort(Sort.Direction.ASC, "name"));
   }
 
+  /**
+   * Test to see if the Controller returns a single CustomMarker if given a CustomMarkerID and StudentID
+   */
   @Test
   public void findByIdAndStudent()
   {
-
+    Mockito.when(customMarkerRepository.findByCmIdAndStudentId(cm1.getCmID(), s1.getId())).thenReturn(Optional.of(cm1));
+    Optional<CustomMarker> cm = controller.getCustomMarkerById(s1.getId(), cm1.getCmID());
+    assertTrue(cm.isPresent());
+    assertEquals(cm1, cm.get());
   }
 
+  /**
+   * Test to see if the Controller returns a single CustomMarker if given the CustomMarker name and the Student
+   * the CustomMarker is for
+   */
   @Test
   public void findByNameAndStudent()
   {
-
+    Mockito.when(customMarkerRepository.findByNameAndStudentId("Convos", s2.getId())).thenReturn(
+            Collections.singletonList(cm2));
+    Iterable<CustomMarker> cm = controller.getCustomMarkers(s2.getId(), "name", "Convos");
+    assertEquals(customMarkerRepository.findByNameAndStudentId("Convos", s2.getId()), cm);
+    Mockito.verify(customMarkerRepository, Mockito.times(2)).findByNameAndStudentId("Convos", s2.getId());
   }
 
+  /**
+   * Test to see if the Controller returns all CustomMarkers for a particular Student who's names start with a given
+   * String
+   */
   @Test
   public void findByStartNameAndStudent()
   {
-
+    Mockito.when(customMarkerRepository.findAllByNameStartingWithAndStudentId("W", s1.getId())).thenReturn(
+            Collections.singletonList(cm1));
+    Iterable<CustomMarker> cm = controller.getCustomMarkers(s1.getId(), "nameStartsWith", "W");
+    assertEquals(customMarkerRepository.findAllByNameStartingWithAndStudentId("W", s1.getId()), cm);
+    Mockito.verify(customMarkerRepository, Mockito.times(2)).findAllByNameStartingWithAndStudentId("W", s1.getId());
   }
 }

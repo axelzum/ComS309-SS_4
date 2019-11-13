@@ -19,15 +19,11 @@ import java.util.Map;
 public class WebSocketServer
 {
 
-  //That doesn't remove users when they logout
   private static Map<Session, Integer> sessionStudentIDMap = new HashMap<>();
   private static Map<Integer, Session> studentIDSessionMap = new HashMap<>();
 
-//  @Autowired
-//  private StudentRepository studentRepository;
-
   @Autowired
-  private static USpotRepository uSpotRepository;
+  private USpotRepository uSpotRepository;
 
   private final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
 
@@ -44,7 +40,7 @@ public class WebSocketServer
   }
 
   @OnMessage
-  public static void onMessage(Integer uSpotID)
+  public void onMessage(Integer uSpotID)
   {
     //logger.info("In \"Message\" method. ID of USpot commented on: " + uSpotID);
     try
@@ -95,10 +91,7 @@ public class WebSocketServer
       //if student is connected to websocket. Send them a message
       if(studentIDSessionMap.containsKey(id))
         studentIDSessionMap.get(id).getBasicRemote().sendText(msg);
-      else
-      {
-        //Otherwise don't send anything
-      }
+      //Otherwise don't send anything
     }
     catch (IOException e)
     {
