@@ -42,6 +42,9 @@ public class CustomMarkersTests
   @InjectMocks
   private CustomMarkerController controller;
 
+  /**
+   * Initialize fake CustomMarkers and Students that created the CustomMarkers before every test
+   */
   @Before
   public void init()
   {

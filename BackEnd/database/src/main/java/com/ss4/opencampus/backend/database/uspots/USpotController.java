@@ -306,6 +306,8 @@ public class USpotController
    */
   private byte[] pathToBytes(String picPath) throws IOException
   {
+    if (picPath == null)
+      return null;
     return Files.readAllBytes(Paths.get(picPath));
   }
 
