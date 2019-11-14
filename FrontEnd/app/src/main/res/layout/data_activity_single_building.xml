@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/building_single_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        tools:text="Building Name" />
+
+    <TextView
+        android:id="@+id/building_single_abbrev"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Abbreviation" />
+
+    <TextView
+        android:id="@+id/building_single_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Address" />
+
+    <TextView
+        android:id="@+id/building_single_latitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Latitude" />
+
+    <TextView
+        android:id="@+id/building_single_longitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Longitude" />
+
+    <Button
+        android:id="@+id/button_Dashboard"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:onClick="viewDashboard"
+        android:text="Dashboard" />
+
+    <Button
+        android:id="@+id/button_BuildingList"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:onClick="viewBuildingListActivity"
+        android:text="Show Building List" />
+
+
+</LinearLayout>

@@ -52,6 +52,7 @@ public class USpotListActivity extends AppCompatActivity {
 
         RecyclerView uList;
         uList = findViewById(R.id.uspot_list);
+
         uList.addOnItemTouchListener(new RecyclerItemClickListener(this, uList ,new RecyclerItemClickListener.OnItemClickListener() {
             /**
              * Left over code that is not used anymore. Switched to .selectedItem() for next sprint

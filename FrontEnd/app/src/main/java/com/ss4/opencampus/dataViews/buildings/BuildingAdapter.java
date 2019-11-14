@@ -51,14 +51,15 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-            Building building = list.get(position);
+        Building building = list.get(position);
 
-            holder.textName.setText(building.getBuildingName());
-            holder.textAbbrev.setText(building.getAbbrev());
-            holder.textAddress.setText(building.getAddress());
-            holder.textLat.setText(building.getLatString());
-            holder.textLong.setText(building.getLongString());
-        }
+        holder.textName.setText(building.getBuildingName());
+        holder.textAbbrev.setText(building.getAbbrev());
+        holder.textAddress.setText(building.getAddress());
+        holder.textLat.setText(building.getLatString());
+        holder.textLong.setText(building.getLongString());
+        holder.itemView.setTag(building);
+    }
     
     /**
      * Returns the number of Buildings in the adapter
