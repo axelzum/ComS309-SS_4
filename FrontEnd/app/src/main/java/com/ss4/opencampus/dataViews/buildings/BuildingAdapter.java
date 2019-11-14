@@ -54,10 +54,11 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
         Building building = list.get(position);
 
         holder.textName.setText(building.getBuildingName());
-        holder.textAbbrev.setText(building.getAbbrev());
+        //Clean up building list
+        /* holder.textAbbrev.setText(building.getAbbrev());
         holder.textAddress.setText(building.getAddress());
         holder.textLat.setText(building.getLatString());
-        holder.textLong.setText(building.getLongString());
+        holder.textLong.setText(building.getLongString()); */
         holder.itemView.setTag(building);
     }
     
@@ -81,10 +82,11 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
                 super(itemView);
 
                 textName = itemView.findViewById(R.id.building_list_buildingName);
-                textAbbrev = itemView.findViewById(R.id.building_list_abbreviation);
+                //Clean up building list
+                /* textAbbrev = itemView.findViewById(R.id.building_list_abbreviation);
                 textAddress = itemView.findViewById(R.id.building_list_address);
                 textLat = itemView.findViewById(R.id.building_list_latitude);
-                textLong = itemView.findViewById(R.id.building_list_longitude);
+                textLong = itemView.findViewById(R.id.building_list_longitude);*/
             }
         }
     }

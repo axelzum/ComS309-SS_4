@@ -78,7 +78,6 @@ public class USpotListActivity extends AppCompatActivity {
                     }
                 }));
 
-
         uspotList = new ArrayList<>();
         adapter = new USpotAdapter(getApplicationContext(),uspotList);
 

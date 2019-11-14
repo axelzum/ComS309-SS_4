@@ -18,7 +18,7 @@
         android:id="@+id/uspot_single_rating"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Latitude" />
+        tools:text="Rating" />
 
     <TextView
         android:id="@+id/uspot_single_latitude"
