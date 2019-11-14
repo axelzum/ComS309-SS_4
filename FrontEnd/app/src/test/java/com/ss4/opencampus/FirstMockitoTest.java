@@ -12,11 +12,15 @@ import com.ss4.opencampus.mapViews.MapsActivity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.plugins.MockMaker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -25,20 +29,23 @@ import static org.junit.Assert.assertTrue;
 public class FirstMockitoTest {
 
     MapsActivity mapsActivity;
-    BuildingAdapter buildingAdapter;
     Building b1, b2, b3;
     Marker m1, m2, m3;
     ArrayList<Marker> customMarkers;
+
     @Mock
     Context mMockContext;
+
+    @InjectMocks
+    BuildingAdapter buildingAdapter;
 
     @Before
     public void setupBuildings()
     {
-        b1 = new Building("Pearson Hall", "PH", "address", 20.0, 30.0);
-        b2 = new Building("Marston Hall", "MH", "address", 24.0, 32.0);
-        b3 = new Building("Parks Library", "PL", "address", 25.0, 35.0);
-        ArrayList<Building> buildingList = new ArrayList<>();
+        b1 = new Building("1", "Pearson Hall", "PH", "address", 20.0, 30.0);
+        b2 = new Building("2","Marston Hall", "MH", "address", 24.0, 32.0);
+        b3 = new Building("3","Parks Library", "PL", "address", 25.0, 35.0);
+        List<Building> buildingList = new ArrayList<>();
         buildingList.add(b1);
         buildingList.add(b2);
         buildingList.add(b3);

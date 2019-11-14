@@ -72,7 +72,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textName, textAbbrev, textAddress, textLat, textLong;
+            TextView textName/*, textAbbrev, textAddress, textLat, textLong*/;
     
             /**
              * Sets xml properties for each item in the Building list to be displayed in the adapter
