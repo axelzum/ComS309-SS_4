@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -22,10 +23,18 @@ public class WebSocketServer
   private static Map<Session, Integer> sessionStudentIDMap = new HashMap<>();
   private static Map<Integer, Session> studentIDSessionMap = new HashMap<>();
 
+  private static USpotRepository uSpotRepository;
+
   @Autowired
-  private USpotRepository uSpotRepository;
+  private USpotRepository temp;
 
   private final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
+
+  @PostConstruct
+  public void init()
+  {
+    WebSocketServer.uSpotRepository = temp;
+  }
 
   @OnOpen
   public void onOpen(Session session, @PathParam("studentID") Integer studentID)
@@ -40,7 +49,7 @@ public class WebSocketServer
   }
 
   @OnMessage
-  public void onMessage(Integer uSpotID)
+  public static void onMessage(Integer uSpotID)
   {
     //logger.info("In \"Message\" method. ID of USpot commented on: " + uSpotID);
     try

@@ -46,8 +46,7 @@ public class ReviewController
       USpot u = uSpotRepository.findById(uspotId).get();
       review.setuSpot(u);
       reviewRepository.save(review);
-      WebSocketServer wss = new WebSocketServer();
-      wss.onMessage(u.getUsID());
+      WebSocketServer.onMessage(u.getUsID());
     }
     catch (Exception e)
     {

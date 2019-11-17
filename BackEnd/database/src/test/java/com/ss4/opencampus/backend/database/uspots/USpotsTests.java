@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -117,6 +117,7 @@ public class USpotsTests
 
   /**
    * Tests to see if the Controller returns all USpots in the Database. Sorted by name alphabetically
+   * @throws IOException Could throw an error if getting picture doesn't work
    */
   @Test
   public void findAll() throws IOException
@@ -128,6 +129,35 @@ public class USpotsTests
     Iterable<USpot> u = uSpotController.getUSpotLists("all", null, null);
     assertEquals(uSpotRepository.findAll(new Sort(Sort.Direction.ASC, "usName")), u);
     Mockito.verify(uSpotRepository, Mockito.times(2)).findAll(new Sort(Sort.Direction.ASC, "usName"));
+  }
+
+  /**
+   * Test to see if we can find the correct USpot when searching with a BuildingID
+   * @throws IOException Could throw an error if getting picture doesn't work
+   */
+  @Test
+  public void findByBuilding() throws IOException
+  {
+    Mockito.when(uSpotRepository.findAllByBuildingIdAndFloor(b.getId(), "B")).thenReturn(Collections.singletonList(u2));
+    Iterable<USpot> u = uSpotController.getUSpotLists("building", "1", "B");
+    assertEquals(uSpotRepository.findAllByBuildingIdAndFloor(b.getId(), "B"), u);
+    Mockito.verify(uSpotRepository, Mockito.times(2)).findAllByBuildingIdAndFloor(b.getId(), "B");
+  }
+
+  /**
+   * Test to see if the USpots are updated properly on PATCH Requests
+   */
+  @Test
+  public void patchTest()
+  {
+    Map<String, Object> map = new HashMap<>();
+    map.put("usName", "testName");
+    Mockito.when(uSpotRepository.findById(u3.getUsID())).thenReturn(Optional.of(u3));
+    assertEquals(uSpotRepository.findById(u3.getUsID()).get().getUsName(), u3.getUsName());
+    uSpotController.patchUSpot(map, u3.getUsID());
+    assertEquals(u3.getUsName(), "testName");
+    assertEquals(uSpotRepository.findById(u3.getUsID()).get().getUsName(), "testName");
+    Mockito.verify(uSpotRepository, Mockito.times(3)).findById(u3.getUsID());
   }
 
 }
