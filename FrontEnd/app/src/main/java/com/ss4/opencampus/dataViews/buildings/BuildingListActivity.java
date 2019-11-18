@@ -37,6 +37,7 @@ public class BuildingListActivity extends AppCompatActivity {
     private RequestQueue queue;
     private List<Building> buildingList;
     private RecyclerView.Adapter adapter;
+    private static Building buildingToBeShown;
     
     /**
      * Creates the ListView page. Loads all Buildings from database
@@ -49,6 +50,31 @@ public class BuildingListActivity extends AppCompatActivity {
 
         RecyclerView bList;
         bList = findViewById(R.id.building_list);
+
+        bList.addOnItemTouchListener(new RecyclerItemClickListener(this, bList ,new RecyclerItemClickListener.OnItemClickListener() {
+            /**
+             * Left over code that is not used anymore. Switched to .selectedItem() for next sprint
+             * @param view view
+             * @param position position of Building
+             */
+                    @Override public void onItemClick(View view, int position) {
+                        view.getId();
+                        Building singleBuilding = (Building)view.getTag();
+                        System.out.println(singleBuilding.toString());
+                        Intent intent = new Intent(view.getContext(), SingleBuildingActivity.class);
+                        BuildingListActivity.setBuildingToBeShown(singleBuilding);
+                        startActivity(intent);
+                    }
+
+            /**
+             * Left over code that is not used anymore. Switched to .selectedItem() for next sprint
+             * @param view view
+             * @param position position of Building
+             */
+            @Override public void onLongItemClick(View view, int position) {
+                // do whatever
+            }
+        }));
 
         buildingList = new ArrayList<>();
         adapter = new BuildingAdapter(getApplicationContext(),buildingList);
@@ -82,6 +108,7 @@ public class BuildingListActivity extends AppCompatActivity {
                                 JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
                                 Building buildingInfo = new Building();             // Makes Building object from the JSONObject
 
+                                buildingInfo.setBuildingID(jsonObject.getString("id"));
                                 buildingInfo.setBuildingName(jsonObject.getString("buildingName"));
                                 buildingInfo.setAbbrev(jsonObject.getString("abbreviation"));
                                 buildingInfo.setAddress(jsonObject.getString("address"));
@@ -130,5 +157,23 @@ public class BuildingListActivity extends AppCompatActivity {
         if (queue != null) {
             queue.cancelAll(TAG);
         }
+    }
+
+    /**
+     * not used code. switching to .selectedItem() needs to be deleted
+     * @return a single Building to show in in SingleBuildingActivity
+     */
+    public static Building getBuildingToBeShown()
+    {
+        return buildingToBeShown;
+    }
+
+    /**
+     * not used code. switching to .selectedItem() needs to be deleted
+     * @param bld new Building to be shown in SingleBuildingActivity
+     */
+    public static void setBuildingToBeShown(Building bld)
+    {
+        buildingToBeShown = bld;
     }
 }

@@ -55,9 +55,11 @@ public class USpotAdapter extends RecyclerView.Adapter<USpotAdapter.ViewHolder> 
         USpot uSpot = list.get(position);
 
         holder.textName.setText(uSpot.getUsName());
-        holder.textRating.setText(uSpot.getRatingString());
+
+        //Clean USpot List
+      /*  holder.textRating.setText(uSpot.getRatingString());
         holder.textLat.setText(uSpot.getLatString());
-        holder.textLong.setText(uSpot.getLongString());
+        holder.textLong.setText(uSpot.getLongString());*/
         holder.textCategory.setText(uSpot.getUsCategory());
         holder.imagePicBytes.setImageBitmap(uSpot.setBitmap());
         holder.itemView.setTag(uSpot);
@@ -73,7 +75,7 @@ public class USpotAdapter extends RecyclerView.Adapter<USpotAdapter.ViewHolder> 
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textName, textRating, textLat, textLong, textCategory;
+        TextView textName, /* textRating, textLat, textLong,*/ textCategory;
         ImageView imagePicBytes;
     
         /**
@@ -84,9 +86,11 @@ public class USpotAdapter extends RecyclerView.Adapter<USpotAdapter.ViewHolder> 
             super(itemView);
 
             textName = itemView.findViewById(R.id.uspot_list_name);
-            textRating = itemView.findViewById(R.id.uspot_list_rating);
+
+            // Clean up USpot List
+            /*textRating = itemView.findViewById(R.id.uspot_list_rating);
             textLat = itemView.findViewById(R.id.uspot_list_latitude);
-            textLong = itemView.findViewById(R.id.uspot_list_longitude);
+            textLong = itemView.findViewById(R.id.uspot_list_longitude);*/
             textCategory = itemView.findViewById(R.id.uspot_list_category);
             imagePicBytes = itemView.findViewById(R.id.uspot_list_image);
         }

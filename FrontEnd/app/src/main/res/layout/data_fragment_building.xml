@@ -14,7 +14,7 @@
         android:textSize="18sp"
         tools:text="@string/tip_building_name" />
 
-    <TextView
+ <!--   <TextView
         android:id="@+id/building_list_abbreviation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,5 +36,5 @@
         android:id="@+id/building_list_longitude"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="@string/tip_longitude" />
+        tools:text="@string/tip_longitude" /> -->
 </LinearLayout>

@@ -1032,7 +1032,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * @param v
      *  View associated with the button that was pressed
      */
-    private void selectFloor(View v)
+    public void selectFloor(View v)
     {
         Marker building = markerShowingInfoWindow;
         int id = v.getId();
