@@ -28,6 +28,11 @@
     <string name="btn_building_list">Show Building List</string>
     <string name="btn_socket_test">Web Socket Test</string>
     <string name="btn_logout">Logout</string>
+    <plurals name="btn_messages">
+        <item quantity="zero">Messages</item>
+        <item quantity="one">1 Unread Message</item>
+        <item quantity="other">%d Unread Messages</item>
+    </plurals>
 
     <!-- Map Views Strings -->
     <!-- MapActivity -->
@@ -49,7 +54,7 @@
     <string name="tip_longitude">Longitude</string>
     <string name="show_uspot_list">Show USpot List</string>
 
-    <!-- WebSocket Test Strings -->
+    <!-- WebSocket Test Strings OBSOLETE-->
     <string name="title_socket">Web Socket Chat</string>
     <string name="txt_view_enter_msg">Enter Message Here</string>
     <string name="btn_send_msg">Send</string>

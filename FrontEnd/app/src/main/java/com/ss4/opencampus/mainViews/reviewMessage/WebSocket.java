@@ -1,4 +1,4 @@
-package com.ss4.opencampus.webSocket;
+package com.ss4.opencampus.mainViews.reviewMessage;
 
 import android.util.Log;
 import android.widget.Button;

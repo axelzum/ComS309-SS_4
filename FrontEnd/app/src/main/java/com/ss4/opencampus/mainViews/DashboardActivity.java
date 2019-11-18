@@ -11,8 +11,7 @@ import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.webSocket.SocketTestActivity;
-import com.ss4.opencampus.webSocket.WebSocket;
+import com.ss4.opencampus.mainViews.reviewMessage.WebSocket;
 
 /**
  * @author Axel Zumwalt
@@ -26,6 +25,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private Button btnViewBuildingList;
     private Button btnViewUspotList;
     private Button btnLogout;
+    private Button btnMessages;
 
     /**
      * OnCreate method for the DashboardActivity.

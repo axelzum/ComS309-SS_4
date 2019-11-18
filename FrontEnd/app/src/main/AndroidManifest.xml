@@ -28,13 +28,14 @@
         </activity>
         <activity android:name=".mainViews.DashboardActivity" />
         <activity android:name=".mainViews.CreateAccountActivity" />
+        <activity android:name=".mainViews.reviewMessage.ReviewMessageListActivity" />
         <activity android:name=".dataViews.buildings.BuildingListActivity" />
         <activity android:name=".dataViews.buildings.SingleBuildingActivity" />
-        <activity android:name=".mapViews.MapsActivity" />
         <activity android:name=".dataViews.uspots.USpotListActivity" />
         <activity android:name=".dataViews.uspots.SingleUSpotActivity" />
         <activity android:name=".dataViews.reviews.CreateReviewActivity" />
         <activity android:name=".dataViews.reviews.ReviewListActivity" />
+        <activity android:name=".mapViews.MapsActivity" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

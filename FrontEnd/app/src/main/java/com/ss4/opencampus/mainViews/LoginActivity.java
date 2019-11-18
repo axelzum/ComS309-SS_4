@@ -15,7 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.webSocket.WebSocket;
+import com.ss4.opencampus.mainViews.reviewMessage.WebSocket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
