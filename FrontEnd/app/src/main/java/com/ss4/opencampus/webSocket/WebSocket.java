@@ -1,19 +1,9 @@
-package com.ss4.opencampus.socketTest;
+package com.ss4.opencampus.webSocket;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.ss4.opencampus.R;
-import com.ss4.opencampus.mainViews.DashboardActivity;
-import com.ss4.opencampus.mainViews.PreferenceUtils;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;

@@ -35,7 +35,6 @@
         <activity android:name=".dataViews.uspots.SingleUSpotActivity" />
         <activity android:name=".dataViews.reviews.CreateReviewActivity" />
         <activity android:name=".dataViews.reviews.ReviewListActivity" />
-        <activity android:name=".socketTest.SocketTestActivity" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
