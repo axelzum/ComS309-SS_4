@@ -57,9 +57,7 @@ public class CustomMarkerDeleteDialog extends DialogFragment{
         mActionOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MapsActivity)getActivity()).deleteCustomMarkers(new boolean[] {
-                        checkDevice.isChecked(),
-                        checkAccount.isChecked()});
+                ((MapsActivity)getActivity()).deleteCustomMarkers();
                 getDialog().dismiss();
             }
         });
