@@ -318,7 +318,7 @@ public class FloorPlanController
     if (bytes != null)
     {
       fp.setFpImagePath(path + "building" + b.getId() + "floor" + fp.getLevel()+ ".png");
-      FileOutputStream fos = new FileOutputStream(fp.getFpImagePath() + ".png");
+      FileOutputStream fos = new FileOutputStream(fp.getFpImagePath());
       fos.write(bytes);
       fos.close();
     }
