@@ -11,7 +11,8 @@ import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.socketTest.SocketTestActivity;
+import com.ss4.opencampus.webSocket.SocketTestActivity;
+import com.ss4.opencampus.webSocket.WebSocket;
 
 /**
  * @author Axel Zumwalt
@@ -25,7 +26,6 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private Button btnViewBuildingList;
     private Button btnViewUspotList;
     private Button btnLogout;
-    private Button btnSocketTest;
 
     /**
      * OnCreate method for the DashboardActivity.
@@ -43,14 +43,12 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         btnViewBuildingList = (Button)findViewById(R.id.button_BuildingList);
         btnViewUspotList = (Button)findViewById(R.id.button_USpotList);
         btnLogout = (Button)findViewById(R.id.button_logout);
-        btnSocketTest = (Button)findViewById(R.id.button_socket);
 
         /* Init Listeners */
         btnViewMap.setOnClickListener(this);
         btnViewBuildingList.setOnClickListener(this);
         btnViewUspotList.setOnClickListener(this);
         btnLogout.setOnClickListener(this);
-        btnSocketTest.setOnClickListener(this);
     }
 
     /**
@@ -70,9 +68,6 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.button_USpotList:
                 viewUspotListActivity();
-                break;
-            case R.id.button_socket:
-                viewSocketActivity();
                 break;
             case R.id.button_logout:
                 logout();
@@ -107,19 +102,12 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     }
 
     /**
-     * Open Web SocketTestActivty
-     */
-    private void viewSocketActivity() {
-        Intent intent = new Intent(this, SocketTestActivity.class);
-        startActivity(intent);
-    }
-
-    /**
      * Sets the userId in Saved Preferences to -1 which signifies no user is logged in.
      * Open the LoginActivity
      */
     public void logout() {
         PreferenceUtils.saveUserId(-1, this);
+        WebSocket.closeWebSocket();
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }

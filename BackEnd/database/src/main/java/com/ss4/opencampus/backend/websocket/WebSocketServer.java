@@ -62,7 +62,7 @@ public class WebSocketServer
         throw new Exception("Not a valid USpot!");
       }
       Integer uSpotOwner = u.getStudentId();
-      String msg = "A new user just left a review on your USpot " + u.getUsName();
+      Integer msg = u.getUsID();
       //send msg to specific User
       displayMsg(msg, uSpotOwner);
     }
@@ -93,13 +93,13 @@ public class WebSocketServer
     logger.info("In error method");
   }
 
-  private static void displayMsg(String msg, Integer id)
+  private static void displayMsg(Integer msg, Integer id)
   {
     try
     {
       //if student is connected to websocket. Send them a message
       if(studentIDSessionMap.containsKey(id))
-        studentIDSessionMap.get(id).getBasicRemote().sendText(msg);
+        studentIDSessionMap.get(id).getBasicRemote().sendText(msg.toString());
       //Otherwise don't send anything
     }
     catch (IOException e)
