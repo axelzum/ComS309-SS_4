@@ -9,6 +9,8 @@ package com.ss4.opencampus.dataViews.buildings;
  
 public class Building {
 
+    public String buildingID;
+
     public String buildingName;
 
     public String abbrev;
@@ -33,14 +35,23 @@ public class Building {
      * @param latitude latitude of the Building
      * @param longitude longitude of the Building
      */
-    public Building(String buildingName, String abbrev, String address, Double latitude, Double longitude) {
+    public Building(String buildingID, String buildingName, String abbrev, String address, Double latitude, Double longitude) {
+        this.buildingID = buildingID;
         this.buildingName = buildingName;
         this.abbrev = abbrev;
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
     }
-    
+
+    /**
+     * Gets the ID of the Building
+     * @return Building ID
+     */
+    public String getBuildingID() {
+        return buildingID;
+    }
+
     /**
      * Gets the name of the Building
      * @return Building name
@@ -99,7 +110,15 @@ public class Building {
     public String getLongString() {
         return longitude.toString();
     }
-    
+
+    /**
+     * Sets the name of the Building to a new value
+     * @param buildingID new name for the Building
+     */
+    public void setBuildingID(String buildingID) {
+        this.buildingID = buildingID;
+    }
+
     /**
      * Sets the name of the Building to a new value
      * @param buildingName new name for the Building

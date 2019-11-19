@@ -51,14 +51,16 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-            Building building = list.get(position);
+        Building building = list.get(position);
 
-            holder.textName.setText(building.getBuildingName());
-            holder.textAbbrev.setText(building.getAbbrev());
-            holder.textAddress.setText(building.getAddress());
-            holder.textLat.setText(building.getLatString());
-            holder.textLong.setText(building.getLongString());
-        }
+        holder.textName.setText(building.getBuildingName());
+        //Clean up building list
+        /* holder.textAbbrev.setText(building.getAbbrev());
+        holder.textAddress.setText(building.getAddress());
+        holder.textLat.setText(building.getLatString());
+        holder.textLong.setText(building.getLongString()); */
+        holder.itemView.setTag(building);
+    }
     
     /**
      * Returns the number of Buildings in the adapter
@@ -70,7 +72,7 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textName, textAbbrev, textAddress, textLat, textLong;
+            TextView textName/*, textAbbrev, textAddress, textLat, textLong*/;
     
             /**
              * Sets xml properties for each item in the Building list to be displayed in the adapter
@@ -80,10 +82,11 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
                 super(itemView);
 
                 textName = itemView.findViewById(R.id.building_list_buildingName);
-                textAbbrev = itemView.findViewById(R.id.building_list_abbreviation);
+                //Clean up building list
+                /* textAbbrev = itemView.findViewById(R.id.building_list_abbreviation);
                 textAddress = itemView.findViewById(R.id.building_list_address);
                 textLat = itemView.findViewById(R.id.building_list_latitude);
-                textLong = itemView.findViewById(R.id.building_list_longitude);
+                textLong = itemView.findViewById(R.id.building_list_longitude);*/
             }
         }
     }

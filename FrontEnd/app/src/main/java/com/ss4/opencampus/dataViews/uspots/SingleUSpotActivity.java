@@ -4,23 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Base64;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import com.ss4.opencampus.dataViews.reviews.CreateReviewActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.ss4.opencampus.dataViews.reviews.ReviewListActivity;
 
 import com.ss4.opencampus.R;
 
@@ -33,8 +24,8 @@ import com.ss4.opencampus.R;
 public class SingleUSpotActivity extends AppCompatActivity {
 
     public static final String TAG = "tag";
-    private RequestQueue queue;
     private USpot uspotItem;
+
     private TextView usName;
     private TextView usRating;
     private TextView usLatit;
@@ -48,48 +39,10 @@ public class SingleUSpotActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) { // Start when page opens
-        //Bundle b = getIntent().getExtras();
-        //int value = -1; // or other values
-        //if(b != null)
-        //    value = b.getInt("usID");
-        //final int usIDVal = value;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.data_activity_single_uspot);
 
         uspotItem = new USpot();
-
-//        queue = Volley.newRequestQueue(this);
-//        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/";
-//        url.concat("" + usIDVal);
-//
-//        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-//                new Response.Listener<JSONObject>() {    // Reads in JSON data for the uspot from the server
-//                    @Override
-//                    public void onResponse(JSONObject response) {
-//                        try {
-//                                JSONObject jsonObject = response;
-//                                uspotItem.setUsID(jsonObject.getInt("usID"));
-//                                uspotItem.setUsName(jsonObject.getString("usName"));
-//                                uspotItem.setUsRating(jsonObject.getDouble("usRating"));
-//                                uspotItem.setUsLatit(jsonObject.getDouble("usLatit"));
-//                                uspotItem.setUsLongit(jsonObject.getDouble("usLongit"));
-//                                uspotItem.setUspotCategory(jsonObject.getString("usCategory"));
-//                                uspotItem.setPicBytes(Base64.decode(jsonObject.getString("picBytes"), Base64.DEFAULT));
-//
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                error.printStackTrace();
-//            }
-//        });
-//        //Set the tag on the request
-//        jsonRequest.setTag(TAG);
-//        // Add the request to the RequestQueue.
-//        queue.add(jsonRequest);
 
         usName = findViewById(R.id.uspot_single_name);
         usRating = findViewById(R.id.uspot_single_rating);
@@ -98,8 +51,6 @@ public class SingleUSpotActivity extends AppCompatActivity {
         usCategories = findViewById(R.id.uspot_single_category);
         usPicBytes = findViewById(R.id.uspot_single_image);
 
-        //int studentId = PreferenceUtils.getUserId(this);
-
         uspotItem = USpotListActivity.getUspotToBeShown();
         usName.setText(uspotItem.getUsName());
         usRating.setText(uspotItem.getRatingString());
@@ -107,8 +58,6 @@ public class SingleUSpotActivity extends AppCompatActivity {
         usLongit.setText(uspotItem.getLongString());
         usCategories.setText(uspotItem.getUsCategory());
         usPicBytes.setImageBitmap(uspotItem.setBitmap());
-
-
     }
     
     /**
@@ -130,14 +79,27 @@ public class SingleUSpotActivity extends AppCompatActivity {
         Intent intent = new Intent(this, USpotListActivity.class);
         startActivity(intent);
     }
-    
+
     /**
-     * Stops displaying the page
+     * Switches app to the list of all reviews for a given USpot
+     * @param view given view
      */
-    public void onStop () {
-        super.onStop();
-        if (queue != null) {
-            queue.cancelAll(TAG);
-        }
+    public void viewReviewListActivity(View view)
+    {
+        Intent intent = new Intent(this, ReviewListActivity.class);
+        uspotItem = USpotListActivity.getUspotToBeShown();
+        intent.putExtra("USpotID", uspotItem.getUsID());
+        startActivity(intent);
+    }
+
+    /**
+     * Switches app to the list of all reviews for a given USpot
+     * @param view given view
+     */
+    public void createReview(View view)
+    {
+        Intent intent = new Intent(this, CreateReviewActivity.class);
+        intent.putExtra("USpotID", uspotItem.getUsID());
+        startActivity(intent);
     }
 }
