@@ -73,6 +73,7 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
             public void onClick(View v) {
                 CustomMarkerDeleteDialog cmDelete = new CustomMarkerDeleteDialog();
                 cmDelete.show(getFragmentManager(), "CustomMarkerDeleteDialog");
+                getDialog().dismiss();
             }
         });
 

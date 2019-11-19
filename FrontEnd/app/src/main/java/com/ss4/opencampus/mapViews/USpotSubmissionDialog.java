@@ -6,7 +6,9 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,11 +33,17 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.PreferenceUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -76,7 +84,7 @@ public class USpotSubmissionDialog extends DialogFragment{
     /**
      * The ImageView which gets filled with the new photo when a user takes a photo.
      */
-    private ImageView imgView;
+    private ImageView imgView, imgViewDefaultPhoto;
 
     /**
      * Image URI for the photo that the user takes.
@@ -103,6 +111,13 @@ public class USpotSubmissionDialog extends DialogFragment{
      */
     private static final int IMAGE_CAPTURE_CODE = 1001;
 
+    boolean cameraOpened=false;
+
+    /**
+     * Building ID corresponding to the building that the USpot is in. -1 if not in a building.
+     */
+    private int buildingId;
+
     /**
      * Method is called when the fragment is created.
      * @param inflater
@@ -127,7 +142,8 @@ public class USpotSubmissionDialog extends DialogFragment{
         rating = view.findViewById(R.id.ratingbar);
         photoButton = view.findViewById(R.id.photo_button);
         imgView = view.findViewById(R.id.image_view);
-
+        imgViewDefaultPhoto = view.findViewById(R.id.image_view_default);
+        buildingId = getBuildingId(((MapsActivity)getActivity()).getMarkerShowingInfoWindow());
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.category_array, R.layout.support_simple_spinner_dropdown_item);
         category.setAdapter(adapter);
 
@@ -167,13 +183,31 @@ public class USpotSubmissionDialog extends DialogFragment{
                 double lat = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow().getPosition().latitude;
                 double lng = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow().getPosition().longitude;
 
-                Bitmap bitmap = ((BitmapDrawable) imgView.getDrawable()).getBitmap();
+                Bitmap bitmap = null;
+
+                if(cameraOpened)
+                    bitmap = ((BitmapDrawable) imgView.getDrawable()).getBitmap();
+                else
+                {
+                    try {
+                        Drawable drawable = imgViewDefaultPhoto.getDrawable();
+                        bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bitmap);
+                        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                        drawable.draw(canvas);
+                    } catch (OutOfMemoryError e) {
+                        // Handle the error
+                    }
+                    //bitmap = ((BitmapDrawable) imgViewDefaultPhoto.getDrawable()).getBitmap();
+                }
+
+
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                 byte[] imageInByte = baos.toByteArray();
                 String byteString = "";
                 byteString = Base64.encodeToString(imageInByte, Base64.DEFAULT);
-                System.out.println(byteString);
+
                 JSONObject newUSpot = new JSONObject();
                 try {
                     newUSpot.put("usName", title.getText().toString());
@@ -183,13 +217,17 @@ public class USpotSubmissionDialog extends DialogFragment{
                     newUSpot.put("usCategory", category.getSelectedItem().toString());
                     newUSpot.put("studentId", PreferenceUtils.getUserId(getActivity()));
                     newUSpot.put("picBytes", byteString);
+                    newUSpot.put("studentId", PreferenceUtils.getUserId(getActivity()));
+
+                    boolean floorplan = ((MapsActivity)getActivity()).getFloorplanVisible();
+                    if(floorplan)
+                    {
+                        newUSpot.put("buildingId", ((MapsActivity)getActivity()).getCurrentBuildingId());
+                        newUSpot.put("floor", ((MapsActivity)getActivity()).getCurrentFloorIndex());
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-                /*
-                picBytes: "lkdfjlkdsfjfdslkj"
-                 */
 
                 queue = Volley.newRequestQueue(getActivity());
                 String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/add";
@@ -228,6 +266,7 @@ public class USpotSubmissionDialog extends DialogFragment{
      */
     private void openCamera()
     {
+        cameraOpened=true;
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "USpot Photo");
         values.put(MediaStore.Images.Media.DESCRIPTION, "USpot photo taken from camera");
@@ -267,5 +306,50 @@ public class USpotSubmissionDialog extends DialogFragment{
         {
             imgView.setImageURI(photo_uri);
         }
+    }
+
+    /**
+     * Used to access a buildingId from the database, using a Marker's name.
+     * @param building
+     *  The marker for the building.
+     * @return
+     *  The id from the database corresponding to the building.
+     */
+    public int getBuildingId(Marker building)
+    {
+        if(!building.getTag().equals("Building"))
+            return -1;
+
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/nameStartsWith?param1=" + building.getTitle();
+
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                                JSONObject building = response.getJSONObject(0);
+                            ((MapsActivity)getActivity()).setCurrentBuildingId(building.getInt("id"));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+                ((MapsActivity)getActivity()).setCurrentBuildingId(-1);
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+
+        return ((MapsActivity)getActivity()).getCurrentBuildingId();
     }
 }

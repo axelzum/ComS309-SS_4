@@ -29,6 +29,74 @@
         android:text="@string/btn_place_marker" />
 
     <Button
+        android:id="@+id/loadRouteButton"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/design_default_color_primary_dark"
+        android:padding="8dp"
+        android:text="Load route" />
+
+    <Button
+        android:id="@+id/routeStartButton"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/design_default_color_primary_dark"
+        android:padding="8dp"
+        android:text="Place route start" />
+
+    <Button
+        android:id="@+id/routeEndButton"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="195dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/design_default_color_primary_dark"
+        android:padding="8dp"
+        android:visibility="gone"
+        android:text="Place route end" />
+
+    <Button
+        android:id="@+id/hideRouteButton"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="270dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/design_default_color_primary_dark"
+        android:padding="8dp"
+        android:visibility="gone"
+        android:text="Cancel" />
+
+    <Button
+        android:id="@+id/saveRouteButton"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="320dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/design_default_color_primary_dark"
+        android:padding="8dp"
+        android:visibility="gone"
+        android:text="Save Route" />
+
+    <Button
         android:id="@+id/filterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
