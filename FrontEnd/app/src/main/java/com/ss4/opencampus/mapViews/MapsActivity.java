@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import static android.view.View.VISIBLE;
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
 
@@ -165,6 +166,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * True when a floorplan view is visible.
      */
     private boolean floorplanVisible;
+
+    /**
+     * Number of floors in current building
+     */
+    private int numFloors;
 
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
@@ -727,14 +733,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLngBounds floorplanBounds = new LatLngBounds(bottomLeft, topRight);
         mMap.setLatLngBoundsForCameraTarget(floorplanBounds);
         mMap.setMapType(MAP_TYPE_NONE);
-        floorplanButton.setVisibility(View.VISIBLE);
+        floorplanButton.setVisibility(VISIBLE);
 
         floorImages = new ArrayList<>();
+        setCurrentBuildingId();
+        System.out.println(currentBuildingId);
+        setNumFloors();
+        System.out.println(numFloors);
+        updateFloorButtonText();
+        System.out.println("update text complete");
+        for(int i = 0; i<numFloors; i++)
+        {
+            System.out.println("Setting " + i + " to visible.");
+            floorButtons.get(i).setVisibility(VISIBLE);
+        }
+
+
+
         // TODO: Load all floorplans for this building
-        // Load all 2-character floors
-        // Show buttons for floors
     }
 
+    /**
+     * Gets the title for a specific floor, ie B2, B1, 1, 2, 3
+     */
+    private void updateFloorButtonText()
+    {
+        // Get request with markerShowingInfoWindow
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/" + currentBuildingId + "/floorPlans/all";
+
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject building = response.getJSONObject(0);
+                                floorButtons.get(i).setText(building.getString("level"));
+                                floorButtons.get(i).setVisibility(VISIBLE);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+    }
     /**
      * Hides the floorplan, returning to the standard map screen.
      * @param view
@@ -858,6 +913,88 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //            default:
 //                break;
 //        }
+    }
+
+    /**
+     * Loads floorCnt for currentBuildingId
+     */
+    private void setNumFloors()
+    {
+        if(currentBuildingId == 0)
+            return;
+
+        // Basic get request
+        //queue = Volley.newRequestQueue(this);
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/id/" + currentBuildingId;
+
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                                JSONObject building = response.getJSONObject(0);
+                                numFloors = building.getInt("floorCnt");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+    }
+
+
+
+    private void showFloor(int floor)
+    {
+        if(!floorplanVisible)
+            return;
+
+        // Show floorplan
+        // Get request, display image
+    }
+
+    private void setCurrentBuildingId()
+    {
+        // Get request with markerShowingInfoWindow
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/name?param1=" + markerShowingInfoWindow.getTitle().replace(" ", "%20");
+        System.out.println(markerShowingInfoWindow.getTitle().replace(" ","%20"));
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            JSONObject building = response.getJSONObject(0);
+                            currentBuildingId = building.getInt("id");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
 
 }
