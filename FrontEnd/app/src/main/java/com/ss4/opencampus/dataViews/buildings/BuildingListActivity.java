@@ -108,7 +108,7 @@ public class BuildingListActivity extends AppCompatActivity {
                                 JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
                                 Building buildingInfo = new Building();             // Makes Building object from the JSONObject
 
-                                buildingInfo.setBuildingID(jsonObject.getString("id"));
+                                buildingInfo.setBuildingID(jsonObject.getInt("id"));
                                 buildingInfo.setBuildingName(jsonObject.getString("buildingName"));
                                 buildingInfo.setAbbrev(jsonObject.getString("abbreviation"));
                                 buildingInfo.setAddress(jsonObject.getString("address"));
