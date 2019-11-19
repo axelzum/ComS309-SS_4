@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
+import com.ss4.opencampus.dataViews.floorPlans.FloorPlanListActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import com.ss4.opencampus.R;
@@ -71,6 +72,18 @@ public class SingleBuildingActivity extends AppCompatActivity {
     public void viewBuildingListActivity(View view)
     {
         Intent intent = new Intent(this, BuildingListActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Switches app to the list of all floor plans for a given Building
+     * @param view given view
+     */
+    public void viewFloorPlanListActivity(View view)
+    {
+        Intent intent = new Intent(this, FloorPlanListActivity.class);
+        buildingItem = BuildingListActivity.getBuildingToBeShown();
+        intent.putExtra("BuildingID", buildingItem.getBuildingID());
         startActivity(intent);
     }
 }
