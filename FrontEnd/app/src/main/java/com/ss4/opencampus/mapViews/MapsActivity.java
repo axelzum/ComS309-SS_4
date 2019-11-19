@@ -1170,4 +1170,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         queue.add(jsonRequest);
     }
 
+    public int getCurrentFloorIndex()
+    {
+        return currentFloorIndex;
+    }
+
 }

@@ -6,7 +6,9 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -82,7 +84,7 @@ public class USpotSubmissionDialog extends DialogFragment{
     /**
      * The ImageView which gets filled with the new photo when a user takes a photo.
      */
-    private ImageView imgView;
+    private ImageView imgView, imgViewDefaultPhoto;
 
     /**
      * Image URI for the photo that the user takes.
@@ -108,6 +110,8 @@ public class USpotSubmissionDialog extends DialogFragment{
      * Permission code for requesting camera permission.
      */
     private static final int IMAGE_CAPTURE_CODE = 1001;
+
+    boolean cameraOpened=false;
 
     /**
      * Building ID corresponding to the building that the USpot is in. -1 if not in a building.
@@ -138,6 +142,7 @@ public class USpotSubmissionDialog extends DialogFragment{
         rating = view.findViewById(R.id.ratingbar);
         photoButton = view.findViewById(R.id.photo_button);
         imgView = view.findViewById(R.id.image_view);
+        imgViewDefaultPhoto = view.findViewById(R.id.image_view_default);
         buildingId = getBuildingId(((MapsActivity)getActivity()).getMarkerShowingInfoWindow());
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.category_array, R.layout.support_simple_spinner_dropdown_item);
         category.setAdapter(adapter);
@@ -178,13 +183,31 @@ public class USpotSubmissionDialog extends DialogFragment{
                 double lat = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow().getPosition().latitude;
                 double lng = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow().getPosition().longitude;
 
-                Bitmap bitmap = ((BitmapDrawable) imgView.getDrawable()).getBitmap();
+                Bitmap bitmap = null;
+
+                if(cameraOpened)
+                    bitmap = ((BitmapDrawable) imgView.getDrawable()).getBitmap();
+                else
+                {
+                    try {
+                        Drawable drawable = imgViewDefaultPhoto.getDrawable();
+                        bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+                        Canvas canvas = new Canvas(bitmap);
+                        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                        drawable.draw(canvas);
+                    } catch (OutOfMemoryError e) {
+                        // Handle the error
+                    }
+                    //bitmap = ((BitmapDrawable) imgViewDefaultPhoto.getDrawable()).getBitmap();
+                }
+
+
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                 byte[] imageInByte = baos.toByteArray();
                 String byteString = "";
                 byteString = Base64.encodeToString(imageInByte, Base64.DEFAULT);
-                System.out.println(byteString);
+
                 JSONObject newUSpot = new JSONObject();
                 try {
                     newUSpot.put("usName", title.getText().toString());
@@ -194,8 +217,13 @@ public class USpotSubmissionDialog extends DialogFragment{
                     newUSpot.put("usCategory", category.getSelectedItem().toString());
                     newUSpot.put("picBytes", byteString);
                     newUSpot.put("studentId", PreferenceUtils.getUserId(getActivity()));
-                    if(buildingId != -1 && ((MapsActivity)getActivity()).getFloorplanVisible())
-                        newUSpot.put("buildingId", buildingId);
+
+                    boolean floorplan = ((MapsActivity)getActivity()).getFloorplanVisible();
+                    if(floorplan)
+                    {
+                        newUSpot.put("buildingId", ((MapsActivity)getActivity()).getCurrentBuildingId());
+                        newUSpot.put("floor", ((MapsActivity)getActivity()).getCurrentFloorIndex());
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -237,6 +265,7 @@ public class USpotSubmissionDialog extends DialogFragment{
      */
     private void openCamera()
     {
+        cameraOpened=true;
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "USpot Photo");
         values.put(MediaStore.Images.Media.DESCRIPTION, "USpot photo taken from camera");
