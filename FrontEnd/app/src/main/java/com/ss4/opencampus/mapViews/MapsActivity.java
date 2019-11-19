@@ -76,6 +76,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Marker> uspotMarkers = new ArrayList<>();
 
     /**
+     * A list of USpot markers which are to be displayed on the map. Temp Uspots are for USpots on a
+     * specific floor in a floorplan which will be unloaded when you switch to a different floor.
+     */
+    private ArrayList<Marker> tempUspotMarkers = new ArrayList<>();
+
+    /**
      * A list of building markers which are to be displayed on the map.
      */
     private ArrayList<Marker> buildingMarkers = new ArrayList<>();
@@ -646,7 +652,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 uspotInfo.setUsLongit(uspot.getDouble("usLongit"));
                                 uspotInfo.setUspotCategory(uspot.getString("usCategory"));
                                 uspotInfo.setPicBytes(Base64.decode(uspot.getString("picBytes"), Base64.DEFAULT));
-                                
+
                                 if(uspot.isNull("buildingId")) {
                                     Marker currentUspot = mMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
@@ -863,6 +869,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             m.setVisible(true);
 
         currentFloorIndex = 0;
+        clearBuildingUspots();
     }
 
     /**
@@ -911,6 +918,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             case R.id.button_floor1:
                 currentFloorIndex = 0;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(0), 0, floorImages.get(0).length)))
@@ -919,6 +928,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor2:
                 currentFloorIndex = 1;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(1), 0, floorImages.get(1).length)))
@@ -926,6 +937,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor3:
                 currentFloorIndex = 2;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(2), 0, floorImages.get(2).length)))
@@ -933,6 +946,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor4:
                 currentFloorIndex = 3;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(3), 0, floorImages.get(3).length)))
@@ -940,6 +955,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor5:
                 currentFloorIndex = 4;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(4), 0, floorImages.get(4).length)))
@@ -947,6 +964,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor6:
                 currentFloorIndex = 5;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(5), 0, floorImages.get(5).length)))
@@ -954,6 +973,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor7:
                 currentFloorIndex = 6;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(6), 0, floorImages.get(6).length)))
@@ -961,6 +982,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor8:
                 currentFloorIndex = 7;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(7), 0, floorImages.get(7).length)))
@@ -968,6 +991,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor9:
                 currentFloorIndex = 8;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(8), 0, floorImages.get(8).length)))
@@ -975,6 +1000,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor10:
                 currentFloorIndex = 9;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(9), 0, floorImages.get(9).length)))
@@ -982,6 +1009,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor11:
                 currentFloorIndex = 10;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(10), 0, floorImages.get(10).length)))
@@ -989,6 +1018,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
             case R.id.button_floor12:
                 currentFloorIndex = 11;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
                 floorplan.remove();
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(11), 0, floorImages.get(11).length)))
@@ -1014,24 +1045,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject uspot = response.getJSONObject(i);
 
-                                USpot uspotInfo = new USpot();
+                                if((!uspot.isNull("buildingId") && uspot.getInt("buildingId")==currentBuildingId && uspot.getInt("floor")==currentFloorIndex))
+                                {
+                                    Marker currentUspot = mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
+                                            .title(uspot.getString("usName"))
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
+                                            .draggable(false));
+                                    currentUspot.setTag("USpot");
+                                    tempUspotMarkers.add(currentUspot);
+                                }
 
-                                uspotInfo.setUsID(uspot.getInt("usID"));
-                                uspotInfo.setUsName(uspot.getString("usName"));
-                                uspotInfo.setUsRating(uspot.getDouble("usRating"));
-                                uspotInfo.setUsLatit(uspot.getDouble("usLatit"));
-                                uspotInfo.setUsLongit(uspot.getDouble("usLongit"));
-                                uspotInfo.setUspotCategory(uspot.getString("usCategory"));
-                                uspotInfo.setPicBytes(Base64.decode(uspot.getString("picBytes"), Base64.DEFAULT));
-
-                                Marker currentUspot = mMap.addMarker(new MarkerOptions()
-                                        .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
-                                        .title(uspot.getString("usName"))
-                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
-                                        .draggable(false));
-                                currentUspot.setTag("USpot");
-                                if(uspot.getString("buildingId")==null)
-                                    uspotMarkers.add(currentUspot);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -1050,6 +1074,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Add the request to the RequestQueue.
         queue.add(jsonRequest);
+    }
+
+    public void clearBuildingUspots()
+    {
+        for(Marker m:tempUspotMarkers)
+        {
+            m.setVisible(false);
+            m.remove();
+        }
+        tempUspotMarkers.clear();
+
     }
 
     /**
