@@ -1,11 +1,16 @@
 package com.ss4.opencampus.mapViews;
 
+import com.android.volley.toolbox.JsonRequest;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.dataViews.floorPlans.FloorPlan;
 import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 import com.ss4.opencampus.mainViews.PreferenceUtils;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -26,6 +31,8 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
 
@@ -38,6 +45,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.ss4.opencampus.mapViews.routes.FetchURL;
+import com.ss4.opencampus.mapViews.routes.TaskLoadedCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,8 +61,9 @@ import java.util.Map;
  *  This class is responsible for connecting to the google maps API and displaying the map, as well as
  *  managing all the markers associated with the map.
  */
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback,
         GoogleMap.OnMarkerClickListener {
+
 
     /**
      *  The map that is being displayed to the user
@@ -69,6 +79,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * A list of USpot markers which are to be displayed on the map.
      */
     private ArrayList<Marker> uspotMarkers = new ArrayList<>();
+
+    /**
+     * A list of USpot markers which are to be displayed on the map. Temp Uspots are for USpots on a
+     * specific floor in a floorplan which will be unloaded when you switch to a different floor.
+     */
+    private ArrayList<Marker> tempUspotMarkers = new ArrayList<>();
 
     /**
      * A list of building markers which are to be displayed on the map.
@@ -154,7 +170,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**
      *  Resource IDs for floorplans (Used for testing purposes, since we're not yet loading floorplans from database).
      */
-    private ArrayList<Integer> floorImages;
+    private ArrayList<byte[]> floorImages;
+
+    /**
+     * Id for the building currently showing a floorplan.
+     */
+    private int currentBuildingId;
+
+    /**
+     * True when a floorplan view is visible.
+     */
+    private boolean floorplanVisible;
+
+    /**
+     * Number of floors in current building
+     */
+    private int numFloors;
+
+    /**
+     *
+     */
+    private int currentFloorIndex = 0;
+
+    private ArrayList<USpot> usObjList;
+    private ArrayList<USpot> tempUsObjList;
+
+    private Marker routeStart, routeEnd;
+
+    private Polyline currentPolyline;
+
+    private Button routeStartButton, loadRouteButton;
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
      * @param savedInstanceState
@@ -208,6 +253,180 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        routeStartButton = findViewById(R.id.routeStartButton);
+        final Button routeEndButton = findViewById(R.id.routeEndButton);
+        final Button hideRouteButton = findViewById(R.id.hideRouteButton);
+        final Button saveRouteButton = findViewById(R.id.saveRouteButton);
+        loadRouteButton = findViewById(R.id.loadRouteButton);
+        loadRouteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/routes/all";
+                // Request a JSONObject response from the provided URL.
+                JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                        JSONObject route = response.getJSONObject(0);
+                                        routeStart = mMap.addMarker(new MarkerOptions()
+                                                .position(new LatLng(route.getDouble("originLat"), route.getDouble("originLng")))
+                                                .title("Loaded Route Start")
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
+                                                .draggable(false));
+
+                                        routeEnd = mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(route.getDouble("destLat"), route.getDouble("destLng")))
+                                            .title("Loaded Route Start")
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
+                                            .draggable(false));
+
+                                        String routeURL = getUrl(routeStart.getPosition(), routeEnd.getPosition(), "walking");
+                                        new FetchURL(MapsActivity.this).execute(routeURL);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        System.out.println("failed");
+                    }
+                });
+
+                //Set the tag on the request
+                jsonRequest.setTag(TAG);
+
+                // Add the request to the RequestQueue.
+                queue.add(jsonRequest);
+            }
+        });
+
+        saveRouteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                if(routeStart != null && routeEnd != null) {
+                    //TODO: Save route to database
+                    String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/routes";
+
+                    JSONObject newRoute = new JSONObject();
+                    try {
+                        newRoute.put("rtName", "default route name");
+                        newRoute.put("originLat", routeStart.getPosition().latitude);
+                        newRoute.put("originLng", routeStart.getPosition().longitude);
+                        newRoute.put("destLat", routeEnd.getPosition().latitude);
+                        newRoute.put("destLng", routeEnd.getPosition().longitude);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newRoute, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            HashMap<String, String> headers = new HashMap<String, String>();
+                            headers.put("Content-Type", "application/json; charset=utf-8");
+                            return headers;
+                        }
+                    };
+                    jsonRequest.setTag(TAG);
+                    queue.add(jsonRequest);
+                }
+            }
+        });
+
+        routeStartButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                if(routeStart!=null)
+                {
+                    routeStart.setVisible(false);
+                    routeStart.remove();
+                }
+
+
+
+                Marker m = mMap.addMarker(new MarkerOptions()
+                        .position(mMap.getCameraPosition().target)
+                        .title("My Route Start")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
+                        .draggable(false));
+                m.setTag("Route");
+                routeStart=m;
+                routeEndButton.setVisibility(VISIBLE);
+                hideRouteButton.setVisibility(VISIBLE);
+
+                if(routeEnd!=null)
+                {
+                    String routeURL = getUrl(routeStart.getPosition(), routeEnd.getPosition(), "walking");
+                    new FetchURL(MapsActivity.this).execute(routeURL);
+                }
+            }
+        });
+
+
+        routeEndButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                if(routeEnd!=null)
+                {
+                    routeEnd.setVisible(false);
+                    routeEnd.remove();
+                }
+
+                Marker m = mMap.addMarker(new MarkerOptions()
+                        .position(mMap.getCameraPosition().target)
+                        .title("My Route End")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
+                        .draggable(false));
+                m.setTag("Route");
+                routeEnd=m;
+
+                saveRouteButton.setVisibility(VISIBLE);
+                String routeURL = getUrl(routeStart.getPosition(), routeEnd.getPosition(), "walking");
+                new FetchURL(MapsActivity.this).execute(routeURL);
+            }
+        });
+
+        hideRouteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                if(currentPolyline!=null)
+                {
+                    currentPolyline.remove();
+                    currentPolyline=null;
+                }
+
+                if(routeStart!=null)
+                {
+                    routeStart.remove();
+                    routeStart=null;
+                }
+
+                if(routeEnd!=null)
+                {
+                    routeEnd.remove();
+                    routeEnd=null;
+                }
+
+                saveRouteButton.setVisibility(GONE);
+                routeEndButton.setVisibility(GONE);
+                hideRouteButton.setVisibility(GONE);
+            }
+        });
+
+
         // Sets up filter button. Filters are used to switch which types of markers are being shown on the map (Buildings, Custom Markers, USpots).
         final Button filterButton = findViewById(R.id.filterButton);
         filterButton.setOnClickListener(new View.OnClickListener() {
@@ -219,6 +438,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 dialog.show(getFragmentManager(), "FragmentDialog");
             }
         });
+
+        usObjList = new ArrayList<>();
+        tempUsObjList = new ArrayList<>();
 
         queue = Volley.newRequestQueue(this);
     }
@@ -258,6 +480,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public Marker getMarkerShowingInfoWindow()
     {
         return markerShowingInfoWindow;
+    }
+
+    /**
+     * Gets a URL to use with the routes API
+     * @param origin
+     * @param dest
+     * @param directionMode
+     * @return
+     */
+    private String getUrl(LatLng origin, LatLng dest, String directionMode) {
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=" + directionMode;
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_maps_key);
+        return url;
     }
 
     /**
@@ -445,7 +690,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void deleteCustomMarkers()
     {
             // Remove marker from database.
-            String getByNameurl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + Integer.toString(studentId) + "/customMarkers/name?param=" + markerShowingInfoWindow.getTitle();
+            String getByNameurl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers/name?param=" + markerShowingInfoWindow.getTitle();
 
             // Request a JSONObject response from the provided URL.
             JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, getByNameurl, null,
@@ -456,7 +701,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 for (int i = 0; i < response.length(); i++) {
                                     JSONObject cm = response.getJSONObject(i);
                                     int cmID = cm.getInt("cmID");
-                                    String deleteUrl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/"+ Integer.toString(studentId) +"/customMarkers/delete/" + cmID;
+                                    String deleteUrl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/"+ studentId +"/customMarkers/delete/" + cmID;
 
                                     StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, deleteUrl,  new Response.Listener<String>() {
                                         @Override
@@ -621,13 +866,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 uspotInfo.setUspotCategory(uspot.getString("usCategory"));
                                 uspotInfo.setPicBytes(Base64.decode(uspot.getString("picBytes"), Base64.DEFAULT));
 
-                                Marker currentUspot = mMap.addMarker(new MarkerOptions()
-                                        .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
-                                        .title(uspot.getString("usName"))
-                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
-                                        .draggable(false));
-                                currentUspot.setTag("USpot");
-                                uspotMarkers.add(currentUspot);
+                                if(uspot.isNull("buildingId")) {
+                                    Marker currentUspot = mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
+                                            .title(uspot.getString("usName"))
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
+                                            .draggable(false));
+                                    currentUspot.setTag("USpot");
+
+                                    uspotMarkers.add(currentUspot);
+                                    usObjList.add(uspotInfo);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -698,6 +947,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void showFloorplan()
     {
+        routeStartButton.setVisibility(GONE);
+        loadRouteButton.setVisibility(GONE);
+        floorplanVisible = true;
         Marker building = markerShowingInfoWindow;
 
         background = mMap.addGroundOverlay(new GroundOverlayOptions()
@@ -715,14 +967,98 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLngBounds floorplanBounds = new LatLngBounds(bottomLeft, topRight);
         mMap.setLatLngBoundsForCameraTarget(floorplanBounds);
         mMap.setMapType(MAP_TYPE_NONE);
-        floorplanButton.setVisibility(View.VISIBLE);
+        floorplanButton.setVisibility(VISIBLE);
 
         floorImages = new ArrayList<>();
-        // TODO: Load all floorplans for this building
-        // Load all 2-character floors
-        // Show buttons for floors
+        setCurrentBuildingId(); //TODO: Bugged
+        currentBuildingId = 147; //Defaulted to Pearson.
+
+        for (Marker m : buildingMarkers)
+            m.setVisible(false);
+
+        for (Marker m : uspotMarkers)
+            m.setVisible(false);
+
+        for (Marker m : customMarkers)
+            m.setVisible(false);
+
+        loadFloorImages();
     }
 
+    private void loadFloorImages()
+    {
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/" + currentBuildingId + "/floorPlans/all";
+
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {    // Reads in JSON data for the buildings from the server
+                    /**
+                     * Makes a GET Request to Backend to get all Buildings in the database and stores the
+                     * information into Building objects
+                     * @param response JSON format of information from Backend
+                     */
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
+                                floorImages.add(Base64.decode(jsonObject.getString("fpBytes"), Base64.DEFAULT));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            /**
+             * Prints an the error if something goes wrong
+             * @param error Type of error that occurred
+             */
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+    }
+    /**
+     * Gets the title for a specific floor, ie B2, B1, 1, 2, 3
+     */
+    private void updateFloorButtonText()
+    {
+        // Get request with markerShowingInfoWindow
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/" + currentBuildingId + "/floorPlans/all";
+
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject building = response.getJSONObject(i);
+                                floorButtons.get(i).setText(building.getString("level"));
+                                floorButtons.get(i).setVisibility(VISIBLE);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+    }
     /**
      * Hides the floorplan, returning to the standard map screen.
      * @param view
@@ -730,11 +1066,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void hideFloorplan(View view)
     {
+        routeStartButton.setVisibility(VISIBLE);
+        loadRouteButton.setVisibility(VISIBLE);
+        floorplanVisible = false;
         background.remove();
         floorplan.remove();
         setMapBounds();
         mMap.setMapType(MAP_TYPE_NORMAL);
-        floorplanButton.setVisibility(View.GONE);
+        floorplanButton.setVisibility(GONE);
+
+        for(int i = 0; i<floorButtons.size(); i++)
+        {
+            System.out.println("Setting " + i + " to invisible.");
+            floorButtons.get(i).setVisibility(GONE);
+        }
+
+        for (Marker m : buildingMarkers)
+            m.setVisible(true);
+
+        currentFloorIndex = 0;
+        clearBuildingUspots();
     }
 
     /**
@@ -750,6 +1101,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     /**
+     * Used for keeping track of the building ID in the database for the marker showing info window.
+     * Necessary for posting USpots indoors.
+     */
+    public void setCurrentBuildingId(int id)
+    {
+        currentBuildingId = id;
+    }
+
+    public int getCurrentBuildingId()
+    {
+        return currentBuildingId;
+    }
+
+    public boolean getFloorplanVisible()
+    {
+        return floorplanVisible;
+    }
+
+
+    /**
      * changes floorplan view to the selected floor.
      * @param v
      *  View associated with the button that was pressed
@@ -759,72 +1130,297 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker building = markerShowingInfoWindow;
         int id = v.getId();
 
-//        switch(id)
-//        {
-//            case R.id.button_floor1:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(0)))
-//                        .position(building.getPosition(),200,150));
-//                // TODO: Load USpots for this floor
-//                break;
-//            case R.id.button_floor2:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(1)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor3:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(2)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor4:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(3)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor5:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(4)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor6:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(5)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor7:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(6)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor8:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(7)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor9:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(8)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor10:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(9)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor11:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(10)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor12:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(11)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            default:
-//                break;
-//        }
+        switch(id)
+        {
+            case R.id.button_floor1:
+                currentFloorIndex = 0;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(0), 0, floorImages.get(0).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor2:
+                currentFloorIndex = 1;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(1), 0, floorImages.get(1).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor3:
+                currentFloorIndex = 2;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(2), 0, floorImages.get(2).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor4:
+                currentFloorIndex = 3;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(3), 0, floorImages.get(3).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor5:
+                currentFloorIndex = 4;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(4), 0, floorImages.get(4).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor6:
+                currentFloorIndex = 5;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(5), 0, floorImages.get(5).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor7:
+                currentFloorIndex = 6;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(6), 0, floorImages.get(6).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor8:
+                currentFloorIndex = 7;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(7), 0, floorImages.get(7).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor9:
+                currentFloorIndex = 8;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(8), 0, floorImages.get(8).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor10:
+                currentFloorIndex = 9;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(9), 0, floorImages.get(9).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor11:
+                currentFloorIndex = 10;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(10), 0, floorImages.get(10).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor12:
+                currentFloorIndex = 11;
+                clearBuildingUspots();
+                loadAndShowUSpotsFloorplan();
+                floorplan.remove();
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(11), 0, floorImages.get(11).length)))
+                        .position(building.getPosition(),200,150));
+                break;
+            default:
+                break;
+        }
     }
 
+    public void loadAndShowUSpotsFloorplan()
+    {
+        //currentBuildingId
+        //currentFloorIndex
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/building?param1=" + currentBuildingId + "&param2=" + currentFloorIndex;
+
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject uspot = response.getJSONObject(i);
+
+                                if((!uspot.isNull("buildingId") && uspot.getInt("buildingId")==currentBuildingId && uspot.getInt("floor")==currentFloorIndex))
+                                {
+                                    Marker currentUspot = mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
+                                            .title(uspot.getString("usName"))
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
+                                            .draggable(false));
+                                    currentUspot.setTag("USpot");
+                                    tempUspotMarkers.add(currentUspot);
+
+                                    USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
+
+                                    uspotInfo.setUsID(uspot.getInt("usID"));
+                                    uspotInfo.setUsName(uspot.getString("usName"));
+                                    uspotInfo.setUsRating(uspot.getDouble("usRating"));
+                                    uspotInfo.setUsLatit(uspot.getDouble("usLatit"));
+                                    uspotInfo.setUsLongit(uspot.getDouble("usLongit"));
+                                    uspotInfo.setUspotCategory(uspot.getString("usCategory"));
+                                    uspotInfo.setPicBytes(Base64.decode(uspot.getString("picBytes"), Base64.DEFAULT));
+                                    tempUsObjList.add(uspotInfo);
+                                }
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+    }
+
+    public void clearBuildingUspots()
+    {
+        for(Marker m:tempUspotMarkers)
+        {
+            m.setVisible(false);
+            m.remove();
+        }
+        tempUspotMarkers.clear();
+        tempUsObjList.clear();
+    }
+
+    /**
+     * Loads floorCnt for currentBuildingId
+     */
+    private void setNumFloors()
+    {
+        if(currentBuildingId == 0)
+            return;
+
+        // Basic get request
+        //queue = Volley.newRequestQueue(this);
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/id/" + currentBuildingId;
+
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                                JSONObject building = response.getJSONObject(0);
+                                numFloors = building.getInt("floorCnt");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+    }
+
+
+    private void setCurrentBuildingId()
+    {
+        queue = Volley.newRequestQueue(this);
+        // Get request with markerShowingInfoWindow
+        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/name?param1=" + markerShowingInfoWindow.getTitle().replace(" ", "%20");
+        System.out.println(markerShowingInfoWindow.getTitle().replace(" ","%20"));
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            JSONObject building = response.getJSONObject(0);
+                            currentBuildingId = building.getInt("id");
+                            System.out.println(currentBuildingId);
+                            setNumFloors();
+                            System.out.println(numFloors);
+                            updateFloorButtonText();
+                            System.out.println("update text complete");
+                            for(int i = 0; i<numFloors; i++)
+                            {
+                                System.out.println("Setting " + i + " to visible.");
+                                floorButtons.get(i).setVisibility(VISIBLE);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                System.out.println("failed");
+            }
+        });
+
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+    }
+
+    public int getCurrentFloorIndex()
+    {
+        return currentFloorIndex;
+    }
+
+    /**
+     * Grabs USpot object for markershowinginfowindow
+     * @return
+     */
+    public USpot getUSpot()
+    {
+        currentMarkerIndex = uspotMarkers.indexOf(markerShowingInfoWindow);
+        return usObjList.get(currentMarkerIndex);
+    }
+
+    public USpot getTempUSpot()
+    {
+        int markerIndex = tempUspotMarkers.indexOf(markerShowingInfoWindow);
+        return tempUsObjList.get(markerIndex);
+    }
+
+    @Override
+    public void onTaskDone(Object... values) {
+        if (currentPolyline != null)
+            currentPolyline.remove();
+        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
+import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 
 /**
@@ -80,9 +81,14 @@ public class USpotDialog extends DialogFragment {
         viewDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Launch SingleUSpotAcivity.
+                USpot toShow;
+                if(!((MapsActivity) getActivity()).getFloorplanVisible())
+                    toShow = ((MapsActivity)getActivity()).getUSpot();
+                else
+                    toShow = ((MapsActivity)getActivity()).getTempUSpot();
+
                 Intent intent = new Intent(v.getContext(), SingleUSpotActivity.class);
-                //USpotListActivity.setUspotToBeShown();
+                USpotListActivity.setUspotToBeShown(toShow);
                 startActivity(intent);
             }
         });

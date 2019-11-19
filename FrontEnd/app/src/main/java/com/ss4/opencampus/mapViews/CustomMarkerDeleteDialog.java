@@ -26,6 +26,13 @@ public class CustomMarkerDeleteDialog extends DialogFragment{
     private CheckBox checkDevice, checkAccount;
 
     /**
+     * true if this marker has been deleted. Turns true when you hit OK.
+     */
+    private boolean deleted;
+
+    private CustomMarkerDetailsDialog cmdd;
+
+    /**
      * Method is called when the fragment is created.
      * @param inflater
      *  Inflater which inflates the dialog_custom_marker_delete XML.
@@ -58,11 +65,23 @@ public class CustomMarkerDeleteDialog extends DialogFragment{
             @Override
             public void onClick(View v) {
                 ((MapsActivity)getActivity()).deleteCustomMarkers();
+                deleted = true;
                 getDialog().dismiss();
             }
         });
 
         return view;
     }
+
+    public boolean getDeleted()
+    {
+        return deleted;
+    }
+
+    public void setParent(CustomMarkerDetailsDialog cmdd)
+    {
+        this.cmdd = cmdd;
+    }
+
 
 }
