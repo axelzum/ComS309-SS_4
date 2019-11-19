@@ -15,7 +15,8 @@ import java.util.List;
 
 /**
  * @author Axel Zumwalt
- * Formats building object data for Recycler View layout
+ *
+ * Formats ReviewMessage data for Recycler View layout
  **/
 
 public class ReviewMessageAdapter extends RecyclerView.Adapter<ReviewMessageAdapter.ViewHolder> {
@@ -24,10 +25,10 @@ public class ReviewMessageAdapter extends RecyclerView.Adapter<ReviewMessageAdap
     private List<ReviewMessage> list;
 
     /**
-     * Constructs a BuildingAdapter given a context and list of Buildings
+     * ReviewMessageAdapter constructor, passes in context and the list of messages to display
      *
      * @param context Context given
-     * @param list List of Building Objects to put in adapter
+     * @param list List of ReviewMessage Objects to put in adapter
      */
     public ReviewMessageAdapter(Context context, List<ReviewMessage> list) {
         this.context = context;
@@ -35,7 +36,8 @@ public class ReviewMessageAdapter extends RecyclerView.Adapter<ReviewMessageAdap
     }
     
     /**
-     * Sets the xml properties for the list of Buildings
+     * Sets the xml properties for the list of messages
+     *
      * @param parent Group the view type is in
      * @param viewType Type of view
      * @return a new ViewHolder to hold the list
@@ -47,26 +49,23 @@ public class ReviewMessageAdapter extends RecyclerView.Adapter<ReviewMessageAdap
     }
     
     /**
-     * Binds the correct Building from the BuildingList to the adapter
+     * Binds the correct message from the list to the adapter
+     *
      * @param holder ViewHolder to bind
-     * @param position position of Building to find
+     * @param position position of message to find
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ReviewMessage message = list.get(position);
 
-        holder.textName.setText("Someone commented on your USpot" + Integer.toString(message.getUSpotId()));
-        //Clean up building list
-        /* holder.textAbbrev.setText(building.getAbbrev());
-        holder.textAddress.setText(building.getAddress());
-        holder.textLat.setText(building.getLatString());
-        holder.textLong.setText(building.getLongString()); */
+        holder.textName.setText("Someone commented on your USpot: " + message.getUSpotName());
         holder.itemView.setTag(message);
     }
     
     /**
-     * Returns the number of Buildings in the adapter
-     * @return number of Buildings in the list
+     * Returns the number of messages in the adapter
+     *
+     * @return number of messages in the list
      */
     @Override
         public int getItemCount() {
@@ -74,21 +73,12 @@ public class ReviewMessageAdapter extends RecyclerView.Adapter<ReviewMessageAdap
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textName/*, textAbbrev, textAddress, textLat, textLong*/;
-    
-            /**
-             * Sets xml properties for each item in the Building list to be displayed in the adapter
-             * @param itemView View to get information from
-             */
+            TextView textName;
+
             ViewHolder(View itemView) {
                 super(itemView);
 
                 textName = itemView.findViewById(R.id.review_message_name);
-                //Clean up building list
-                /* textAbbrev = itemView.findViewById(R.id.building_list_abbreviation);
-                textAddress = itemView.findViewById(R.id.building_list_address);
-                textLat = itemView.findViewById(R.id.building_list_latitude);
-                textLong = itemView.findViewById(R.id.building_list_longitude);*/
             }
         }
     }
