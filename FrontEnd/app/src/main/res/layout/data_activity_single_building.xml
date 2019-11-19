@@ -54,5 +54,12 @@
         android:onClick="viewBuildingListActivity"
         android:text="Show Building List" />
 
+    <Button
+        android:id="@+id/button_FloorPlanList"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:onClick="viewFloorPlanListActivity"
+        android:text="Show Floor Plans" />
 
 </LinearLayout>
