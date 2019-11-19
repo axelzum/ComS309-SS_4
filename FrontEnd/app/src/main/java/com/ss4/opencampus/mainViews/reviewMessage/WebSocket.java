@@ -1,9 +1,16 @@
 package com.ss4.opencampus.mainViews.reviewMessage;
 
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.ss4.opencampus.dataViews.reviews.Review;
+import com.ss4.opencampus.mainViews.DashboardActivity;
+import com.ss4.opencampus.mainViews.LoginActivity;
+import com.ss4.opencampus.mainViews.PreferenceUtils;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
@@ -12,6 +19,7 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class WebSocket {
 
@@ -22,7 +30,7 @@ public class WebSocket {
 
     private static WebSocketClient cc;
 
-    public static void openWebSocket(int userId) {
+    public static void openWebSocket(int userId, final Context context) {
 
         Draft[] draft = {new Draft_6455()};
         String url = "ws://coms-309-ss-4.misc.iastate.edu:8080/websocket/" + Integer.toString(userId);
@@ -37,6 +45,16 @@ public class WebSocket {
                 @Override
                 public void onMessage(String message) {
                     Log.d("TO NOTIFY USER :", message);
+                    //ReviewMessage reviewMessage = new ReviewMessage(Integer.getInteger(message), false);
+                    ReviewMessage reviewMessage = new ReviewMessage(20, false); //TODO
+
+                    ArrayList<ReviewMessage> messageList = (ArrayList<ReviewMessage>) PreferenceUtils.getReviewMessageList(context);
+                    if (messageList == null) {
+                        messageList = new ArrayList<ReviewMessage>();
+                    }
+                    messageList.add(reviewMessage);
+
+                    PreferenceUtils.addReviewMessageList(messageList, context);
                 }
 
                 @Override

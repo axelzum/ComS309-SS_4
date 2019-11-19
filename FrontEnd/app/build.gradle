@@ -41,5 +41,6 @@ dependencies {
     implementation group: 'org.java-websocket', name: 'Java-WebSocket', version:'1.4.0'
     // https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy-gradle-plugin
     implementation group: 'net.bytebuddy', name: 'byte-buddy-gradle-plugin', version: '1.10.3'
+    implementation 'com.google.code.gson:gson:2.8.2'
 
 }
