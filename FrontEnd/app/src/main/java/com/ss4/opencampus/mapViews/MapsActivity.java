@@ -60,6 +60,7 @@ import java.util.Map;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener {
 
+
     /**
      *  The map that is being displayed to the user
      */
@@ -187,6 +188,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     private int currentFloorIndex = 0;
 
+    private ArrayList<USpot> usObjList;
+    private ArrayList<USpot> tempUsObjList;
+
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
      * @param savedInstanceState
@@ -251,6 +255,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 dialog.show(getFragmentManager(), "FragmentDialog");
             }
         });
+
+        usObjList = new ArrayList<>();
+        tempUsObjList = new ArrayList<>();
 
         queue = Volley.newRequestQueue(this);
     }
@@ -662,6 +669,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     currentUspot.setTag("USpot");
 
                                     uspotMarkers.add(currentUspot);
+                                    usObjList.add(uspotInfo);
                                 }
                             }
                         } catch (JSONException e) {
@@ -761,13 +769,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             m.setVisible(false);
 
         for (Marker m : uspotMarkers)
-            m.setVisible(false); //TODO: Check if marker is in this building and on this floor
+            m.setVisible(false);
 
         for (Marker m : customMarkers)
-            m.setVisible(false); //TODO: Check if marker is in this building and on this floor
+            m.setVisible(false);
 
-
-        // TODO: Load all floorplans for this building
         loadFloorImages();
     }
 
@@ -924,7 +930,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
                         .image(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeByteArray(floorImages.get(0), 0, floorImages.get(0).length)))
                         .position(building.getPosition(),200,150));
-                // TODO: Load USpots for this floor
                 break;
             case R.id.button_floor2:
                 currentFloorIndex = 1;
@@ -1054,6 +1059,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             .draggable(false));
                                     currentUspot.setTag("USpot");
                                     tempUspotMarkers.add(currentUspot);
+
+                                    USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
+
+                                    uspotInfo.setUsID(uspot.getInt("usID"));
+                                    uspotInfo.setUsName(uspot.getString("usName"));
+                                    uspotInfo.setUsRating(uspot.getDouble("usRating"));
+                                    uspotInfo.setUsLatit(uspot.getDouble("usLatit"));
+                                    uspotInfo.setUsLongit(uspot.getDouble("usLongit"));
+                                    uspotInfo.setUspotCategory(uspot.getString("usCategory"));
+                                    uspotInfo.setPicBytes(Base64.decode(uspot.getString("picBytes"), Base64.DEFAULT));
+                                    tempUsObjList.add(uspotInfo);
                                 }
 
                             }
@@ -1084,7 +1100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             m.remove();
         }
         tempUspotMarkers.clear();
-
+        tempUsObjList.clear();
     }
 
     /**
@@ -1173,6 +1189,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public int getCurrentFloorIndex()
     {
         return currentFloorIndex;
+    }
+
+    /**
+     * Grabs USpot object for markershowinginfowindow
+     * @return
+     */
+    public USpot getUSpot()
+    {
+        currentMarkerIndex = uspotMarkers.indexOf(markerShowingInfoWindow);
+        return usObjList.get(currentMarkerIndex);
+    }
+
+    public USpot getTempUSpot()
+    {
+        int markerIndex = tempUspotMarkers.indexOf(markerShowingInfoWindow);
+        return tempUsObjList.get(markerIndex);
     }
 
 }
