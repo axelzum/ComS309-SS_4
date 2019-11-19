@@ -54,7 +54,7 @@ public class ReviewMessageListActivity extends AppCompatActivity {
      * @param savedInstanceState state of app before this Activity
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) { // Start when page opens
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_message_list);
 
@@ -62,7 +62,7 @@ public class ReviewMessageListActivity extends AppCompatActivity {
 
         msgList.addOnItemTouchListener(new RecyclerItemClickListener(this, msgList ,new RecyclerItemClickListener.OnItemClickListener() {
             /**
-             * On click method, opens message view which an item in the list is clicked.
+             * On click method, opens the USpot associated with the message clicked
              *
              * @param view view
              * @param position position of message
@@ -73,9 +73,7 @@ public class ReviewMessageListActivity extends AppCompatActivity {
                 int USpotId = selectedReviewMessage.getUSpotId();
 
                 queue = Volley.newRequestQueue(ReviewMessageListActivity.this);
-                //String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/" + Integer.toString(USpotId);
-                String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/20";
-
+                String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/" + Integer.toString(USpotId);
 
                 JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                         new Response.Listener<JSONObject>() {    // Reads in JSON data for the uspots from the server

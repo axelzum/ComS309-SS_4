@@ -15,7 +15,9 @@ import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.mapViews.USpotSubmissionDialog;
 
 /**
- * Dialog appears when selecting the filters button from the map screen.
+ * @author Axel Zumwalt
+ *
+ * Dialog, to choose to delete a message or go to USpot page. Not currently used in app
  */
 public class ReviewMessageDialog extends DialogFragment{
 
@@ -25,14 +27,14 @@ public class ReviewMessageDialog extends DialogFragment{
     private TextView mActionCancel, mActionContinue;
 
     /**
-     * Checkboxes for each category of marker.
+     * Radio buttons to select option
      */
     private RadioButton deleteMsg, openUspot;
 
     /**
      * Method is called when the fragment is created.
      * @param inflater
-     *  Inflater which inflates the map_dialog_filters XML.
+     *  Inflater which inflates the dialog XML.
      *
      * @param container
      *  ViewGroup passed to inflater.inflate
