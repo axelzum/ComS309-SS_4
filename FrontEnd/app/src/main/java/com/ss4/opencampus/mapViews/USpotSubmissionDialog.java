@@ -34,6 +34,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.mainViews.PreferenceUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -180,6 +181,7 @@ public class USpotSubmissionDialog extends DialogFragment{
                     newUSpot.put("usLatit", lat);
                     newUSpot.put("usLongit", lng);
                     newUSpot.put("usCategory", category.getSelectedItem().toString());
+                    newUSpot.put("studentId", PreferenceUtils.getUserId(getActivity()));
                     newUSpot.put("picBytes", byteString);
                 } catch (JSONException e) {
                     e.printStackTrace();
