@@ -215,6 +215,7 @@ public class USpotSubmissionDialog extends DialogFragment{
                     newUSpot.put("usLatit", lat);
                     newUSpot.put("usLongit", lng);
                     newUSpot.put("usCategory", category.getSelectedItem().toString());
+                    newUSpot.put("studentId", PreferenceUtils.getUserId(getActivity()));
                     newUSpot.put("picBytes", byteString);
                     newUSpot.put("studentId", PreferenceUtils.getUserId(getActivity()));
 
