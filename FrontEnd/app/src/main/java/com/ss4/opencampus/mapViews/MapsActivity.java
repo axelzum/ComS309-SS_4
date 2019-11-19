@@ -268,7 +268,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onResponse(JSONArray response) {
                                 try {
-                                        JSONObject route = response.getJSONObject(response.length()-1);
+                                        JSONObject route = response.getJSONObject(0);
                                         routeStart = mMap.addMarker(new MarkerOptions()
                                                 .position(new LatLng(route.getDouble("originLat"), route.getDouble("originLng")))
                                                 .title("Loaded Route Start")
@@ -393,6 +393,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 m.setTag("Route");
                 routeEnd=m;
 
+                saveRouteButton.setVisibility(VISIBLE);
                 String routeURL = getUrl(routeStart.getPosition(), routeEnd.getPosition(), "walking");
                 new FetchURL(MapsActivity.this).execute(routeURL);
             }
@@ -419,6 +420,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     routeEnd=null;
                 }
 
+                saveRouteButton.setVisibility(GONE);
                 routeEndButton.setVisibility(GONE);
                 hideRouteButton.setVisibility(GONE);
             }
