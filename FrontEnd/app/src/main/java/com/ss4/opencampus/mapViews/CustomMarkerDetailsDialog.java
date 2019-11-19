@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.Marker;
@@ -18,8 +19,9 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
     /**
      * Clickable TextViews for done, save, delete, rename, edit description. TextViews for title and description.
      */
-    private TextView mActionDone, mActionSave, mActionDelete, mActionRename, mActionEditdesc, markerTitle, markerDesc;
+    private TextView mActionDone, mActionSave, mActionDelete;
 
+    private EditText markerTitle, markerDesc;
     /**
      * Method is called when the fragment is created.
      * @param inflater
@@ -40,15 +42,20 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
         mActionDone = view.findViewById(R.id.action_done);
         mActionSave = view.findViewById(R.id.action_save);
         mActionDelete = view.findViewById(R.id.action_delete);
-        mActionRename = view.findViewById(R.id.action_rename);
-        mActionEditdesc = view.findViewById(R.id.action_editdesc);
 
         markerTitle = view.findViewById(R.id.marker_title);
         markerDesc = view.findViewById(R.id.marker_desc);
-        updateTextViews();
+
+        Marker m = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow();
+        markerTitle.setText(m.getTitle());
+        markerDesc.setText(((MapsActivity)getActivity()).getCustomMarkerDescription(m));
+
         mActionDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ((MapsActivity)getActivity()).getMarkerShowingInfoWindow().setTitle(markerTitle.getText().toString());
+                ((MapsActivity)getActivity()).setCustomMarkerDescription(markerDesc.getText().toString());
+                ((MapsActivity)getActivity()).setCustomMarkerTitle(markerTitle.getText().toString());
                 getDialog().dismiss();
             }
         });
@@ -66,22 +73,6 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
             public void onClick(View v) {
                 CustomMarkerDeleteDialog cmDelete = new CustomMarkerDeleteDialog();
                 cmDelete.show(getFragmentManager(), "CustomMarkerDeleteDialog");
-            }
-        });
-
-        mActionRename.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ((MapsActivity)getActivity()).customMarkerRename();
-            }
-        });
-
-        mActionEditdesc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ((MapsActivity)getActivity()).customMarkerChangeDescription();
             }
         });
 
@@ -105,28 +96,8 @@ public class CustomMarkerDetailsDialog extends DialogFragment {
     public void updateTextViews()
     {
         Marker m = ((MapsActivity)getActivity()).getMarkerShowingInfoWindow();
-        getTitleTextView().setText(m.getTitle());
-        getDescTextView().setText(((MapsActivity)getActivity()).getCustomMarkerDescription(m));
-    }
-
-    /**
-     * Returns the TextView for marker title
-     * @return
-     * TextView for marker title
-     */
-    public TextView getTitleTextView()
-    {
-        return markerTitle;
-    }
-
-    /**
-     * Returns the TextView for marker description
-     * @return
-     * TextView for marker description
-     */
-    public TextView getDescTextView()
-    {
-        return markerDesc;
+        markerTitle.setText(m.getTitle());
+        markerDesc.setText(((MapsActivity)getActivity()).getCustomMarkerDescription(m));
     }
 
 }
