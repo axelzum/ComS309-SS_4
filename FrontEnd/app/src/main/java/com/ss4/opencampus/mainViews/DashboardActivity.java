@@ -11,6 +11,7 @@ import android.widget.Button;
 import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessage;
+import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessageListActivity;
 import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.reviewMessage.WebSocket;
@@ -31,6 +32,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private Button btnViewUspotList;
     private Button btnLogout;
     private Button btnMessages;
+    private Button btnDeleteMessages;
 
     /**
      * OnCreate method for the DashboardActivity.
@@ -49,6 +51,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         btnViewUspotList = (Button)findViewById(R.id.button_USpotList);
         btnLogout = (Button)findViewById(R.id.button_logout);
         btnMessages = (Button)findViewById(R.id.button_messages);
+        btnDeleteMessages = (Button)findViewById(R.id.button_delete_messages);
 
         /* Init Listeners */
         btnViewMap.setOnClickListener(this);
@@ -56,6 +59,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         btnViewUspotList.setOnClickListener(this);
         btnLogout.setOnClickListener(this);
         btnMessages.setOnClickListener(this);
+        btnDeleteMessages.setOnClickListener(this);
 
         refresh();
     }
@@ -80,6 +84,10 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.button_messages:
                 viewReviewMessageListActivity();
+                break;
+            case R.id.button_delete_messages:
+                PreferenceUtils.deleteMessageList(this);
+                refresh();
                 break;
             case R.id.button_logout:
                 logout();
@@ -117,7 +125,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
      * Open ReviewMessageListActivity
      */
     private void viewReviewMessageListActivity() {
-        Log.d("OUTPUT", "OPEN REVIEW MESSAGE ACTIVITY");
+        Intent intent = new Intent(this, ReviewMessageListActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -133,20 +142,13 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
 
     public void refresh() {
         btnMessages.setEnabled(true);
+        btnMessages.setVisibility(View.VISIBLE);
         ArrayList<ReviewMessage> messageArrayList = (ArrayList<ReviewMessage>)PreferenceUtils.getReviewMessageList(this);
         if (messageArrayList != null) {
-            if (messageArrayList.size() > 0) {
-                btnMessages.setVisibility(View.VISIBLE);
-                btnMessages.setText(getResources().getQuantityString(R.plurals.btn_messages, messageArrayList.size(), messageArrayList.size()));
-            }
-            else {
-                btnMessages.setVisibility(View.GONE);
-                btnMessages.setEnabled(false);
-            }
+            btnMessages.setText(getResources().getQuantityString(R.plurals.btn_messages, messageArrayList.size(), messageArrayList.size()));
         }
         else {
-            btnMessages.setVisibility(View.GONE);
-            btnMessages.setEnabled(false);
+            btnMessages.setText(getResources().getQuantityString(R.plurals.btn_messages, 0, 0));
         }
     }
 }

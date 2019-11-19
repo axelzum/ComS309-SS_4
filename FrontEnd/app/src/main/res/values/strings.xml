@@ -29,10 +29,11 @@
     <string name="btn_socket_test">Web Socket Test</string>
     <string name="btn_logout">Logout</string>
     <plurals name="btn_messages">
-        <item quantity="zero">Messages</item>
-        <item quantity="one">1 Unread Message</item>
-        <item quantity="other">%d Unread Messages</item>
+        <item quantity="zero">0 Messages</item>
+        <item quantity="one">1 Message</item>
+        <item quantity="other">%d Messages</item>
     </plurals>
+    <string name="btn_delete_message">Delete All Messages</string>
 
     <!-- Map Views Strings -->
     <!-- MapActivity -->
