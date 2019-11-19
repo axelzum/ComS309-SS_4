@@ -307,7 +307,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         saveRouteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
-                //TODO: Save route to database
+                if(routeStart != null && routeEnd != null) {
+                    //TODO: Save route to database
+                    String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/routes";
+
+                    JSONObject newRoute = new JSONObject();
+                    try {
+                        newRoute.put("rtName", "default route name");
+                        newRoute.put("originLat", routeStart.getPosition().latitude);
+                        newRoute.put("originLng", routeStart.getPosition().longitude);
+                        newRoute.put("destLat", routeEnd.getPosition().latitude);
+                        newRoute.put("destLng", routeEnd.getPosition().longitude);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newRoute, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            HashMap<String, String> headers = new HashMap<String, String>();
+                            headers.put("Content-Type", "application/json; charset=utf-8");
+                            return headers;
+                        }
+                    };
+                    jsonRequest.setTag(TAG);
+                    queue.add(jsonRequest);
+                }
             }
         });
 
