@@ -6,7 +6,8 @@
 A better map of Iowa State University campus that shows more in depth features like water fountains, bathrooms, bike racks, classroom numbers, study spots, or other features 
 that are useful to students and visitors on campus. Different time sensitive additions could include events or construction that will stay on the map for a specific duration.
 We can include user input to rank things like study spots and give feedback to other users. We will implement a fastest route option that takes into
-account walking, biking, or riding a bus. Different features can be filtered based on user’s needs. For example: male, female, or unisex bathrooms.
+account walking between two different locations on the map. These routes will be tied to a specific user and they will be able to view their saved routes on the app.
+Different features can be filtered based on user’s needs. For example: male, female, or unisex bathrooms.
 More features can be added on to this application as requested.
 
 ### Group Members:
