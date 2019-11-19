@@ -2,6 +2,7 @@ package com.ss4.opencampus.mainViews.reviewMessage;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +21,12 @@ import com.ss4.opencampus.dataViews.buildings.Building;
 import com.ss4.opencampus.dataViews.buildings.BuildingAdapter;
 import com.ss4.opencampus.dataViews.buildings.RecyclerItemClickListener;
 import com.ss4.opencampus.dataViews.buildings.SingleBuildingActivity;
+import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
+import com.ss4.opencampus.dataViews.uspots.USpot;
+import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
+import com.ss4.opencampus.mainViews.PreferenceUtils;
+import com.ss4.opencampus.mapViews.FilterDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,92 +59,90 @@ public class ReviewMessageListActivity extends AppCompatActivity {
 
         RecyclerView msgList = findViewById(R.id.message_list);
 
-        //msgList.addOnItemTouchListener(new RecyclerItemClickListener(this, msgList ,new RecyclerItemClickListener.OnItemClickListener() {
+        msgList.addOnItemTouchListener(new RecyclerItemClickListener(this, msgList ,new RecyclerItemClickListener.OnItemClickListener() {
             /**
              * On click method, opens message view which an item in the list is clicked.
              *
              * @param view view
              * @param position position of message
-             *//*
+             */
             @Override public void onItemClick(View view, int position) {
                 view.getId();
                 ReviewMessage selectedReviewMessage = (ReviewMessage)view.getTag();
-                //TODO open upspot with message
-                Intent intent = new Intent(view.getContext(), SingleBuildingActivity.class);
-                ReviewMessageListActivity.setSelectedReviewMessage(selectedReviewMessage);
-                startActivity(intent);
+                int USpotId = selectedReviewMessage.getUSpotId();
+
+                queue = Volley.newRequestQueue(ReviewMessageListActivity.this);
+                String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/" + Integer.toString(USpotId);
+
+                JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONArray>() {    // Reads in JSON data for the uspots from the server
+                            /**
+                             * Makes a GET Request to Backend to get the USpot with the given ID in the database.
+                             * @param response JSON format of information from Backend
+                             */
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                    JSONObject jsonObject = response.getJSONObject(0);
+                                    USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
+
+                                    uspotInfo.setUsID(jsonObject.getInt("usID"));
+                                    uspotInfo.setUsName(jsonObject.getString("usName"));
+                                    uspotInfo.setUsRating(jsonObject.getDouble("usRating"));
+                                    uspotInfo.setUsLatit(jsonObject.getDouble("usLatit"));
+                                    uspotInfo.setUsLongit(jsonObject.getDouble("usLongit"));
+                                    uspotInfo.setUspotCategory(jsonObject.getString("usCategory"));
+                                    uspotInfo.setPicBytes(Base64.decode(jsonObject.getString("picBytes"), Base64.DEFAULT));
+
+                                    Intent intent = new Intent(ReviewMessageListActivity.this, SingleUSpotActivity.class);
+                                    USpotListActivity.setUspotToBeShown(uspotInfo);
+                                    startActivity(intent);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    /**
+                     * Prints an the error if something goes wrong
+                     * @param error Type of error that occurred
+                     */
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+                //Set the tag on the request
+                jsonRequest.setTag(TAG);
+                // Add the request to the RequestQueue.
+                queue.add(jsonRequest);
             }
 
             /**
              * @param view view
              * @param position position of message
-             *//*
+             */
             @Override public void onLongItemClick(View view, int position) {
             }
         }));
 
-        //TODO get message array from persistent storage.
-        buildingList = new ArrayList<>();
-        adapter = new BuildingAdapter(getApplicationContext(),buildingList);
+        reviewMessageList = (ArrayList<ReviewMessage>) PreferenceUtils.getReviewMessageList(this);
+        if (reviewMessageList == null) {
+            reviewMessageList = new ArrayList<ReviewMessage>();
+        }
+        adapter = new ReviewMessageAdapter(getApplicationContext(), reviewMessageList);
 
         LinearLayoutManager linearLayoutManager;
         DividerItemDecoration dividerItemDecoration;
 
         linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        dividerItemDecoration = new DividerItemDecoration(bList.getContext(), linearLayoutManager.getOrientation());
+        dividerItemDecoration = new DividerItemDecoration(msgList.getContext(), linearLayoutManager.getOrientation());
 
-        bList.setHasFixedSize(true);
-        bList.setLayoutManager(linearLayoutManager);
-        bList.addItemDecoration(dividerItemDecoration);
-        bList.setAdapter(adapter);
-
-        queue = Volley.newRequestQueue(this);
-        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/all";
-
-        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {    // Reads in JSON data for the buildings from the server
-                    /**
-                     * Makes a GET Request to Backend to get all Buildings in the database and stores the
-                     * information into Building objects
-                     * @param response JSON format of information from Backend
-                     *//*
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
-                                Building buildingInfo = new Building();             // Makes Building object from the JSONObject
-
-                                buildingInfo.setBuildingID(jsonObject.getString("id"));
-                                buildingInfo.setBuildingName(jsonObject.getString("buildingName"));
-                                buildingInfo.setAbbrev(jsonObject.getString("abbreviation"));
-                                buildingInfo.setAddress(jsonObject.getString("address"));
-                                buildingInfo.setLatitude(jsonObject.getDouble("latit"));
-                                buildingInfo.setLongitude(jsonObject.getDouble("longit"));
-
-                                buildingList.add(buildingInfo);
-                            }
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            /**
-             * Prints an the error if something goes wrong
-             * @param error Type of error that occurred
-             *//*
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-        //Set the tag on the request
-        jsonRequest.setTag(TAG);
-        // Add the request to the RequestQueue.
-        queue.add(jsonRequest);
-        */
+        msgList.setHasFixedSize(true);
+        msgList.setLayoutManager(linearLayoutManager);
+        msgList.addItemDecoration(dividerItemDecoration);
+        msgList.setAdapter(adapter);
     }
     
     /**
@@ -160,24 +164,5 @@ public class ReviewMessageListActivity extends AppCompatActivity {
         if (queue != null) {
             queue.cancelAll(TAG);
         }
-    }
-
-    /**
-     * Used to get the information of the selected message to show in full message view.
-     * @return
-     */
-    public static ReviewMessage getSelectedReviewMessage()
-    {
-        return selectedReviewMessage;
-    }
-
-    /**
-     * Sets the message that will be shown in detail. Called when a message in the list is clicked on.
-     * @param msg
-     *  ReviewMessage that is selected.
-     */
-    public static void setSelectedReviewMessage(ReviewMessage msg)
-    {
-        selectedReviewMessage = msg;
     }
 }
