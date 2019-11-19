@@ -198,6 +198,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker routeStart, routeEnd;
 
     private Polyline currentPolyline;
+
+    private Button routeStartButton;
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
      * @param savedInstanceState
@@ -251,11 +253,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        final Button routeStartButton = findViewById(R.id.routeStartButton);
+        routeStartButton = findViewById(R.id.routeStartButton);
         final Button routeEndButton = findViewById(R.id.routeEndButton);
         final Button hideRouteButton = findViewById(R.id.hideRouteButton);
         final Button saveRouteButton = findViewById(R.id.saveRouteButton);
         final Button loadRouteButton = findViewById(R.id.loadRouteButton);
+        loadRouteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                //TODO: Load route from database, set routeStart/routeEnd
+            }
+        });
+
+        saveRouteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                //TODO: Save route to database
+            }
+        });
+
         routeStartButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
@@ -855,6 +871,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void showFloorplan()
     {
+        routeStartButton.setVisibility(GONE);
         floorplanVisible = true;
         Marker building = markerShowingInfoWindow;
 
@@ -972,6 +989,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void hideFloorplan(View view)
     {
+        routeStartButton.setVisibility(VISIBLE);
         floorplanVisible = false;
         background.remove();
         floorplan.remove();
