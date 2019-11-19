@@ -1,6 +1,8 @@
 package com.ss4.opencampus.mapViews;
 
 import com.android.volley.toolbox.JsonRequest;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.dataViews.floorPlans.FloorPlan;
 import com.ss4.opencampus.dataViews.uspots.USpot;
@@ -43,6 +45,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.ss4.opencampus.mapViews.routes.FetchURL;
+import com.ss4.opencampus.mapViews.routes.TaskLoadedCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,7 +61,7 @@ import java.util.Map;
  *  This class is responsible for connecting to the google maps API and displaying the map, as well as
  *  managing all the markers associated with the map.
  */
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback,
         GoogleMap.OnMarkerClickListener {
 
 
@@ -192,6 +196,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<USpot> tempUsObjList;
 
     private Marker routeStart, routeEnd;
+
+    private Polyline currentPolyline;
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
      * @param savedInstanceState
@@ -257,6 +263,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     routeStart.remove();
                 }
 
+
+
                 Marker m = mMap.addMarker(new MarkerOptions()
                         .position(mMap.getCameraPosition().target)
                         .title("My Route Start")
@@ -266,6 +274,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 routeStart=m;
                 routeEndButton.setVisibility(VISIBLE);
                 hideRouteButton.setVisibility(VISIBLE);
+
+                if(routeEnd!=null)
+                {
+                    String routeURL = getUrl(routeStart.getPosition(), routeEnd.getPosition(), "walking");
+                    new FetchURL(MapsActivity.this).execute(routeURL);
+                }
             }
         });
 
@@ -287,25 +301,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 m.setTag("Route");
                 routeEnd=m;
 
-                //TODO: Draw Route
+                String routeURL = getUrl(routeStart.getPosition(), routeEnd.getPosition(), "walking");
+                new FetchURL(MapsActivity.this).execute(routeURL);
             }
         });
 
         hideRouteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
+                if(currentPolyline!=null)
+                {
+                    currentPolyline.remove();
+                    currentPolyline=null;
+                }
+
                 if(routeStart!=null)
                 {
-                    routeStart.setVisible(false);
                     routeStart.remove();
+                    routeStart=null;
                 }
 
                 if(routeEnd!=null)
                 {
-                    routeEnd.setVisible(false);
                     routeEnd.remove();
+                    routeEnd=null;
                 }
-
+                
                 routeEndButton.setVisibility(GONE);
                 hideRouteButton.setVisibility(GONE);
             }
@@ -365,6 +386,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public Marker getMarkerShowingInfoWindow()
     {
         return markerShowingInfoWindow;
+    }
+
+    /**
+     * Gets a URL to use with the routes API
+     * @param origin
+     * @param dest
+     * @param directionMode
+     * @return
+     */
+    private String getUrl(LatLng origin, LatLng dest, String directionMode) {
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        // Mode
+        String mode = "mode=" + directionMode;
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        // Output format
+        String output = "json";
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&key=" + getString(R.string.google_maps_key);
+        return url;
     }
 
     /**
@@ -1275,4 +1319,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return tempUsObjList.get(markerIndex);
     }
 
+    @Override
+    public void onTaskDone(Object... values) {
+        if (currentPolyline != null)
+            currentPolyline.remove();
+        currentPolyline = mMap.addPolyline((PolylineOptions) values[0]);
+    }
 }
