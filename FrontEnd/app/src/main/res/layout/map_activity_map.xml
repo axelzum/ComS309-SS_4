@@ -56,6 +56,20 @@
         android:text="Place route end" />
 
     <Button
+        android:id="@+id/hideRouteButton"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="220dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/design_default_color_primary_dark"
+        android:padding="8dp"
+        android:visibility="gone"
+        android:text="Cancel" />
+
+    <Button
         android:id="@+id/filterButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

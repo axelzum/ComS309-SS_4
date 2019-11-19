@@ -247,6 +247,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         final Button routeStartButton = findViewById(R.id.routeStartButton);
         final Button routeEndButton = findViewById(R.id.routeEndButton);
+        final Button hideRouteButton = findViewById(R.id.hideRouteButton);
         routeStartButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
@@ -264,6 +265,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 m.setTag("Route");
                 routeStart=m;
                 routeEndButton.setVisibility(VISIBLE);
+                hideRouteButton.setVisibility(VISIBLE);
             }
         });
 
@@ -271,7 +273,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         routeEndButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
+                if(routeEnd!=null)
+                {
+                    routeEnd.setVisible(false);
+                    routeEnd.remove();
+                }
 
+                Marker m = mMap.addMarker(new MarkerOptions()
+                        .position(mMap.getCameraPosition().target)
+                        .title("My Route End")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
+                        .draggable(false));
+                m.setTag("Route");
+                routeEnd=m;
+
+                //TODO: Draw Route
+            }
+        });
+
+        hideRouteButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v)
+            {
+                if(routeStart!=null)
+                {
+                    routeStart.setVisible(false);
+                    routeStart.remove();
+                }
+
+                if(routeEnd!=null)
+                {
+                    routeEnd.setVisible(false);
+                    routeEnd.remove();
+                }
+
+                routeEndButton.setVisibility(GONE);
+                hideRouteButton.setVisibility(GONE);
             }
         });
 
