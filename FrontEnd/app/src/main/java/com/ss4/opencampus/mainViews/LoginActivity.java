@@ -56,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
 
         /* Checks Shared Preferences to see if a user is already logged in */
         if (PreferenceUtils.getUserId(this) != -1 ){
+            int studentId = PreferenceUtils.getUserId(this);
+            WebSocket.openWebSocket(studentId, this);
             Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
             startActivity(intent);
         }
@@ -128,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
         try {
             if (Crypto.decodeAndDecrypt(password).equals(this.password.getText().toString())) {
                 PreferenceUtils.saveUserId(studentId, this);
-                WebSocket.openWebSocket(studentId);
+                WebSocket.openWebSocket(studentId, this);
                 Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                 startActivity(intent);
             }
@@ -139,6 +141,10 @@ public class LoginActivity extends AppCompatActivity {
         catch (Exception e) {
 
         }
+    }
+
+    public static void openDashboard() {
+
     }
 
     @Override
