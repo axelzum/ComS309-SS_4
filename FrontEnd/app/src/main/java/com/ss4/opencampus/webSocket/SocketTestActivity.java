@@ -1,4 +1,4 @@
-package com.ss4.opencampus.socketTest;
+package com.ss4.opencampus.webSocket;
 
 import android.content.Intent;
 import android.os.Bundle;
