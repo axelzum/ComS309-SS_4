@@ -199,7 +199,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Polyline currentPolyline;
 
-    private Button routeStartButton;
+    private Button routeStartButton, loadRouteButton;
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
      * @param savedInstanceState
@@ -257,11 +257,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final Button routeEndButton = findViewById(R.id.routeEndButton);
         final Button hideRouteButton = findViewById(R.id.hideRouteButton);
         final Button saveRouteButton = findViewById(R.id.saveRouteButton);
-        final Button loadRouteButton = findViewById(R.id.loadRouteButton);
+        loadRouteButton = findViewById(R.id.loadRouteButton);
         loadRouteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
-                //TODO: Load route from database, set routeStart/routeEnd
+                String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/routes/all";
+                // Request a JSONObject response from the provided URL.
+                JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                        JSONObject route = response.getJSONObject(response.length()-1);
+                                        routeStart = mMap.addMarker(new MarkerOptions()
+                                                .position(new LatLng(route.getDouble("originLat"), route.getDouble("originLng")))
+                                                .title("Loaded Route Start")
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
+                                                .draggable(false));
+
+                                        routeEnd = mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(route.getDouble("destLat"), route.getDouble("destLng")))
+                                            .title("Loaded Route Start")
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
+                                            .draggable(false));
+
+                                        String routeURL = getUrl(routeStart.getPosition(), routeEnd.getPosition(), "walking");
+                                        new FetchURL(MapsActivity.this).execute(routeURL);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        System.out.println("failed");
+                    }
+                });
+
+                //Set the tag on the request
+                jsonRequest.setTag(TAG);
+
+                // Add the request to the RequestQueue.
+                queue.add(jsonRequest);
             }
         });
 
@@ -872,6 +911,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void showFloorplan()
     {
         routeStartButton.setVisibility(GONE);
+        loadRouteButton.setVisibility(GONE);
         floorplanVisible = true;
         Marker building = markerShowingInfoWindow;
 
@@ -990,6 +1030,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void hideFloorplan(View view)
     {
         routeStartButton.setVisibility(VISIBLE);
+        loadRouteButton.setVisibility(VISIBLE);
         floorplanVisible = false;
         background.remove();
         floorplan.remove();
