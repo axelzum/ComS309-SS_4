@@ -254,6 +254,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         final Button routeStartButton = findViewById(R.id.routeStartButton);
         final Button routeEndButton = findViewById(R.id.routeEndButton);
         final Button hideRouteButton = findViewById(R.id.hideRouteButton);
+        final Button saveRouteButton = findViewById(R.id.saveRouteButton);
+        final Button loadRouteButton = findViewById(R.id.loadRouteButton);
         routeStartButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v)
             {
@@ -326,7 +328,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     routeEnd.remove();
                     routeEnd=null;
                 }
-                
+
                 routeEndButton.setVisibility(GONE);
                 hideRouteButton.setVisibility(GONE);
             }
