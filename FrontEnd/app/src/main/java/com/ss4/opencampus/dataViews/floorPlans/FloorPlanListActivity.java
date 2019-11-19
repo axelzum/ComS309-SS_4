@@ -40,7 +40,7 @@ public class FloorPlanListActivity extends AppCompatActivity {
     private List<FloorPlan> floorPlanList;
     private RecyclerView.Adapter adapter;
 
-    int buildingID;
+    String buildingID;
 
     /**
      * Creates the ListView page. Loads all FloorPlans from database
@@ -52,7 +52,7 @@ public class FloorPlanListActivity extends AppCompatActivity {
         setContentView(R.layout.data_activity_floor_plan_list);
 
         Intent intent =  getIntent();
-        buildingID = intent.getExtras().getInt("BuildingID", 0);
+        buildingID = intent.getExtras().getString("BuildingID", "");
 
         RecyclerView fList;
         fList = findViewById(R.id.floor_plan_list);

@@ -45,7 +45,7 @@ import java.io.Serializable;
          * Gets the Details of the FloorPlan
          * @return floorPlanID
          */
-        public int getFloorPlanID() {
+        public int getFloorPlanIDAsInt() {
             return floorPlanID;
         }
 
@@ -61,7 +61,7 @@ import java.io.Serializable;
          * Gets the Details of the FloorPlan
          * @return floorPlanIDAsString
          */
-        public String getFloorPlanIDAsString() {
+        public String getFloorPlanID() {
             String floorPlanIDAsString = "" + floorPlanID;
             return floorPlanIDAsString;
         }

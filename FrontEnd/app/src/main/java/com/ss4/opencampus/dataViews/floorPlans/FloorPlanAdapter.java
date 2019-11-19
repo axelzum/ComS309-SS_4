@@ -70,7 +70,7 @@ public class FloorPlanAdapter extends RecyclerView.Adapter<com.ss4.opencampus.da
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView fpId, textName, level, fpImagePath;
+        TextView textName;
         ImageView picBytes;
 
         /**

@@ -76,18 +76,6 @@ public class SingleBuildingActivity extends AppCompatActivity {
     }
 
     /**
-     * Switches app to the list of all reviews for a given USpot
-     * @param view given view
-     */
-    public void viewReviewListActivity(View view)
-    {
-        Intent intent = new Intent(this, BuildingListActivity.class);
-        buildingItem = BuildingListActivity.getBuildingToBeShown();
-        intent.putExtra("BuildingID", buildingItem.getBuildingID());
-        startActivity(intent);
-    }
-
-    /**
      * Switches app to the list of all floor plans for a given Building
      * @param view given view
      */
@@ -95,7 +83,7 @@ public class SingleBuildingActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(this, FloorPlanListActivity.class);
         buildingItem = BuildingListActivity.getBuildingToBeShown();
-        intent.putExtra("BuildingID", buildingItem.getBuildingIDAsInt());
+        intent.putExtra("BuildingID", buildingItem.getBuildingID());
         startActivity(intent);
     }
 }
