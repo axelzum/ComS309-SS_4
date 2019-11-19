@@ -456,7 +456,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void deleteCustomMarkers()
     {
             // Remove marker from database.
-            String getByNameurl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + Integer.toString(studentId) + "/customMarkers/name?param=" + markerShowingInfoWindow.getTitle();
+            String getByNameurl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers/name?param=" + markerShowingInfoWindow.getTitle();
 
             // Request a JSONObject response from the provided URL.
             JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, getByNameurl, null,
@@ -467,7 +467,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 for (int i = 0; i < response.length(); i++) {
                                     JSONObject cm = response.getJSONObject(i);
                                     int cmID = cm.getInt("cmID");
-                                    String deleteUrl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/"+ Integer.toString(studentId) +"/customMarkers/delete/" + cmID;
+                                    String deleteUrl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/"+ studentId +"/customMarkers/delete/" + cmID;
 
                                     StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, deleteUrl,  new Response.Listener<String>() {
                                         @Override
