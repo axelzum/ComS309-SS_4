@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
 }
 
 dependencies {
@@ -27,12 +30,16 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.+'
+    testImplementation 'org.mockito:mockito-core:2.28.2'
     testImplementation 'org.mockito:mockito-inline:2.7.21'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta04'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-rc01'
+    implementation group: 'org.java-websocket', name: 'Java-WebSocket', version:'1.4.0'
+    // https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy-gradle-plugin
+    implementation group: 'net.bytebuddy', name: 'byte-buddy-gradle-plugin', version: '1.10.3'
+
 }

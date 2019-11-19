@@ -18,7 +18,7 @@
         android:id="@+id/uspot_single_rating"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Latitude" />
+        tools:text="Rating" />
 
     <TextView
         android:id="@+id/uspot_single_latitude"
@@ -50,14 +50,30 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:onClick="viewDashboard"
-        android:text="@string/btn_building_list" />
+        android:text="Dashboard" />
 
     <Button
         android:id="@+id/button_USpotList"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:onClick="viewUspotListActivity"
+        android:onClick="viewUSpotListActivity"
         android:text="@string/show_uspot_list" />
+
+    <Button
+        android:id="@+id/button_ReviewList"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:onClick="viewReviewListActivity"
+        android:text="Show Reviews" />
+
+    <Button
+        android:id="@+id/button_createReview"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:onClick="createReview"
+        android:text="Create Review" />
 
 </LinearLayout>

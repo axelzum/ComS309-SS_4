@@ -23,15 +23,20 @@
         <activity android:name=".mainViews.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".mainViews.DashboardActivity" />
         <activity android:name=".mainViews.CreateAccountActivity" />
         <activity android:name=".dataViews.buildings.BuildingListActivity" />
+        <activity android:name=".dataViews.buildings.SingleBuildingActivity" />
         <activity android:name=".mapViews.MapsActivity" />
         <activity android:name=".dataViews.uspots.USpotListActivity" />
+        <activity android:name=".dataViews.uspots.SingleUSpotActivity" />
+        <activity android:name=".dataViews.reviews.CreateReviewActivity" />
+        <activity android:name=".dataViews.reviews.ReviewListActivity" />
+        <activity android:name=".dataViews.floorPlans.FloorPlanListActivity" />
+        <activity android:name=".socketTest.SocketTestActivity" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

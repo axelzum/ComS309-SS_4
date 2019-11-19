@@ -9,6 +9,9 @@ import javax.persistence.*;
 
 /**
  * @author Willis Knox
+ * <p>
+ * FloorPlans will store information about the floor of the different Buildings on campus. A FloorPlan is a Weak Entity
+ * Set of a Building. FloorPlans have pictures that will be stored on the remote server
  */
 @Entity
 @Table(name = "FloorPlans")

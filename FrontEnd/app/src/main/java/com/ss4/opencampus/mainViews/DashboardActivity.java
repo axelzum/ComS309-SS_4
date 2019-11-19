@@ -11,9 +11,11 @@ import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.webSocket.SocketTestActivity;
+import com.ss4.opencampus.webSocket.WebSocket;
 
 /**
- * @Author: Axel Zumwalt
+ * @author Axel Zumwalt
  *
  * Class that provides functionality for the DashboardActivity List Activity
  * Creates view methods to view different activities with onClick buttons
@@ -37,10 +39,10 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.main_activity_dashboard);
 
         /* Init Objects */
-        btnViewMap = (Button) findViewById(R.id.button_OpenMap);
-        btnViewBuildingList = (Button) findViewById(R.id.button_BuildingList);
-        btnViewUspotList = (Button) findViewById(R.id.button_USpotList);
-        btnLogout = (Button) findViewById(R.id.button_logout);
+        btnViewMap = (Button)findViewById(R.id.button_OpenMap);
+        btnViewBuildingList = (Button)findViewById(R.id.button_BuildingList);
+        btnViewUspotList = (Button)findViewById(R.id.button_USpotList);
+        btnLogout = (Button)findViewById(R.id.button_logout);
 
         /* Init Listeners */
         btnViewMap.setOnClickListener(this);
@@ -70,7 +72,6 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             case R.id.button_logout:
                 logout();
                 break;
-
         }
     }
 
@@ -106,6 +107,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
      */
     public void logout() {
         PreferenceUtils.saveUserId(-1, this);
+        WebSocket.closeWebSocket();
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }

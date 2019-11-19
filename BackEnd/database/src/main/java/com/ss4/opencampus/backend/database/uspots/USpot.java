@@ -1,10 +1,5 @@
 package com.ss4.opencampus.backend.database.uspots;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.ss4.opencampus.backend.database.buildings.Building;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 
 /**
@@ -82,13 +77,16 @@ public class USpot
   private String floor;
 
   /**
-   * Foreign Key to Building table. Used if USpot is located inside a building
+   * References Building table. Used if USpot is located inside a building
    */
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "uspot_building_id")
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  @JsonIgnore
-  private Building building;
+  @Column(name = "uspot_building_id")
+  private Integer buildingId;
+
+  /**
+   * References the Student that made the USpot
+   */
+  @Column(name = "uspot_student_id")
+  private Integer studentId;
 
   /**
    * Provided by Frontend but not saved directly to database
@@ -102,6 +100,16 @@ public class USpot
   public USpot()
   {
 
+  }
+
+  public Integer getStudentId()
+  {
+    return studentId;
+  }
+
+  public void setStudentId(Integer studentId)
+  {
+    this.studentId = studentId;
   }
 
   /**
@@ -340,25 +348,46 @@ public class USpot
     this.ratingTotal = ratingTotal;
   }
 
-
+  /**
+   * Gets the floor that the USpot is on. Can be null
+   *
+   * @return Floor the USpot is on.
+   */
   public String getFloor()
   {
     return floor;
   }
 
+  /**
+   * Sets the floor the USpot is on.
+   *
+   * @param floor
+   *         New floor for the USpot
+   */
   public void setFloor(String floor)
   {
     this.floor = floor;
   }
 
-  public Building getBuilding()
+  /**
+   * Gets the ID of the Building the USpot is in
+   *
+   * @return ID of Building that the USpot is in
+   */
+  public Integer getBuildingId()
   {
-    return building;
+    return buildingId;
   }
 
-  public void setBuilding(Building building)
+  /**
+   * Sets the ID of the Building that the USpot is in. Would be used if the USpot was incorrectly placed in a building.
+   *
+   * @param buildingId
+   *         New ID for Building
+   */
+  public void setBuildingId(Integer buildingId)
   {
-    this.building = building;
+    this.buildingId = buildingId;
   }
 
 
