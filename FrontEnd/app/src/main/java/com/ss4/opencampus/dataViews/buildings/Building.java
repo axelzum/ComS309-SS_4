@@ -48,8 +48,18 @@ public class Building {
      * Gets the ID of the Building
      * @return Building ID
      */
-    public int getBuildingID() {
+    public int getBuildingIDAsInt() {
         return buildingID;
+    }
+
+
+    /**
+     * Gets the ID of the Building
+     * @return Building ID
+     */
+    public String getBuildingID() {
+        String temp = "" + buildingID;
+        return temp;
     }
 
     /**

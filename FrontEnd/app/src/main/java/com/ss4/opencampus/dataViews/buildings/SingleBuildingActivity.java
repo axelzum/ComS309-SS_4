@@ -95,7 +95,7 @@ public class SingleBuildingActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(this, FloorPlanListActivity.class);
         buildingItem = BuildingListActivity.getBuildingToBeShown();
-        intent.putExtra("BuildingID", buildingItem.getBuildingID());
+        intent.putExtra("BuildingID", buildingItem.getBuildingIDAsInt());
         startActivity(intent);
     }
 }
