@@ -1,5 +1,6 @@
 package com.ss4.opencampus.mapViews;
 
+import com.android.volley.toolbox.JsonRequest;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.mainViews.DashboardActivity;
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
@@ -736,17 +738,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         floorplanButton.setVisibility(VISIBLE);
 
         floorImages = new ArrayList<>();
-        setCurrentBuildingId();
-        System.out.println(currentBuildingId);
-        setNumFloors();
-        System.out.println(numFloors);
-        updateFloorButtonText();
-        System.out.println("update text complete");
-        for(int i = 0; i<numFloors; i++)
-        {
-            System.out.println("Setting " + i + " to visible.");
-            floorButtons.get(i).setVisibility(VISIBLE);
-        }
+        setCurrentBuildingId(); //TODO: Bugged
+        currentBuildingId = 147; //Defaulted to Pearson.
+
 
 
 
@@ -768,7 +762,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onResponse(JSONArray response) {
                         try {
                             for (int i = 0; i < response.length(); i++) {
-                                JSONObject building = response.getJSONObject(0);
+                                JSONObject building = response.getJSONObject(i);
                                 floorButtons.get(i).setText(building.getString("level"));
                                 floorButtons.get(i).setVisibility(VISIBLE);
                             }
@@ -802,7 +796,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         floorplan.remove();
         setMapBounds();
         mMap.setMapType(MAP_TYPE_NORMAL);
-        floorplanButton.setVisibility(View.GONE);
+        floorplanButton.setVisibility(GONE);
+
+        for(int i = 0; i<floorButtons.size(); i++)
+        {
+            System.out.println("Setting " + i + " to invisible.");
+            floorButtons.get(i).setVisibility(GONE);
+        }
     }
 
     /**
@@ -847,72 +847,72 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Marker building = markerShowingInfoWindow;
         int id = v.getId();
 
-//        switch(id)
-//        {
-//            case R.id.button_floor1:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(0)))
-//                        .position(building.getPosition(),200,150));
-//                // TODO: Load USpots for this floor
-//                break;
-//            case R.id.button_floor2:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(1)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor3:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(2)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor4:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(3)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor5:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(4)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor6:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(5)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor7:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(6)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor8:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(7)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor9:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(8)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor10:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(9)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor11:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(10)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            case R.id.button_floor12:
-//                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
-//                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(11)))
-//                        .position(building.getPosition(),200,150));
-//                break;
-//            default:
-//                break;
-//        }
+        switch(id)
+        {
+            case R.id.button_floor1:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(0)))
+                        .position(building.getPosition(),200,150));
+                // TODO: Load USpots for this floor
+                break;
+            case R.id.button_floor2:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(1)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor3:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(2)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor4:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(3)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor5:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(4)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor6:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(5)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor7:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(6)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor8:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(7)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor9:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(8)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor10:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(9)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor11:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(10)))
+                        .position(building.getPosition(),200,150));
+                break;
+            case R.id.button_floor12:
+                floorplan = mMap.addGroundOverlay(new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromResource(floorImages.get(11)))
+                        .position(building.getPosition(),200,150));
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -967,6 +967,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void setCurrentBuildingId()
     {
+        queue = Volley.newRequestQueue(this);
         // Get request with markerShowingInfoWindow
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/name?param1=" + markerShowingInfoWindow.getTitle().replace(" ", "%20");
         System.out.println(markerShowingInfoWindow.getTitle().replace(" ","%20"));
@@ -978,6 +979,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         try {
                             JSONObject building = response.getJSONObject(0);
                             currentBuildingId = building.getInt("id");
+                            System.out.println(currentBuildingId);
+                            setNumFloors();
+                            System.out.println(numFloors);
+                            updateFloorButtonText();
+                            System.out.println("update text complete");
+                            for(int i = 0; i<numFloors; i++)
+                            {
+                                System.out.println("Setting " + i + " to visible.");
+                                floorButtons.get(i).setVisibility(VISIBLE);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
