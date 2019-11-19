@@ -15,6 +15,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.dataViews.buildings.Building;
@@ -72,18 +73,20 @@ public class ReviewMessageListActivity extends AppCompatActivity {
                 int USpotId = selectedReviewMessage.getUSpotId();
 
                 queue = Volley.newRequestQueue(ReviewMessageListActivity.this);
-                String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/" + Integer.toString(USpotId);
+                //String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/" + Integer.toString(USpotId);
+                String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/20";
 
-                JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                        new Response.Listener<JSONArray>() {    // Reads in JSON data for the uspots from the server
+
+                JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONObject>() {    // Reads in JSON data for the uspots from the server
                             /**
                              * Makes a GET Request to Backend to get the USpot with the given ID in the database.
                              * @param response JSON format of information from Backend
                              */
                             @Override
-                            public void onResponse(JSONArray response) {
+                            public void onResponse(JSONObject response) {
                                 try {
-                                    JSONObject jsonObject = response.getJSONObject(0);
+                                    JSONObject jsonObject = response;
                                     USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
 
                                     uspotInfo.setUsID(jsonObject.getInt("usID"));

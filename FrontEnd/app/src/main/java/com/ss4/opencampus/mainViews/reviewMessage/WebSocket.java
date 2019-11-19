@@ -11,6 +11,7 @@ import com.ss4.opencampus.dataViews.reviews.Review;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 import com.ss4.opencampus.mainViews.LoginActivity;
 import com.ss4.opencampus.mainViews.PreferenceUtils;
+import com.ss4.opencampus.mapViews.MapsActivity;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
@@ -55,6 +56,9 @@ public class WebSocket {
                     messageList.add(reviewMessage);
 
                     PreferenceUtils.addReviewMessageList(messageList, context);
+
+                    Intent intent = new Intent(context, DashboardActivity.class);
+                    context.startActivity(intent);
                 }
 
                 @Override
