@@ -53,26 +53,26 @@ public class ReviewMessageListActivity extends AppCompatActivity {
 
         RecyclerView msgList = findViewById(R.id.message_list);
 
-        msgList.addOnItemTouchListener(new RecyclerItemClickListener(this, msgList ,new RecyclerItemClickListener.OnItemClickListener() {
+        //msgList.addOnItemTouchListener(new RecyclerItemClickListener(this, msgList ,new RecyclerItemClickListener.OnItemClickListener() {
             /**
              * On click method, opens message view which an item in the list is clicked.
              *
              * @param view view
              * @param position position of message
-             */
+             *//*
             @Override public void onItemClick(View view, int position) {
                 view.getId();
                 ReviewMessage selectedReviewMessage = (ReviewMessage)view.getTag();
                 //TODO open upspot with message
                 Intent intent = new Intent(view.getContext(), SingleBuildingActivity.class);
-                ReviewMessageListActivity.setBuildingToBeShown(singleBuilding);
+                ReviewMessageListActivity.setSelectedReviewMessage(selectedReviewMessage);
                 startActivity(intent);
             }
 
             /**
              * @param view view
              * @param position position of message
-             */
+             *//*
             @Override public void onLongItemClick(View view, int position) {
             }
         }));
@@ -102,7 +102,7 @@ public class ReviewMessageListActivity extends AppCompatActivity {
                      * Makes a GET Request to Backend to get all Buildings in the database and stores the
                      * information into Building objects
                      * @param response JSON format of information from Backend
-                     */
+                     *//*
                     @Override
                     public void onResponse(JSONArray response) {
                         try {
@@ -128,7 +128,7 @@ public class ReviewMessageListActivity extends AppCompatActivity {
             /**
              * Prints an the error if something goes wrong
              * @param error Type of error that occurred
-             */
+             *//*
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
@@ -138,6 +138,7 @@ public class ReviewMessageListActivity extends AppCompatActivity {
         jsonRequest.setTag(TAG);
         // Add the request to the RequestQueue.
         queue.add(jsonRequest);
+        */
     }
     
     /**

@@ -21,7 +21,8 @@ public class ReviewMessage {
      * ReviewMessage constructor
      */
     public ReviewMessage(int USpotId, boolean isRead) {
-
+        this.USpotId = USpotId;
+        this.isRead = isRead;
     }
 
     public void setUSpotId(int USpotId) {
