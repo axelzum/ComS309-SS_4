@@ -72,7 +72,7 @@ public class WebSocket {
                 @Override
                 public void onMessage(String message) {
                     Log.d("TO NOTIFY USER :", message);
-                    int USpotId = Integer.getInteger(message);
+                    int USpotId = Integer.parseInt(message);
 
                     RequestQueue queue = Volley.newRequestQueue(context);
                     String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/" + Integer.toString(USpotId);
