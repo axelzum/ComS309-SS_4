@@ -1,4 +1,4 @@
-package com.ss4.opencampus.backend.database.students.routes;
+package com.ss4.opencampus.backend.database.routes;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;

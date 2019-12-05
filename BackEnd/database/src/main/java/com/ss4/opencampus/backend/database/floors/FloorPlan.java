@@ -1,6 +1,7 @@
-package com.ss4.opencampus.backend.database.buildings.floors;
+package com.ss4.opencampus.backend.database.floors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ss4.opencampus.backend.database.OpenCampusEntity;
 import com.ss4.opencampus.backend.database.buildings.Building;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -15,7 +16,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "FloorPlans")
-public class FloorPlan
+public class FloorPlan implements OpenCampusEntity
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +53,7 @@ public class FloorPlan
    *
    * @return The Floor Plan's ID
    */
-  public Integer getFpId()
+  public Integer getId()
   {
     return fpId;
   }
@@ -63,7 +64,7 @@ public class FloorPlan
    * @param fpId
    *         New ID for the Floor Plan
    */
-  public void setFpId(Integer fpId)
+  public void setId(Integer fpId)
   {
     this.fpId = fpId;
   }

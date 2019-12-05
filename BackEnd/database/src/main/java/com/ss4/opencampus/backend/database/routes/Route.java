@@ -1,6 +1,7 @@
-package com.ss4.opencampus.backend.database.students.routes;
+package com.ss4.opencampus.backend.database.routes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ss4.opencampus.backend.database.OpenCampusEntity;
 import com.ss4.opencampus.backend.database.students.Student;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -12,7 +13,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "Routes")
-public class Route
+public class Route implements OpenCampusEntity
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

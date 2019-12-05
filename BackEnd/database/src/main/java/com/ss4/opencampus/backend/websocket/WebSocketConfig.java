@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
+/**
+ * Class was implemented following tutorial on Piazza
+ */
 @ConditionalOnWebApplication
 @Configuration
 public class WebSocketConfig

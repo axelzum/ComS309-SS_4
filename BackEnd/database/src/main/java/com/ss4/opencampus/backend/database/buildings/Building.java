@@ -1,5 +1,7 @@
 package com.ss4.opencampus.backend.database.buildings;
 
+import com.ss4.opencampus.backend.database.OpenCampusEntity;
+
 import javax.persistence.*;
 
 /**
@@ -8,7 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "Buildings")
-public class Building
+public class Building implements OpenCampusEntity
 {
   /**
    * Needs to be IDENTITY otherwise the IDs from other Tables will increment off of each other

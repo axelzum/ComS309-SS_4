@@ -1,6 +1,7 @@
-package com.ss4.opencampus.backend.database.uspots.reviews;
+package com.ss4.opencampus.backend.database.reviews;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ss4.opencampus.backend.database.OpenCampusEntity;
 import com.ss4.opencampus.backend.database.uspots.USpot;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -15,7 +16,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "Reviews")
-public class Review
+public class Review implements OpenCampusEntity
 {
 
   @Id
@@ -36,7 +37,7 @@ public class Review
    *
    * @return Review's ID
    */
-  public Integer getrId()
+  public Integer getId()
   {
     return rId;
   }
@@ -47,7 +48,7 @@ public class Review
    * @param rId
    *         new ID for Review
    */
-  public void setrId(Integer rId)
+  public void setId(Integer rId)
   {
     this.rId = rId;
   }

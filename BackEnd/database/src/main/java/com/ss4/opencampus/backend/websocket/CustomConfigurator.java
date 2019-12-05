@@ -6,6 +6,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.socket.server.standard.ServerEndpointRegistration;
 
+/**
+ * Class was implemented following tutorial on Piazza
+ */
 public class CustomConfigurator extends ServerEndpointRegistration.Configurator implements ApplicationContextAware
 {
   private static volatile BeanFactory context;

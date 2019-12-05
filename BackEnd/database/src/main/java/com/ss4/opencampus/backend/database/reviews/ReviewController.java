@@ -1,4 +1,4 @@
-package com.ss4.opencampus.backend.database.uspots.reviews;
+package com.ss4.opencampus.backend.database.reviews;
 
 import com.ss4.opencampus.backend.database.uspots.USpot;
 import com.ss4.opencampus.backend.database.uspots.USpotRepository;
@@ -46,7 +46,7 @@ public class ReviewController
       USpot u = uSpotRepository.findById(uspotId).get();
       review.setuSpot(u);
       reviewRepository.save(review);
-      WebSocketServer.onMessage(u.getUsID());
+      WebSocketServer.onMessage(u.getId());
     }
     catch (Exception e)
     {

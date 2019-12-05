@@ -1,4 +1,4 @@
-package com.ss4.opencampus.backend.database.buildings.floors;
+package com.ss4.opencampus.backend.database.floors;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;

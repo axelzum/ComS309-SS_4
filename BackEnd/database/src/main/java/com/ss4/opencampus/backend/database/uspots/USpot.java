@@ -1,5 +1,7 @@
 package com.ss4.opencampus.backend.database.uspots;
 
+import com.ss4.opencampus.backend.database.OpenCampusEntity;
+
 import javax.persistence.*;
 
 /**
@@ -10,7 +12,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "USpots")
-public class USpot
+public class USpot implements OpenCampusEntity
 {
 
   @Id
@@ -117,7 +119,7 @@ public class USpot
    *
    * @return the id of the USpot
    */
-  public Integer getUsID()
+  public Integer getId()
   {
     return usID;
   }
@@ -128,7 +130,7 @@ public class USpot
    * @param usID
    *         new ID for the USpot to have
    */
-  public void setUsID(Integer usID)
+  public void setId(Integer usID)
   {
     this.usID = usID;
   }

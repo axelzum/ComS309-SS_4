@@ -1,6 +1,7 @@
-package com.ss4.opencampus.backend.database.students.custommarkers;
+package com.ss4.opencampus.backend.database.custommarkers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ss4.opencampus.backend.database.OpenCampusEntity;
 import com.ss4.opencampus.backend.database.students.Student;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -15,7 +16,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "CustomMarkers")
-public class CustomMarker
+public class CustomMarker implements OpenCampusEntity
 {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +49,7 @@ public class CustomMarker
    *
    * @return ID of the CustomMarker
    */
-  public Integer getCmID()
+  public Integer getId()
   {
     return cmId;
   }
@@ -59,7 +60,7 @@ public class CustomMarker
    * @param cmId
    *         New ID for the CustomMarker
    */
-  public void setCmID(Integer cmId)
+  public void setId(Integer cmId)
   {
     this.cmId = cmId;
   }

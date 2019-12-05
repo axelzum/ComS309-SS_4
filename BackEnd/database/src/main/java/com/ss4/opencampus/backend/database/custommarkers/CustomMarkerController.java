@@ -1,4 +1,4 @@
-package com.ss4.opencampus.backend.database.students.custommarkers;
+package com.ss4.opencampus.backend.database.custommarkers;
 
 import com.ss4.opencampus.backend.database.students.Student;
 import com.ss4.opencampus.backend.database.students.StudentRepository;
