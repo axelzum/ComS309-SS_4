@@ -1,4 +1,4 @@
-package com.ss4.opencampus.backend.database.buildings.floors;
+package com.ss4.opencampus.backend.database.floors;
 
 import com.ss4.opencampus.backend.database.buildings.Building;
 import com.ss4.opencampus.backend.database.buildings.BuildingRepository;

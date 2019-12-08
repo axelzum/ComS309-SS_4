@@ -1,9 +1,5 @@
-package com.ss4.opencampus.backend.database.uspots.reviews;
+package com.ss4.opencampus.backend.database.reviews;
 
-import com.ss4.opencampus.backend.database.students.Student;
-import com.ss4.opencampus.backend.database.students.custommarkers.CustomMarker;
-import com.ss4.opencampus.backend.database.students.custommarkers.CustomMarkerController;
-import com.ss4.opencampus.backend.database.students.custommarkers.CustomMarkerRepository;
 import com.ss4.opencampus.backend.database.uspots.USpot;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +47,7 @@ public class ReviewsTests
   public void init()
   {
     u1 = new USpot();
-    u1.setUsID(1);
+    u1.setId(1);
     u1.setStudentId(1);
     u1.setUsName("LeBaron Bike Rack");
     u1.setUsRating(4.5);
@@ -64,7 +60,7 @@ public class ReviewsTests
     u1.setUsLongit(-93.10000);
 
     u2 = new USpot();
-    u2.setUsID(2);
+    u2.setId(2);
     u2.setStudentId(1);
     u2.setBuildingId(1);
     u2.setFloor("B");
@@ -79,12 +75,12 @@ public class ReviewsTests
     u2.setUsLongit(-93.12345);
 
     rev1 = new Review();
-    rev1.setrId(1);
+    rev1.setId(1);
     rev1.setText("This is review 1");
     rev1.setuSpot(u1);
 
     rev2 = new Review();
-    rev2.setrId(2);
+    rev2.setId(2);
     rev2.setText("This is review 2");
     rev2.setuSpot(u1);
 
@@ -97,10 +93,10 @@ public class ReviewsTests
   @Test
   public void findAll()
   {
-    Mockito.when(reviewRepository.findAllByUSpotUsID(u1.getUsID(), new Sort(Sort.Direction.ASC, "rId")))
+    Mockito.when(reviewRepository.findAllByUSpotUsID(u1.getId(), new Sort(Sort.Direction.ASC, "rId")))
             .thenReturn(Arrays.asList(rev1, rev2));
-    Iterable<Review> rev = controller.getReviews(u1.getUsID(), "all");
-    assertEquals(reviewRepository.findAllByUSpotUsID(u1.getUsID(), new Sort(Sort.Direction.ASC, "rId")), rev);
+    Iterable<Review> rev = controller.getReviews(u1.getId(), "all");
+    assertEquals(reviewRepository.findAllByUSpotUsID(u1.getId(), new Sort(Sort.Direction.ASC, "rId")), rev);
 
   }
 
@@ -110,10 +106,10 @@ public class ReviewsTests
   @Test
   public void findStudentWithNoCMs()
   {
-    Mockito.when(reviewRepository.findAllByUSpotUsID(u2.getUsID(), new Sort(Sort.Direction.ASC, "rId")))
+    Mockito.when(reviewRepository.findAllByUSpotUsID(u2.getId(), new Sort(Sort.Direction.ASC, "rId")))
             .thenReturn(Collections.emptyList());
-    Iterable<Review> rev = controller.getReviews(u2.getUsID(), "all");
-    assertEquals(reviewRepository.findAllByUSpotUsID(u2.getUsID(), new Sort(Sort.Direction.ASC, "rId")), rev);
+    Iterable<Review> rev = controller.getReviews(u2.getId(), "all");
+    assertEquals(reviewRepository.findAllByUSpotUsID(u2.getId(), new Sort(Sort.Direction.ASC, "rId")), rev);
   }
 
   /**
@@ -122,8 +118,8 @@ public class ReviewsTests
   @Test
   public void findByRIdAndUSID()
   {
-    Mockito.when(reviewRepository.findByRIdAndUSpotUsID(rev2.getrId(), u1.getUsID())).thenReturn(Optional.of(rev2));
-    Optional<Review> rev = controller.getById(u1.getUsID(), rev2.getrId());
+    Mockito.when(reviewRepository.findByRIdAndUSpotUsID(rev2.getId(), u1.getId())).thenReturn(Optional.of(rev2));
+    Optional<Review> rev = controller.getById(u1.getId(), rev2.getId());
     assertTrue(rev.isPresent());
     assertEquals(rev2, rev.get());
   }

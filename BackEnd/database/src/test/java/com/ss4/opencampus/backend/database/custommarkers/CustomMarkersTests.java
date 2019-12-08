@@ -1,4 +1,4 @@
-package com.ss4.opencampus.backend.database.students.custommarkers;
+package com.ss4.opencampus.backend.database.custommarkers;
 
 import com.ss4.opencampus.backend.database.students.Student;
 import org.junit.Before;
@@ -65,7 +65,7 @@ public class CustomMarkersTests
     s2.setPassword("h3lpM3Chani");
 
     cm1 = new CustomMarker();
-    cm1.setCmID(1);
+    cm1.setId(1);
     cm1.setStudent(s1);
     cm1.setName("West St Lofts");
     cm1.setDesc("My apartment building. Close to West St Deli and 1+1");
@@ -73,7 +73,7 @@ public class CustomMarkersTests
     cm1.setCmLongit(-93.6585319);
 
     cm4 = new CustomMarker();
-    cm4.setCmID(4);
+    cm4.setId(4);
     cm4.setStudent(s1);
     cm4.setName("Morrill Hall Bathroom");
     cm4.setDesc("Best bathroom on campus for guys. Always clean and never full");
@@ -81,7 +81,7 @@ public class CustomMarkersTests
     cm4.setCmLongit(-93.6486402);
 
     cm3 = new CustomMarker();
-    cm3.setCmID(3);
+    cm3.setId(3);
     cm3.setStudent(s2);
     cm3.setName("West St Lofts");
     cm3.setDesc("Potential apt building for next year. Like the location.");
@@ -89,7 +89,7 @@ public class CustomMarkersTests
     cm3.setCmLongit(-93.6585319);
 
     cm2 = new CustomMarker();
-    cm2.setCmID(2);
+    cm2.setId(2);
     cm2.setStudent(s2);
     cm2.setName("Convos");
     cm2.setDesc("EASILY the best dining hall on campus. Best burgers by FAR.");
@@ -155,8 +155,8 @@ public class CustomMarkersTests
   @Test
   public void findByIdAndStudent()
   {
-    Mockito.when(customMarkerRepository.findByCmIdAndStudentId(cm1.getCmID(), s1.getId())).thenReturn(Optional.of(cm1));
-    Optional<CustomMarker> cm = controller.getCustomMarkerById(s1.getId(), cm1.getCmID());
+    Mockito.when(customMarkerRepository.findByCmIdAndStudentId(cm1.getId(), s1.getId())).thenReturn(Optional.of(cm1));
+    Optional<CustomMarker> cm = controller.getCustomMarkerById(s1.getId(), cm1.getId());
     assertTrue(cm.isPresent());
     assertEquals(cm1, cm.get());
   }

@@ -336,7 +336,7 @@ public class USpotController
       FileOutputStream fos;
       if (u.getUsImagePath().equals("/target/images/noimage.png"))
       {
-        u.setUsImagePath(path + "uspot_fresh_image_" + u.getUsID() + ".png");
+        u.setUsImagePath(path + "uspot_fresh_image_" + u.getId() + ".png");
         fos = new FileOutputStream(u.getUsImagePath());
       }
       else

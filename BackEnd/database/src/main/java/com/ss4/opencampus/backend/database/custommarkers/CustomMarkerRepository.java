@@ -1,4 +1,4 @@
-package com.ss4.opencampus.backend.database.students.custommarkers;
+package com.ss4.opencampus.backend.database.custommarkers;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;

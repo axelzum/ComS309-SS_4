@@ -74,7 +74,7 @@ public class USpotsTests
     b.setLongit(-93.1010);
 
     u1 = new USpot();
-    u1.setUsID(1);
+    u1.setId(1);
     u1.setStudentId(1);
     u1.setUsName("LeBaron Bike Rack");
     u1.setUsRating(4.5);
@@ -87,7 +87,7 @@ public class USpotsTests
     u1.setUsLongit(-93.10000);
 
     u2 = new USpot();
-    u2.setUsID(2);
+    u2.setId(2);
     u2.setStudentId(1);
     u2.setBuildingId(1);
     u2.setFloor("B");
@@ -102,7 +102,7 @@ public class USpotsTests
     u2.setUsLongit(-93.12345);
 
     u3 = new USpot();
-    u3.setUsID(3);
+    u3.setId(3);
     u3.setStudentId(2);
     u3.setUsName("Study Tree");
     u3.setUsRating(4.88);
@@ -152,12 +152,12 @@ public class USpotsTests
   {
     Map<String, Object> map = new HashMap<>();
     map.put("usName", "testName");
-    Mockito.when(uSpotRepository.findById(u3.getUsID())).thenReturn(Optional.of(u3));
-    assertEquals(uSpotRepository.findById(u3.getUsID()).get().getUsName(), u3.getUsName());
-    uSpotController.patchUSpot(map, u3.getUsID());
+    Mockito.when(uSpotRepository.findById(u3.getId())).thenReturn(Optional.of(u3));
+    assertEquals(uSpotRepository.findById(u3.getId()).get().getUsName(), u3.getUsName());
+    uSpotController.patchUSpot(map, u3.getId());
     assertEquals(u3.getUsName(), "testName");
-    assertEquals(uSpotRepository.findById(u3.getUsID()).get().getUsName(), "testName");
-    Mockito.verify(uSpotRepository, Mockito.times(3)).findById(u3.getUsID());
+    assertEquals(uSpotRepository.findById(u3.getId()).get().getUsName(), "testName");
+    Mockito.verify(uSpotRepository, Mockito.times(3)).findById(u3.getId());
   }
 
 }

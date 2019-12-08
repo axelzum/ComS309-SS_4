@@ -1,4 +1,4 @@
-package com.ss4.opencampus.backend.database.uspots.reviews;
+package com.ss4.opencampus.backend.database.reviews;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;

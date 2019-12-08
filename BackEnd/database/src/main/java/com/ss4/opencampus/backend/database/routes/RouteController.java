@@ -1,4 +1,4 @@
-package com.ss4.opencampus.backend.database.students.routes;
+package com.ss4.opencampus.backend.database.routes;
 
 import com.ss4.opencampus.backend.database.students.Student;
 import com.ss4.opencampus.backend.database.students.StudentRepository;
