@@ -1,7 +1,6 @@
 package com.ss4.opencampus.backend.database.students;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -23,7 +22,7 @@ import java.util.Optional;
 public class StudentController
 {
   @Autowired
-  private StudentRepository studentRepository;
+  private StudentService studentService;
 
   /**
    * Adds a new Student to the Students table
@@ -37,23 +36,7 @@ public class StudentController
   public @ResponseBody
   Map<String, Boolean> addNewStudent(@RequestBody Student student)
   {
-    try
-    {
-      studentRepository.save(student);
-    }
-    catch (Exception e)
-    {
-        /*
-      if (e.getMessage().equals("could not execute statement; SQL [n/a]; constraint [Username_UNIQUE]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement")) {
-        dupUsername = true;
-      }
-      else if (e.getMessage().equals("could not execute statement; SQL [n/a]; constraint [Email_UNIQUE]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement")) {
-        dupEmail = true;
-      }
-         */
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", studentService.add(student));
   }
 
   /**
@@ -75,21 +58,7 @@ public class StudentController
   public @ResponseBody
   Iterable<Student> getStudentLists(@PathVariable String searchType, @RequestParam(required = false) String param1, @RequestParam(required = false) String param2)
   {
-    switch (searchType)
-    {
-      case "firstName":
-        return studentRepository.findAllByFirstName(param1);
-      case "lastName":
-        return studentRepository.findAllByLastName(param1);
-      case "firstNameAndLastName":
-        return studentRepository.findAllByFirstNameAndLastName(param1, param2);
-      case "userName":
-        return studentRepository.findByUserName(param1);
-      case "email":
-        return studentRepository.findByEmail(param1);
-      default: // default is returning a list of students sorted by last name. There needs to be some text after "search/" otherwise it will not work?
-        return studentRepository.findAll(new Sort(Sort.Direction.ASC, "lastName"));
-    }
+    return studentService.getStudents(searchType, param1, param2);
   }
 
   /**
@@ -107,7 +76,7 @@ public class StudentController
   public @ResponseBody
   Optional<Student> getStudentById(@PathVariable Integer id)
   {
-    return studentRepository.findById(id);
+    return studentService.getById(id);
   }
 
   /**
@@ -126,21 +95,7 @@ public class StudentController
   public @ResponseBody
   Map<String, Boolean> updateStudent(@RequestBody Student student, @PathVariable Integer id)
   {
-    try
-    {
-      Student s = studentRepository.findById(id).get();
-      s.setFirstName(student.getFirstName());
-      s.setLastName(student.getLastName());
-      s.setEmail(student.getEmail());
-      s.setUserName(student.getUserName());
-      s.setPassword(student.getPassword());
-      studentRepository.save(s);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", studentService.put(student, id));
   }
 
   /**
@@ -157,39 +112,10 @@ public class StudentController
    */
   @PatchMapping(path = "/patch/{id}")
   public @ResponseBody
-  Map<String, Boolean> patchStudent(@RequestBody Map<String, String> patch,
+  Map<String, Boolean> patchStudent(@RequestBody Map<String, Object> patch,
                                     @PathVariable Integer id)
   {
-    try
-    {
-      Student student = studentRepository.findById(id).get();
-      if (patch.containsKey("firstName"))
-      {
-        student.setFirstName(patch.get("firstName"));
-      }
-      if (patch.containsKey("lastName"))
-      {
-        student.setLastName(patch.get("lastName"));
-      }
-      if (patch.containsKey("userName"))
-      {
-        student.setUserName(patch.get("userName"));
-      }
-      if (patch.containsKey("email"))
-      {
-        student.setEmail(patch.get("email"));
-      }
-      if (patch.containsKey("password"))
-      {
-        student.setPassword(patch.get("password"));
-      }
-      studentRepository.save(student);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", studentService.patch(patch, id));
   }
 
   /**
@@ -204,14 +130,6 @@ public class StudentController
   public @ResponseBody
   Map<String, Boolean> deleteStudent(@PathVariable Integer id)
   {
-    try
-    {
-      studentRepository.deleteById(id);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", studentService.delete(id));
   }
 }

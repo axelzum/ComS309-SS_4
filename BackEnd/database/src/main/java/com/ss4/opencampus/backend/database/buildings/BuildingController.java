@@ -36,7 +36,7 @@ public class BuildingController
   public @ResponseBody
   Map<String, Boolean> addSingleBuilding(@RequestBody Building building)
   {
-    return Collections.singletonMap("response", buildingService.addSingleBuilding(building));
+    return Collections.singletonMap("response", buildingService.add(building));
   }
 
   /**
@@ -94,7 +94,7 @@ public class BuildingController
   public @ResponseBody
   Optional<Building> getBuildingById(@PathVariable Integer id)
   {
-    return buildingService.getBuildingById(id);
+    return buildingService.getById(id);
   }
 
   /**
@@ -113,7 +113,7 @@ public class BuildingController
   public @ResponseBody
   Map<String, Boolean> updateBuilding(@RequestBody Building building, @PathVariable Integer id)
   {
-    return Collections.singletonMap("response", buildingService.putBuilding(building, id));
+    return Collections.singletonMap("response", buildingService.put(building, id));
   }
 
   /**
@@ -133,7 +133,7 @@ public class BuildingController
   Map<String, Boolean> patchBuilding(@RequestBody Map<String, Object> patch,
                                      @PathVariable Integer id)
   {
-    return Collections.singletonMap("response", buildingService.patchBuilding(patch, id));
+    return Collections.singletonMap("response", buildingService.patch(patch, id));
   }
 
   /**
@@ -148,6 +148,6 @@ public class BuildingController
   public @ResponseBody
   Map<String, Boolean> deleteBuilding(@PathVariable Integer id)
   {
-    return Collections.singletonMap("response", buildingService.deleteBuilding(id));
+    return Collections.singletonMap("response", buildingService.delete(id));
   }
 }

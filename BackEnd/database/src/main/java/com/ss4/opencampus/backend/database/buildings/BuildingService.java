@@ -1,5 +1,6 @@
 package com.ss4.opencampus.backend.database.buildings;
 
+import com.ss4.opencampus.backend.database.OpenCampusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -8,15 +9,16 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class BuildingService
+public class BuildingService implements OpenCampusService
 {
   @Autowired
   private BuildingRepository buildingRepository;
 
-  public Boolean addSingleBuilding(Building building)
+  public <T> Boolean add(T t)
   {
     try
     {
+      Building building = (Building) t;
       buildingRepository.save(building);
     }
     catch (Exception e)
@@ -42,22 +44,22 @@ public class BuildingService
     return true;
   }
 
-  public Iterable<Building> getBuildings(String searchType, Object param, Object param2)
+  public Iterable<Building> getBuildings(String searchType, Object param1, Object param2)
   {
     switch (searchType)
     {
       case "nameStartsWith":
-        return buildingRepository.findAllByBuildingNameStartingWith((String) param);
+        return buildingRepository.findAllByBuildingNameStartingWith((String) param1);
       case "abbreviationStartsWith":
-        return buildingRepository.findAllByAbbreviationStartingWith((String) param);
+        return buildingRepository.findAllByAbbreviationStartingWith((String) param1);
       case "name":
-        return buildingRepository.findByBuildingName((String) param);
+        return buildingRepository.findByBuildingName((String) param1);
       case "abbreviation":
-        return buildingRepository.findByAbbreviation((String) param);
+        return buildingRepository.findByAbbreviation((String) param1);
       case "address":
-        return buildingRepository.findByAddress((String) param);
+        return buildingRepository.findByAddress((String) param1);
       case "location":
-        Double lat = Double.parseDouble((String) param);
+        Double lat = Double.parseDouble((String) param1);
         Double lon = Double.parseDouble((String) param2);
         return buildingRepository.findByLatitAndLongit(lat, lon);
       default:
@@ -65,15 +67,16 @@ public class BuildingService
     }
   }
 
-  public Optional<Building> getBuildingById(Integer id)
+  public Optional<Building> getById(Integer id)
   {
     return buildingRepository.findById(id);
   }
 
-  public Boolean putBuilding(Building building, Integer id)
+  public <T> Boolean put(T t, Integer id)
   {
     try
     {
+      Building building = (Building) t;
       Building b = buildingRepository.findById(id).get();
       b.setBuildingName(building.getBuildingName());
       b.setAddress(building.getAddress());
@@ -90,7 +93,7 @@ public class BuildingService
     return true;
   }
 
-  public Boolean patchBuilding(Map<String, Object> patch, Integer id)
+  public Boolean patch(Map<String, Object> patch, Integer id)
   {
     try
     {
@@ -128,7 +131,7 @@ public class BuildingService
     return true;
   }
 
-  public Boolean deleteBuilding(Integer id)
+  public Boolean delete(Integer id)
   {
     try
     {

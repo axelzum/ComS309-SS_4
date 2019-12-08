@@ -180,7 +180,7 @@ public class BuildingsTests
   public void findById()
   {
     Mockito.when(buildingRepository.findById(3)).thenReturn(Optional.of(building3));
-    Optional<Building> b = buildingService.getBuildingById(3);
+    Optional<Building> b = buildingService.getById(3);
     assertTrue(b.isPresent());
     assertEquals(building3, b.get());
   }

@@ -34,7 +34,7 @@ public class StudentsTests
   private StudentRepository studentRepository;
 
   @InjectMocks
-  private StudentController studentController;
+  private StudentService studentService;
 
   /**
    * Initializes 4 fake Students before every test
@@ -83,7 +83,7 @@ public class StudentsTests
   {
     Mockito.when(studentRepository.findAll(new Sort(Sort.Direction.ASC, "lastName"))).thenReturn(
             Collections.emptyList());
-    Iterable<Student> b = studentController.getStudentLists("all", null, null);
+    Iterable<Student> b = studentService.getStudents("all", null, null);
     assertEquals(studentRepository.findAll(new Sort(Sort.Direction.ASC, "lastName")), b);
     Mockito.verify(studentRepository, Mockito.times(2)).findAll(new Sort(Sort.Direction.ASC, "lastName"));
   }
@@ -98,7 +98,7 @@ public class StudentsTests
     Mockito.when(studentRepository.findAll(new Sort(Sort.Direction.ASC, "lastName"))).thenReturn(
             Arrays.asList(student2,
                           student1));
-    Iterable<Student> b = studentController.getStudentLists("all", null, null);
+    Iterable<Student> b = studentService.getStudents("all", null, null);
     assertEquals(studentRepository.findAll(new Sort(Sort.Direction.ASC, "lastName")), b);
     Mockito.verify(studentRepository, Mockito.times(2)).findAll(new Sort(Sort.Direction.ASC, "lastName"));
   }
@@ -112,7 +112,7 @@ public class StudentsTests
   {
     Mockito.when(studentRepository.findByUserName("wpknox")).thenReturn(
             Collections.singletonList(student2));
-    Iterable<Student> b = studentController.getStudentLists("userName", "wpknox", null);
+    Iterable<Student> b = studentService.getStudents("userName", "wpknox", null);
     assertEquals(studentRepository.findByUserName("wpknox"), b);
     Mockito.verify(studentRepository, Mockito.times(2)).findByUserName("wpknox");
   }
