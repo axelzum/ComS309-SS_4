@@ -40,7 +40,7 @@ public class CustomMarkersTests
   private CustomMarkerRepository customMarkerRepository;
 
   @InjectMocks
-  private CustomMarkerController controller;
+  private CustomMarkerService customMarkerService;
 
   /**
    * Initialize fake CustomMarkers and Students that created the CustomMarkers before every test
@@ -105,14 +105,14 @@ public class CustomMarkersTests
   {
     Mockito.when(customMarkerRepository.findAllByStudentId(s1.getId(), new Sort(Sort.Direction.ASC, "name")))
             .thenReturn(Arrays.asList(cm4, cm1));
-    Iterable<CustomMarker> cm = controller.getCustomMarkers(s1.getId(), "all", null);
+    Iterable<CustomMarker> cm = customMarkerService.getCustomMarkers(s1.getId(), "all", null);
     assertEquals(customMarkerRepository.findAllByStudentId(s1.getId(), new Sort(Sort.Direction.ASC, "name")), cm);
     Mockito.verify(customMarkerRepository, Mockito.times(2)).findAllByStudentId(s1.getId(),
                                                                                 new Sort(Sort.Direction.ASC, "name"));
 
     Mockito.when(customMarkerRepository.findAllByStudentId(s2.getId(), new Sort(Sort.Direction.ASC, "name")))
             .thenReturn(Arrays.asList(cm2, cm3));
-    cm = controller.getCustomMarkers(s2.getId(), "all", null);
+    cm = customMarkerService.getCustomMarkers(s2.getId(), "all", null);
     assertEquals(customMarkerRepository.findAllByStudentId(s2.getId(), new Sort(Sort.Direction.ASC, "name")), cm);
     Mockito.verify(customMarkerRepository, Mockito.times(2)).findAllByStudentId(s2.getId(),
                                                                                 new Sort(Sort.Direction.ASC, "name"));
@@ -129,7 +129,7 @@ public class CustomMarkersTests
     s3.setId(3);
     Mockito.when(customMarkerRepository.findAllByStudentId(s3.getId(), new Sort(Sort.Direction.ASC, "name")))
             .thenReturn(Collections.emptyList());
-    Iterable<CustomMarker> cm = controller.getCustomMarkers(s3.getId(), "all", null);
+    Iterable<CustomMarker> cm = customMarkerService.getCustomMarkers(s3.getId(), "all", null);
     assertEquals(customMarkerRepository.findAllByStudentId(s3.getId(), new Sort(Sort.Direction.ASC, "name")), cm);
     Mockito.verify(customMarkerRepository, Mockito.times(2)).findAllByStudentId(s3.getId(),
                                                                                 new Sort(Sort.Direction.ASC, "name"));
@@ -143,7 +143,7 @@ public class CustomMarkersTests
   {
     Mockito.when(customMarkerRepository.findAllByStudentId(3, new Sort(Sort.Direction.ASC, "name")))
             .thenReturn(Collections.emptyList());
-    Iterable<CustomMarker> cm = controller.getCustomMarkers(3, "all", null);
+    Iterable<CustomMarker> cm = customMarkerService.getCustomMarkers(3, "all", null);
     assertEquals(customMarkerRepository.findAllByStudentId(3, new Sort(Sort.Direction.ASC, "name")), cm);
     Mockito.verify(customMarkerRepository, Mockito.times(2)).findAllByStudentId(3,
                                                                                 new Sort(Sort.Direction.ASC, "name"));
@@ -156,7 +156,7 @@ public class CustomMarkersTests
   public void findByIdAndStudent()
   {
     Mockito.when(customMarkerRepository.findByCmIdAndStudentId(cm1.getId(), s1.getId())).thenReturn(Optional.of(cm1));
-    Optional<CustomMarker> cm = controller.getCustomMarkerById(s1.getId(), cm1.getId());
+    Optional<CustomMarker> cm = customMarkerService.getById(s1.getId(), cm1.getId());
     assertTrue(cm.isPresent());
     assertEquals(cm1, cm.get());
   }
@@ -170,7 +170,7 @@ public class CustomMarkersTests
   {
     Mockito.when(customMarkerRepository.findByNameAndStudentId("Convos", s2.getId())).thenReturn(
             Collections.singletonList(cm2));
-    Iterable<CustomMarker> cm = controller.getCustomMarkers(s2.getId(), "name", "Convos");
+    Iterable<CustomMarker> cm = customMarkerService.getCustomMarkers(s2.getId(), "name", "Convos");
     assertEquals(customMarkerRepository.findByNameAndStudentId("Convos", s2.getId()), cm);
     Mockito.verify(customMarkerRepository, Mockito.times(2)).findByNameAndStudentId("Convos", s2.getId());
   }
@@ -184,7 +184,7 @@ public class CustomMarkersTests
   {
     Mockito.when(customMarkerRepository.findAllByNameStartingWithAndStudentId("W", s1.getId())).thenReturn(
             Collections.singletonList(cm1));
-    Iterable<CustomMarker> cm = controller.getCustomMarkers(s1.getId(), "nameStartsWith", "W");
+    Iterable<CustomMarker> cm = customMarkerService.getCustomMarkers(s1.getId(), "nameStartsWith", "W");
     assertEquals(customMarkerRepository.findAllByNameStartingWithAndStudentId("W", s1.getId()), cm);
     Mockito.verify(customMarkerRepository, Mockito.times(2)).findAllByNameStartingWithAndStudentId("W", s1.getId());
   }

@@ -8,12 +8,18 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * @author Willis Knox
+ *
+ * Service Class for Students
+ */
 @Service
 public class StudentService implements OpenCampusService
 {
   @Autowired
   private StudentRepository studentRepository;
 
+  @Override
   public <T> Boolean add(T t)
   {
     try
@@ -47,11 +53,13 @@ public class StudentService implements OpenCampusService
     }
   }
 
+  @Override
   public Optional<Student> getById(Integer id)
   {
     return studentRepository.findById(id);
   }
 
+  @Override
   public <T> Boolean put(T t, Integer id)
   {
     try
@@ -72,6 +80,7 @@ public class StudentService implements OpenCampusService
     return true;
   }
 
+  @Override
   public Boolean patch(Map<String, Object> patch, Integer id)
   {
     try
@@ -106,6 +115,7 @@ public class StudentService implements OpenCampusService
     return true;
   }
 
+  @Override
   public Boolean delete(Integer id)
   {
     try

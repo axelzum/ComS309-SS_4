@@ -8,12 +8,18 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * @author Willis Knox
+ *
+ * Service Class for Buildings
+ */
 @Service
 public class BuildingService implements OpenCampusService
 {
   @Autowired
   private BuildingRepository buildingRepository;
 
+  @Override
   public <T> Boolean add(T t)
   {
     try
@@ -67,11 +73,13 @@ public class BuildingService implements OpenCampusService
     }
   }
 
+  @Override
   public Optional<Building> getById(Integer id)
   {
     return buildingRepository.findById(id);
   }
 
+  @Override
   public <T> Boolean put(T t, Integer id)
   {
     try
@@ -93,6 +101,7 @@ public class BuildingService implements OpenCampusService
     return true;
   }
 
+  @Override
   public Boolean patch(Map<String, Object> patch, Integer id)
   {
     try
@@ -131,6 +140,7 @@ public class BuildingService implements OpenCampusService
     return true;
   }
 
+  @Override
   public Boolean delete(Integer id)
   {
     try
