@@ -1,7 +1,6 @@
 package com.ss4.opencampus.backend.database.buildings;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -23,7 +22,7 @@ import java.util.Optional;
 public class BuildingController
 {
   @Autowired
-  private BuildingRepository buildingRepository;
+  private BuildingService buildingService;
 
   /**
    * Add new Building to Buildings table
@@ -37,15 +36,7 @@ public class BuildingController
   public @ResponseBody
   Map<String, Boolean> addSingleBuilding(@RequestBody Building building)
   {
-    try
-    {
-      buildingRepository.save(building);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", buildingService.addSingleBuilding(building));
   }
 
   /**
@@ -61,20 +52,7 @@ public class BuildingController
   public @ResponseBody
   Map<String, Boolean> addMultipleBuildings(@RequestBody Building[] buildings)
   {
-    int addedCnt = 0;
-    try
-    {
-      for (Building b : buildings)
-      {
-        buildingRepository.save(b);
-        addedCnt++;
-      }
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", buildingService.addMultipleBuildings(buildings));
   }
 
   /**
@@ -98,25 +76,7 @@ public class BuildingController
   Iterable<Building> getBuildingLists(@PathVariable String searchType, @RequestParam(required = false) Object param1,
                                       @RequestParam(required = false) Object param2)
   {
-    switch (searchType)
-    {
-      case "nameStartsWith":
-        return buildingRepository.findAllByBuildingNameStartingWith((String) param1);
-      case "abbreviationStartsWith":
-        return buildingRepository.findAllByAbbreviationStartingWith((String) param1);
-      case "name":
-        return buildingRepository.findByBuildingName((String) param1);
-      case "abbreviation":
-        return buildingRepository.findByAbbreviation((String) param1);
-      case "address":
-        return buildingRepository.findByAddress((String) param1);
-      case "location":
-        Double lat = Double.parseDouble((String) param1);
-        Double lon = Double.parseDouble((String) param2);
-        return buildingRepository.findByLatitAndLongit(lat, lon);
-      default: // default is returning a list of all Buildings sorted by their names. There needs to be some text after "search/" otherwise it will not work?
-        return buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName"));
-    }
+    return buildingService.getBuildings(searchType, param1, param2);
   }
 
   /**
@@ -134,7 +94,7 @@ public class BuildingController
   public @ResponseBody
   Optional<Building> getBuildingById(@PathVariable Integer id)
   {
-    return buildingRepository.findById(id);
+    return buildingService.getBuildingById(id);
   }
 
   /**
@@ -153,22 +113,7 @@ public class BuildingController
   public @ResponseBody
   Map<String, Boolean> updateBuilding(@RequestBody Building building, @PathVariable Integer id)
   {
-    try
-    {
-      Building b = buildingRepository.findById(id).get();
-      b.setBuildingName(building.getBuildingName());
-      b.setAddress(building.getAddress());
-      b.setAbbreviation(building.getAbbreviation());
-      b.setLatit(building.getLatit());
-      b.setLongit(building.getLongit());
-      b.setFloorCnt(building.getFloorCnt());
-      buildingRepository.save(b);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", buildingService.putBuilding(building, id));
   }
 
   /**
@@ -188,40 +133,7 @@ public class BuildingController
   Map<String, Boolean> patchBuilding(@RequestBody Map<String, Object> patch,
                                      @PathVariable Integer id)
   {
-    try
-    {
-      Building building = buildingRepository.findById(id).get();
-      if (patch.containsKey("buildingName"))
-      {
-        building.setBuildingName((String) patch.get("buildingName"));
-      }
-      if (patch.containsKey("address"))
-      {
-        building.setAddress((String) patch.get("address"));
-      }
-      if (patch.containsKey("abbreviation"))
-      {
-        building.setAbbreviation((String) patch.get("abbreviation"));
-      }
-      if (patch.containsKey("latit"))
-      {
-        building.setLatit(((Double) patch.get("latit")));
-      }
-      if (patch.containsKey("longit"))
-      {
-        building.setLongit(((Double) patch.get("longit")));
-      }
-      if(patch.containsKey("floorCnt"))
-      {
-        building.setFloorCnt(((Integer) patch.get("floorCnt")));
-      }
-      buildingRepository.save(building);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", buildingService.patchBuilding(patch, id));
   }
 
   /**
@@ -236,14 +148,6 @@ public class BuildingController
   public @ResponseBody
   Map<String, Boolean> deleteBuilding(@PathVariable Integer id)
   {
-    try
-    {
-      buildingRepository.deleteById(id);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", buildingService.deleteBuilding(id));
   }
 }
