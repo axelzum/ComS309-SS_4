@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.Marker;
@@ -36,6 +37,8 @@ public class CustomMarkerDialog extends DialogFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_custom_marker, container, false);
+
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionConvert = view.findViewById(R.id.action_convert);
