@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.DashboardActivity;
+import com.ss4.opencampus.mainViews.NetworkingUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,8 +34,6 @@ import java.util.List;
 
 public class BuildingListActivity extends AppCompatActivity {
 
-    public static final String TAG = "tag";
-    private RequestQueue queue;
     private List<Building> buildingList;
     private RecyclerView.Adapter adapter;
     private static Building buildingToBeShown;
@@ -91,51 +90,40 @@ public class BuildingListActivity extends AppCompatActivity {
         bList.addItemDecoration(dividerItemDecoration);
         bList.setAdapter(adapter);
 
-        queue = Volley.newRequestQueue(this);
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/all";
 
-        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {    // Reads in JSON data for the buildings from the server
-                    /**
-                     * Makes a GET Request to Backend to get all Buildings in the database and stores the
-                     * information into Building objects
-                     * @param response JSON format of information from Backend
-                     */
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
-                                Building buildingInfo = new Building();             // Makes Building object from the JSONObject
+        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
+                        Building buildingInfo = new Building();             // Makes Building object from the JSONObject
 
-                                buildingInfo.setBuildingID(jsonObject.getString("id"));
-                                buildingInfo.setBuildingName(jsonObject.getString("buildingName"));
-                                buildingInfo.setAbbrev(jsonObject.getString("abbreviation"));
-                                buildingInfo.setAddress(jsonObject.getString("address"));
-                                buildingInfo.setLatitude(jsonObject.getDouble("latit"));
-                                buildingInfo.setLongitude(jsonObject.getDouble("longit"));
+                        buildingInfo.setBuildingID(jsonObject.getString("id"));
+                        buildingInfo.setBuildingName(jsonObject.getString("buildingName"));
+                        buildingInfo.setAbbrev(jsonObject.getString("abbreviation"));
+                        buildingInfo.setAddress(jsonObject.getString("address"));
+                        buildingInfo.setLatitude(jsonObject.getDouble("latit"));
+                        buildingInfo.setLongitude(jsonObject.getDouble("longit"));
 
-                                buildingList.add(buildingInfo);
-                            }
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        buildingList.add(buildingInfo);
                     }
-                }, new Response.ErrorListener() {
-            /**
-             * Prints an the error if something goes wrong
-             * @param error Type of error that occurred
-             */
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener listenerError = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
             }
-        });
-        //Set the tag on the request
-        jsonRequest.setTag(TAG);
-        // Add the request to the RequestQueue.
-        queue.add(jsonRequest);
+        };
+
+        NetworkingUtils.sendGetArrayRequest(this, url, listenerResponse, listenerError);
     }
     
     /**
@@ -146,17 +134,6 @@ public class BuildingListActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
-    }
-    
-    /**
-     * Stops displaying the ListView page
-     */
-    @Override
-    protected void onStop () {
-        super.onStop();
-        if (queue != null) {
-            queue.cancelAll(TAG);
-        }
     }
 
     /**

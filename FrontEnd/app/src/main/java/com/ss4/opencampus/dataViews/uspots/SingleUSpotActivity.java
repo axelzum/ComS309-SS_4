@@ -23,7 +23,6 @@ import com.ss4.opencampus.R;
 
 public class SingleUSpotActivity extends AppCompatActivity {
 
-    public static final String TAG = "tag";
     private USpot uspotItem;
 
     private TextView usName;

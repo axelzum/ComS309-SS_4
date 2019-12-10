@@ -22,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.mainViews.NetworkingUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,6 @@ import java.util.List;
 
 public class ReviewListActivity extends AppCompatActivity {
 
-    public static final String TAG = "tag";
-    private RequestQueue queue;
     private List<Review> reviewList;
     private RecyclerView.Adapter adapter;
 
@@ -71,46 +70,35 @@ public class ReviewListActivity extends AppCompatActivity {
         rList.addItemDecoration(dividerItemDecoration);
         rList.setAdapter(adapter);
 
-        queue = Volley.newRequestQueue(this);
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/" + usID + "/reviews/all";
 
-        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {    // Reads in JSON data for the buildings from the server
-                    /**
-                     * Makes a GET Request to Backend to get all Buildings in the database and stores the
-                     * information into Building objects
-                     * @param response JSON format of information from Backend
-                     */
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
-                                Review reviewInfo = new Review();                 // Makes Review object from the JSONObject
+        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
+                        Review reviewInfo = new Review();                 // Makes Review object from the JSONObject
 
-                                reviewInfo.setReviewDetails(jsonObject.getString("text"));
+                        reviewInfo.setReviewDetails(jsonObject.getString("text"));
 
-                                reviewList.add(reviewInfo);
-                            }
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        reviewList.add(reviewInfo);
                     }
-                }, new Response.ErrorListener() {
-            /**
-             * Prints an the error if something goes wrong
-             * @param error Type of error that occurred
-             */
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener listenerError = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
             }
-        });
-        //Set the tag on the request
-        jsonRequest.setTag(TAG);
-        // Add the request to the RequestQueue.
-        queue.add(jsonRequest);
+        };
+
+        NetworkingUtils.sendGetArrayRequest(this, url, listenerResponse, listenerError);
     }
 
     /**
@@ -130,14 +118,4 @@ public class ReviewListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /**
-     * Stops displaying the ListView page
-     */
-    @Override
-    protected void onStop () {
-        super.onStop();
-        if (queue != null) {
-            queue.cancelAll(TAG);
-        }
-    }
 }
