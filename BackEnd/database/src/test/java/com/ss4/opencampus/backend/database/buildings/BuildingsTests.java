@@ -35,7 +35,7 @@ public class BuildingsTests
   private BuildingRepository buildingRepository;
 
   @InjectMocks
-  private BuildingController buildingController;
+  private BuildingService buildingService;
 
   /**
    * Initializes 3 fake buildings to test with before each test is ran
@@ -69,14 +69,14 @@ public class BuildingsTests
   }
 
   /**
-   * Test to make sure if no buildings are added, the buildingController returns an empty list
+   * Test to make sure if no buildings are added, the buildingService returns an empty list
    */
   @Test
   public void findAllNoBuildings()
   {
     Mockito.when(buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName"))).thenReturn(
             Collections.emptyList());
-    Iterable<Building> b = buildingController.getBuildingLists("all", null, null);
+    Iterable<Building> b = buildingService.getBuildings("all", null, null);
     assertEquals(buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName")), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findAll(new Sort(Sort.Direction.ASC, "buildingName"));
   }
@@ -92,7 +92,7 @@ public class BuildingsTests
             Arrays.asList(building2,
                           building3,
                           building1));
-    Iterable<Building> b = buildingController.getBuildingLists("all", null, null);
+    Iterable<Building> b = buildingService.getBuildings("all", null, null);
     assertEquals(buildingRepository.findAll(new Sort(Sort.Direction.ASC, "buildingName")), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findAll(new Sort(Sort.Direction.ASC, "buildingName"));
   }
@@ -105,7 +105,7 @@ public class BuildingsTests
   {
     Mockito.when(buildingRepository.findByBuildingName("West St Lofts")).thenReturn(
             Collections.singletonList(building1));
-    Iterable<Building> b = buildingController.getBuildingLists("name", "West St Lofts", null);
+    Iterable<Building> b = buildingService.getBuildings("name", "West St Lofts", null);
     assertEquals(buildingRepository.findByBuildingName("West St Lofts"), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findByBuildingName("West St Lofts");
   }
@@ -118,7 +118,7 @@ public class BuildingsTests
   {
     Mockito.when(buildingRepository.findAllByBuildingNameStartingWith("West")).thenReturn(Arrays.asList(building1,
                                                                                                         building3));
-    Iterable<Building> b = buildingController.getBuildingLists("nameStartsWith", "West", null);
+    Iterable<Building> b = buildingService.getBuildings("nameStartsWith", "West", null);
     assertEquals(buildingRepository.findAllByBuildingNameStartingWith("West"), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findAllByBuildingNameStartingWith("West");
   }
@@ -130,7 +130,7 @@ public class BuildingsTests
   public void findByAddress()
   {
     Mockito.when(buildingRepository.findByAddress("1732 S 4th St")).thenReturn(Collections.singletonList(building2));
-    Iterable<Building> b = buildingController.getBuildingLists("address", "1732 S 4th St", null);
+    Iterable<Building> b = buildingService.getBuildings("address", "1732 S 4th St", null);
     assertEquals(buildingRepository.findByAddress("1732 S 4th St"), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findByAddress("1732 S 4th St");
   }
@@ -142,7 +142,7 @@ public class BuildingsTests
   public void findByAbbrev()
   {
     Mockito.when(buildingRepository.findByAbbreviation("JTS")).thenReturn(Collections.singletonList(building2));
-    Iterable<Building> b = buildingController.getBuildingLists("abbreviation", "JTS", null);
+    Iterable<Building> b = buildingService.getBuildings("abbreviation", "JTS", null);
     assertEquals(buildingRepository.findByAbbreviation("JTS"), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findByAbbreviation("JTS");
   }
@@ -155,7 +155,7 @@ public class BuildingsTests
   {
     Mockito.when(buildingRepository.findAllByAbbreviationStartingWith("W")).thenReturn(
             Arrays.asList(building1, building3));
-    Iterable<Building> b = buildingController.getBuildingLists("abbreviationStartsWith", "W", null);
+    Iterable<Building> b = buildingService.getBuildings("abbreviationStartsWith", "W", null);
     assertEquals(buildingRepository.findAllByAbbreviationStartingWith("W"), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findAllByAbbreviationStartingWith("W");
   }
@@ -168,7 +168,7 @@ public class BuildingsTests
   {
     Mockito.when(buildingRepository.findByLatitAndLongit(42.0187128, -93.6633696)).thenReturn(
             Collections.singletonList(building3));
-    Iterable<Building> b = buildingController.getBuildingLists("location", "42.0187128", "-93.6633696");
+    Iterable<Building> b = buildingService.getBuildings("location", "42.0187128", "-93.6633696");
     assertEquals(buildingRepository.findByLatitAndLongit(42.0187128, -93.6633696), b);
     Mockito.verify(buildingRepository, Mockito.times(2)).findByLatitAndLongit(42.0187128, -93.6633696);
   }
@@ -180,7 +180,7 @@ public class BuildingsTests
   public void findById()
   {
     Mockito.when(buildingRepository.findById(3)).thenReturn(Optional.of(building3));
-    Optional<Building> b = buildingController.getBuildingById(3);
+    Optional<Building> b = buildingService.getById(3);
     assertTrue(b.isPresent());
     assertEquals(building3, b.get());
   }

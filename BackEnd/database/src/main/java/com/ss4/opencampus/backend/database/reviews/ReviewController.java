@@ -1,10 +1,6 @@
 package com.ss4.opencampus.backend.database.reviews;
 
-import com.ss4.opencampus.backend.database.uspots.USpot;
-import com.ss4.opencampus.backend.database.uspots.USpotRepository;
-import com.ss4.opencampus.backend.websocket.WebSocketServer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -20,12 +16,8 @@ import java.util.Optional;
 @RestController
 public class ReviewController
 {
-
   @Autowired
-  private ReviewRepository reviewRepository;
-
-  @Autowired
-  private USpotRepository uSpotRepository;
+  private ReviewService reviewService;
 
   /**
    * Handles POST Requests. Will save a new Review given a particular USpot and Review JSON data to the database.
@@ -41,18 +33,7 @@ public class ReviewController
   public @ResponseBody
   Map<String, Boolean> addReview(@PathVariable(value = "uspotId") Integer uspotId, @RequestBody Review review)
   {
-    try
-    {
-      USpot u = uSpotRepository.findById(uspotId).get();
-      review.setuSpot(u);
-      reviewRepository.save(review);
-      WebSocketServer.onMessage(u.getId());
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", reviewService.add(uspotId, review));
   }
 
   /**
@@ -71,7 +52,7 @@ public class ReviewController
   Iterable<Review> getReviews(@PathVariable(value = "uspotId") Integer uspotId,
                               @PathVariable(value = "searchType") String searchType)
   {
-    return reviewRepository.findAllByUSpotUsID(uspotId, new Sort(Sort.Direction.ASC, "rId"));
+    return reviewService.getReviews(uspotId, searchType);
   }
 
   /**
@@ -88,7 +69,7 @@ public class ReviewController
   public @ResponseBody
   Optional<Review> getById(@PathVariable(value = "uspotsId") Integer uspotsId, @PathVariable(value = "id") Integer rId)
   {
-    return reviewRepository.findByRIdAndUSpotUsID(rId, uspotsId);
+    return reviewService.getById(uspotsId, rId);
   }
 
   /**
@@ -109,17 +90,7 @@ public class ReviewController
                                     @PathVariable(value = "uspotsId") Integer uspotsId,
                                     @PathVariable(value = "id") Integer rId)
   {
-    try
-    {
-      Review r = reviewRepository.findByRIdAndUSpotUsID(rId, uspotsId).get();
-      r.setText(review.getText());
-      reviewRepository.save(r);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", reviewService.put(review, uspotsId, rId));
   }
 
   /**
@@ -142,20 +113,7 @@ public class ReviewController
                                    @PathVariable(value = "uspotsId") Integer uspotsId,
                                    @PathVariable(value = "id") Integer rId)
   {
-    try
-    {
-      Review r = reviewRepository.findByRIdAndUSpotUsID(rId, uspotsId).get();
-      if (patch.containsKey("text"))
-      {
-        r.setText((String) patch.get("text"));
-      }
-      reviewRepository.save(r);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", reviewService.patch(patch, uspotsId, rId));
   }
 
   /**
@@ -173,16 +131,7 @@ public class ReviewController
   Map<String, Boolean> deleteReview(@PathVariable(value = "uspotsId") Integer uspotsId,
                                     @PathVariable(value = "id") Integer rId)
   {
-    try
-    {
-      Review r = reviewRepository.findByRIdAndUSpotUsID(rId, uspotsId).get();
-      reviewRepository.delete(r);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", reviewService.delete(uspotsId, rId));
   }
 }
 

@@ -38,7 +38,7 @@ public class ReviewsTests
   private ReviewRepository reviewRepository;
 
   @InjectMocks
-  private ReviewController controller;
+  private ReviewService reviewService;
 
   /**
    * Initialize fake Reviews and Students that created the Reviews before every test
@@ -95,7 +95,7 @@ public class ReviewsTests
   {
     Mockito.when(reviewRepository.findAllByUSpotUsID(u1.getId(), new Sort(Sort.Direction.ASC, "rId")))
             .thenReturn(Arrays.asList(rev1, rev2));
-    Iterable<Review> rev = controller.getReviews(u1.getId(), "all");
+    Iterable<Review> rev = reviewService.getReviews(u1.getId(), "all");
     assertEquals(reviewRepository.findAllByUSpotUsID(u1.getId(), new Sort(Sort.Direction.ASC, "rId")), rev);
 
   }
@@ -108,7 +108,7 @@ public class ReviewsTests
   {
     Mockito.when(reviewRepository.findAllByUSpotUsID(u2.getId(), new Sort(Sort.Direction.ASC, "rId")))
             .thenReturn(Collections.emptyList());
-    Iterable<Review> rev = controller.getReviews(u2.getId(), "all");
+    Iterable<Review> rev = reviewService.getReviews(u2.getId(), "all");
     assertEquals(reviewRepository.findAllByUSpotUsID(u2.getId(), new Sort(Sort.Direction.ASC, "rId")), rev);
   }
 
@@ -119,7 +119,7 @@ public class ReviewsTests
   public void findByRIdAndUSID()
   {
     Mockito.when(reviewRepository.findByRIdAndUSpotUsID(rev2.getId(), u1.getId())).thenReturn(Optional.of(rev2));
-    Optional<Review> rev = controller.getById(u1.getId(), rev2.getId());
+    Optional<Review> rev = reviewService.getById(u1.getId(), rev2.getId());
     assertTrue(rev.isPresent());
     assertEquals(rev2, rev.get());
   }

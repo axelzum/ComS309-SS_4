@@ -1,17 +1,9 @@
 package com.ss4.opencampus.backend.database.floors;
 
-import com.ss4.opencampus.backend.database.buildings.Building;
-import com.ss4.opencampus.backend.database.buildings.BuildingRepository;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -26,12 +18,7 @@ import java.util.Optional;
 public class FloorPlanController
 {
   @Autowired
-  private FloorPlanRepository floorPlanRepository;
-
-  @Autowired
-  private BuildingRepository buildingRepository;
-
-  private final String path = "/target/images/floorplans/";
+  private FloorPlanService floorPlanService;
 
   /**
    * POST a single FloorPlan to the database. Calls the saveFloorPlan helper method to do the heavy lifting
@@ -48,15 +35,7 @@ public class FloorPlanController
   Map<String, Boolean> addFloorPlan(@PathVariable(value = "buildingId") Integer buildingId,
                                     @RequestBody FloorPlan floorPlan)
   {
-    try
-    {
-      saveFloorPlan(buildingId, floorPlan);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", floorPlanService.add(buildingId, floorPlan));
   }
 
   /**
@@ -74,18 +53,7 @@ public class FloorPlanController
   Map<String, Boolean> addMultiFloorPlan(@PathVariable(value = "buildingId") Integer buildingId,
                                          @RequestBody FloorPlan[] floorPlans)
   {
-    try
-    {
-      for (FloorPlan fp : floorPlans)
-      {
-        saveFloorPlan(buildingId, fp);
-      }
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", floorPlanService.addMultiple(buildingId, floorPlans));
   }
 
   /**
@@ -103,13 +71,7 @@ public class FloorPlanController
   public @ResponseBody
   Iterable<FloorPlan> getFloorPlans(@PathVariable(value = "buildingId") Integer buildingId) throws IOException
   {
-    Iterable<FloorPlan> fpList = floorPlanRepository.findAllByBuildingId(buildingId,
-                                                                         new Sort(Sort.Direction.ASC, "level"));
-    for (FloorPlan fp : fpList)
-      fp.setFpBytes(pathToBytes(fp.getFpImagePath()));
-    return fpList;
-    // might need to change because basement will be last? Could say 0 = basement... tiers will be weird but
-    // if im being honest, i dont care about them
+    return floorPlanService.getFloorPlans(buildingId);
   }
 
   /**
@@ -129,10 +91,7 @@ public class FloorPlanController
   public @ResponseBody
   Optional<FloorPlan> getFloorPlanById(@PathVariable(value = "buildingId") Integer buildingId, @PathVariable(value = "id") Integer fpId) throws IOException
   {
-    Optional<FloorPlan> fp = floorPlanRepository.findByFpIdAndBuildingId(fpId, buildingId);
-    if (fp.isPresent())
-      fp.get().setFpBytes(pathToBytes(fp.get().getFpImagePath()));
-    return fp;
+    return floorPlanService.getById(buildingId, fpId);
   }
 
   /**
@@ -154,20 +113,7 @@ public class FloorPlanController
                                        @PathVariable(value = "id") Integer fpId,
                                        @RequestBody FloorPlan floorPlan)
   {
-    try
-    {
-      FloorPlan fp = floorPlanRepository.findByFpIdAndBuildingId(fpId, buildingId).get();
-      fp.setName(floorPlan.getName());
-      fp.setLevel(floorPlan.getLevel());
-      byte[] bytes = floorPlan.getFpBytes();
-      fp = newFpImage(fp, bytes);
-      floorPlanRepository.save(fp);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", floorPlanService.put(buildingId, fpId, floorPlan));
   }
 
   /**
@@ -189,29 +135,7 @@ public class FloorPlanController
                                       @PathVariable(value = "id") Integer fpId,
                                       @RequestBody Map<String, Object> patch)
   {
-    try
-    {
-      FloorPlan fp = floorPlanRepository.findByFpIdAndBuildingId(fpId, buildingId).get();
-      if (patch.containsKey("name"))
-      {
-        fp.setName((String) patch.get("name"));
-      }
-      if (patch.containsKey("level"))
-      {
-        fp.setLevel((String) patch.get("level"));
-      }
-      if (patch.containsKey("fpBytes"))
-      {
-        byte[] bytes = Base64.decodeBase64((String) patch.get("fpBytes"));
-        fp = newFpImage(fp, bytes);
-      }
-      floorPlanRepository.save(fp);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", floorPlanService.patch(buildingId, fpId, patch));
   }
 
   /**
@@ -229,102 +153,7 @@ public class FloorPlanController
   Map<String, Boolean> deleteFloorPlan(@PathVariable(value = "buildingId") Integer buildingId,
                                        @PathVariable(value = "id") Integer fpId)
   {
-    try
-    { // only delete the file if it isn't tied to "noimage.png"
-      FloorPlan fp = floorPlanRepository.findByFpIdAndBuildingId(fpId, buildingId).get();
-      File file = new File(fp.getFpImagePath());
-      if (!(file.getAbsolutePath().equals("/target/images/noimage.png")))
-        file.delete();
-      floorPlanRepository.delete(fp);
-    }
-    catch (Exception e)
-    {
-      return Collections.singletonMap("response", false);
-    }
-    return Collections.singletonMap("response", true);
+    return Collections.singletonMap("response", floorPlanService.delete(buildingId, fpId));
   }
 
-  /**
-   * Helper method to retrieve the image bytes of an image that is tied to a USpot. Used in GET Requests
-   *
-   * @param picPath
-   *         Path in DB to look into to find the image
-   *
-   * @return byte array that is the image data
-   *
-   * @throws IOException
-   *         Could potentially through an error if given a non-valid path.
-   */
-  private byte[] pathToBytes(String picPath) throws IOException
-  {
-    if (picPath == null)
-      return null;
-    return Files.readAllBytes(Paths.get(picPath));
-  }
-
-  /**
-   * Helper method that is used by PUT and PATCH when trying to update the FloorPlan picture. If the FloorPlan is using
-   * "noimage.png" as the image, we DON'T want to replace it and if it is using another image, we can go ahead and
-   * overwrite it.
-   * <p>
-   * If the byte[] is null, it will simply keep the old image that is currently linked to the USpot.
-   *
-   * @param floorPlan
-   *         FLoorPlan who's image is being changed
-   * @param bytes
-   *         array of base64 bytes of the new image
-   *
-   * @return The FloorPlan so it can be saved to the table
-   *
-   * @throws IOException
-   *         Could potentially through an error if given a non-valid path.
-   */
-  private FloorPlan newFpImage(FloorPlan floorPlan, byte[] bytes) throws IOException
-  {
-    if (bytes != null) // just keep old picture if no new picture is given
-    {
-      floorPlan.setFpBytes(bytes);
-      FileOutputStream fos;
-      if (floorPlan.getFpImagePath().equals("/target/images/noimage.png")) //no previous photo for floor, so make a
-      // new one... don't want to overwrite noimage.png!
-      {
-        floorPlan.setFpImagePath(
-                path + "building" + floorPlan.getBuilding().getId() + "floor" + floorPlan.getLevel() + ".png");
-        fos = new FileOutputStream(floorPlan.getFpImagePath());
-      }
-      else // can overwrite old photo, so we don't have to make a new picture like we do above
-        fos = new FileOutputStream(floorPlan.getFpImagePath(), false);
-      fos.write(floorPlan.getFpBytes());
-      fos.close();
-    }
-    return floorPlan;
-  }
-
-  /**
-   * Helper method to save a single FloorPlan to the database
-   *
-   * @param buildingId
-   *         id of the Building the FloorPlan is for
-   * @param fp
-   *         The FloorPlan object in JSON format to be saved
-   *
-   * @throws IOException
-   *         Could be thrown if an issue with saving the image occurs.
-   */
-  private void saveFloorPlan(Integer buildingId, FloorPlan fp) throws IOException
-  {
-    byte[] bytes = fp.getFpBytes();
-    Building b = buildingRepository.findById(buildingId).get();
-    if (bytes != null)
-    {
-      fp.setFpImagePath(path + "building" + b.getId() + "floor" + fp.getLevel()+ ".png");
-      FileOutputStream fos = new FileOutputStream(fp.getFpImagePath());
-      fos.write(bytes);
-      fos.close();
-    }
-    else
-      fp.setFpImagePath("/target/images/noimage.png");
-    fp.setBuilding(b);
-    floorPlanRepository.save(fp);
-  }
 }
