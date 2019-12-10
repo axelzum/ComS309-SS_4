@@ -9,12 +9,16 @@ import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 import com.ss4.opencampus.mainViews.PreferenceUtils;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -188,18 +192,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int numFloors;
 
     /**
-     *
+     *  The name of the route being posted.
+     */
+    private String routeName = "";
+
+    /**
+     * The index of the floor being displayed.
      */
     private int currentFloorIndex = 0;
 
+    /**
+     * List for holding USpot objects.
+     */
     private ArrayList<USpot> usObjList;
+
+    /**
+     * USpot object list for USpots being shown in floorplan view.
+     */
     private ArrayList<USpot> tempUsObjList;
 
+    /**
+     * Start and endpoints for custom route.
+     */
     private Marker routeStart, routeEnd;
 
+    /**
+     * Polyline showing route.
+     */
     private Polyline currentPolyline;
 
+    /**
+     * Buttons to place start and end marker for route.
+     */
     private Button routeStartButton, loadRouteButton;
+
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
      * @param savedInstanceState
@@ -309,40 +335,69 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v)
             {
                 if(routeStart != null && routeEnd != null) {
-                    //TODO: Save route to database
-                    String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/routes";
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    builder.setTitle("Title");
 
-                    JSONObject newRoute = new JSONObject();
-                    try {
-                        newRoute.put("rtName", "default route name");
-                        newRoute.put("originLat", routeStart.getPosition().latitude);
-                        newRoute.put("originLng", routeStart.getPosition().longitude);
-                        newRoute.put("destLat", routeEnd.getPosition().latitude);
-                        newRoute.put("destLng", routeEnd.getPosition().longitude);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    // Set up the input
+                    final EditText input = new EditText(MapsActivity.this);
 
-                    JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newRoute, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
+                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    builder.setView(input);
 
-                        }
-                    }, new Response.ErrorListener() {
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onErrorResponse(VolleyError error) {
-                            error.printStackTrace();
+                        public void onClick(DialogInterface dialog, int which) {
+                            routeName = input.getText().toString();
+
+                            String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/routes";
+
+                            JSONObject newRoute = new JSONObject();
+                            try {
+                                if(routeName.equals(""))
+                                    newRoute.put("rtName", "default route name");
+                                else
+                                    newRoute.put("rtName", routeName);
+                                newRoute.put("originLat", routeStart.getPosition().latitude);
+                                newRoute.put("originLng", routeStart.getPosition().longitude);
+                                newRoute.put("destLat", routeEnd.getPosition().latitude);
+                                newRoute.put("destLng", routeEnd.getPosition().longitude);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newRoute, new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    error.printStackTrace();
+                                }
+                            }) {
+                                @Override
+                                public Map<String, String> getHeaders() throws AuthFailureError {
+                                    HashMap<String, String> headers = new HashMap<String, String>();
+                                    headers.put("Content-Type", "application/json; charset=utf-8");
+                                    return headers;
+                                }
+                            };
+                            jsonRequest.setTag(TAG);
+                            queue.add(jsonRequest);
+                            routeName="";
                         }
-                    }) {
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            HashMap<String, String> headers = new HashMap<String, String>();
-                            headers.put("Content-Type", "application/json; charset=utf-8");
-                            return headers;
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
                         }
-                    };
-                    jsonRequest.setTag(TAG);
-                    queue.add(jsonRequest);
+                    });
+
+                    builder.show();
                 }
             }
         });

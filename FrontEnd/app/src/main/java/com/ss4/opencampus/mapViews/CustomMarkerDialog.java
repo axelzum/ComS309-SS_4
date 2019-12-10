@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.Marker;
@@ -37,6 +38,9 @@ public class CustomMarkerDialog extends DialogFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_custom_marker, container, false);
 
+        // Hide the title bar
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionConvert = view.findViewById(R.id.action_convert);
         mActionDetails = view.findViewById(R.id.action_details);
@@ -67,8 +71,8 @@ public class CustomMarkerDialog extends DialogFragment{
             @Override
             public void onClick(View v) {
                 // Open convert to uspot dialog
-                CustomMarkerConvertDialog cmConvert = new CustomMarkerConvertDialog();
-                cmConvert.show(getFragmentManager(), "CustomMarkerConvert");
+                USpotSubmissionDialog uSpotSubmissionDialog = new USpotSubmissionDialog();
+                uSpotSubmissionDialog.show(getFragmentManager(), "CustomMarkerConvert");
                 dismiss();
             }
         });
