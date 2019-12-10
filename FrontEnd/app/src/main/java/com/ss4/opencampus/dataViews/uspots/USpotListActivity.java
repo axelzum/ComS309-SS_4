@@ -110,7 +110,7 @@ public class USpotListActivity extends AppCompatActivity {
                         JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
                         USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
 
-                        uspotInfo.setUsID(jsonObject.getInt("usID"));
+                        uspotInfo.setUsID(jsonObject.getInt("id"));
                         uspotInfo.setUsName(jsonObject.getString("usName"));
                         uspotInfo.setUsRating(jsonObject.getDouble("usRating"));
                         uspotInfo.setUsLatit(jsonObject.getDouble("usLatit"));

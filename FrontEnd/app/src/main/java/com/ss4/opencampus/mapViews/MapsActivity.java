@@ -1,20 +1,24 @@
 package com.ss4.opencampus.mapViews;
 
+import com.android.volley.toolbox.JsonRequest;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.dataViews.floorPlans.FloorPlan;
 import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.mainViews.DashboardActivity;
-import com.ss4.opencampus.mainViews.NetworkingUtils;
 import com.ss4.opencampus.mainViews.login.LoginPreferenceUtils;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -148,9 +152,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     GroundOverlay background;
 
     /**
+     * Tag used for json requests
+     */
+    private static final String TAG = "tag";
+
+    /**
      * Student ID for the student that is logged in.
      */
     private int studentId;
+
+    /**
+     * Request queue used for json requests
+     */
+    private RequestQueue queue;
 
     /**
      * Array of floorplan buttons used to switch between floors. Visible only when in a floorplan view.
@@ -178,23 +192,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int numFloors;
 
     /**
-     *
+     *  The name of the route being posted.
+     */
+    private String routeName = "";
+
+    /**
+     * The index of the floor being displayed.
      */
     private int currentFloorIndex = 0;
 
     /**
-     * Maps activity context
+     * List for holding USpot objects.
      */
-    private Context context;
-
     private ArrayList<USpot> usObjList;
+
+    /**
+     * USpot object list for USpots being shown in floorplan view.
+     */
     private ArrayList<USpot> tempUsObjList;
 
+    /**
+     * Start and endpoints for custom route.
+     */
     private Marker routeStart, routeEnd;
 
+    /**
+     * Polyline showing route.
+     */
     private Polyline currentPolyline;
 
+    /**
+     * Buttons to place start and end marker for route.
+     */
     private Button routeStartButton, loadRouteButton;
+
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
      * @param savedInstanceState
@@ -209,7 +240,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        context = this;
 
         /*up to 12 floor bottons are used to switch between floors when looking at a floorplan view.
         / They are hidden when not in a floorplan.
@@ -259,41 +289,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v)
             {
                 String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/routes/all";
+                // Request a JSONObject response from the provided URL.
+                JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+                                try {
+                                        JSONObject route = response.getJSONObject(0);
+                                        routeStart = mMap.addMarker(new MarkerOptions()
+                                                .position(new LatLng(route.getDouble("originLat"), route.getDouble("originLng")))
+                                                .title("Loaded Route Start")
+                                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
+                                                .draggable(false));
 
-                Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            JSONObject route = response.getJSONObject(0);
-                            routeStart = mMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(route.getDouble("originLat"), route.getDouble("originLng")))
-                                    .title("Loaded Route Start")
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
-                                    .draggable(false));
+                                        routeEnd = mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(route.getDouble("destLat"), route.getDouble("destLng")))
+                                            .title("Loaded Route Start")
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
+                                            .draggable(false));
 
-                            routeEnd = mMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(route.getDouble("destLat"), route.getDouble("destLng")))
-                                    .title("Loaded Route Start")
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_feature))
-                                    .draggable(false));
+                                        String routeURL = getUrl(routeStart.getPosition(), routeEnd.getPosition(), "walking");
+                                        new FetchURL(MapsActivity.this).execute(routeURL);
 
-                            String routeURL = getUrl(routeStart.getPosition(), routeEnd.getPosition(), "walking");
-                            new FetchURL(MapsActivity.this).execute(routeURL);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
-
-                Response.ErrorListener listenerError = new Response.ErrorListener() {
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
+                        System.out.println("failed");
                     }
-                };
+                });
 
-                NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
+                //Set the tag on the request
+                jsonRequest.setTag(TAG);
+
+                // Add the request to the RequestQueue.
+                queue.add(jsonRequest);
             }
         });
 
@@ -301,36 +335,69 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v)
             {
                 if(routeStart != null && routeEnd != null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                    builder.setTitle("Title");
 
-                    JSONObject newRoute = new JSONObject();
-                    try {
-                        newRoute.put("rtName", "default route name");
-                        newRoute.put("originLat", routeStart.getPosition().latitude);
-                        newRoute.put("originLng", routeStart.getPosition().longitude);
-                        newRoute.put("destLat", routeEnd.getPosition().latitude);
-                        newRoute.put("destLng", routeEnd.getPosition().longitude);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    // Set up the input
+                    final EditText input = new EditText(MapsActivity.this);
 
-                    //TODO: Save route to database
-                    String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/routes";
+                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    builder.setView(input);
 
-                    Response.Listener<JSONObject> listenerResponse = new Response.Listener<JSONObject>() {
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onResponse(JSONObject response) {
-                            /* Do nothing */
-                        }
-                    };
+                        public void onClick(DialogInterface dialog, int which) {
+                            routeName = input.getText().toString();
 
-                    Response.ErrorListener listenerError = new Response.ErrorListener() {
+                            String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/routes";
+
+                            JSONObject newRoute = new JSONObject();
+                            try {
+                                if(routeName.equals(""))
+                                    newRoute.put("rtName", "default route name");
+                                else
+                                    newRoute.put("rtName", routeName);
+                                newRoute.put("originLat", routeStart.getPosition().latitude);
+                                newRoute.put("originLng", routeStart.getPosition().longitude);
+                                newRoute.put("destLat", routeEnd.getPosition().latitude);
+                                newRoute.put("destLng", routeEnd.getPosition().longitude);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newRoute, new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    error.printStackTrace();
+                                }
+                            }) {
+                                @Override
+                                public Map<String, String> getHeaders() throws AuthFailureError {
+                                    HashMap<String, String> headers = new HashMap<String, String>();
+                                    headers.put("Content-Type", "application/json; charset=utf-8");
+                                    return headers;
+                                }
+                            };
+                            jsonRequest.setTag(TAG);
+                            queue.add(jsonRequest);
+                            routeName="";
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onErrorResponse(VolleyError error) {
-                            error.printStackTrace();
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
                         }
-                    };
+                    });
 
-                    NetworkingUtils.sendPostObjectRequest(context, url, newRoute, listenerResponse, listenerError);
+                    builder.show();
                 }
             }
         });
@@ -431,6 +498,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         usObjList = new ArrayList<>();
         tempUsObjList = new ArrayList<>();
 
+        queue = Volley.newRequestQueue(this);
     }
 
     /**
@@ -646,6 +714,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void viewDashboard(View view)
     {
         Intent intent = new Intent(this, DashboardActivity.class);
+        intent.putExtra("EXTRA_STUDENT_ID", studentId);
         startActivity(intent);
     }
 
@@ -676,86 +745,101 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void deleteCustomMarkers()
     {
-        // Remove marker from database.
-        String getByNameurl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers/name?param=" + markerShowingInfoWindow.getTitle();
+            // Remove marker from database.
+            String getByNameurl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + studentId + "/customMarkers/name?param=" + markerShowingInfoWindow.getTitle();
 
-        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject cm = response.getJSONObject(i);
-                        int cmID = cm.getInt("cmID");
-                        String deleteUrl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/"+ studentId +"/customMarkers/delete/" + cmID;
+            // Request a JSONObject response from the provided URL.
+            JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, getByNameurl, null,
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            try {
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject cm = response.getJSONObject(i);
+                                    int cmID = cm.getInt("cmID");
+                                    String deleteUrl = "http://coms-309-ss-4.misc.iastate.edu:8080/students/"+ studentId +"/customMarkers/delete/" + cmID;
 
-                        Response.Listener<String> listenerResponseDelete = new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                /* Do nothing */
+                                    StringRequest deleteRequest = new StringRequest(Request.Method.DELETE, deleteUrl,  new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
+                                            //
+                                        }
+                                    }, new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            error.printStackTrace();
+                                        }
+                                    }) {
+                                        @Override
+                                        public Map<String, String> getHeaders() throws AuthFailureError {
+                                            HashMap<String, String> headers = new HashMap<String, String>();
+                                            headers.put("Content-Type", "application/json; charset=utf-8");
+                                            return headers;
+                                        }
+                                    };
+                                    deleteRequest.setTag(TAG);
+                                    queue.add(deleteRequest);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        };
-
-                        Response.ErrorListener listenerErrorDelete = new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                error.printStackTrace();
-                            }
-                        };
-
-                        NetworkingUtils.sendDeleteRequest(context, deleteUrl, listenerResponseDelete, listenerErrorDelete);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                    System.out.println("failed");
                 }
-            }
-        };
+            });
 
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        };
+            markerShowingInfoWindow.setVisible(false);
+            customMarkers.remove(markerShowingInfoWindow);
 
-        NetworkingUtils.sendGetArrayRequest(context, getByNameurl, listenerResponse, listenerError);
+            //Set the tag on the request
+            jsonRequest.setTag(TAG);
 
-        markerShowingInfoWindow.setVisible(false);
-        customMarkers.remove(markerShowingInfoWindow);
+            // Add the request to the RequestQueue.
+            queue.add(jsonRequest);
     }
 
     /**
      * Saves custom markers to the database.
      */
     public void saveCustomMarkers() {
-        // Save markers to database.
-        JSONObject newCM = new JSONObject();
-        try {
-            newCM.put("name", markerShowingInfoWindow.getTitle());
-            newCM.put("desc", cmDescriptions.get(currentMarkerIndex));
-            newCM.put("cmLatit", markerShowingInfoWindow.getPosition().latitude);
-            newCM.put("cmLongit", markerShowingInfoWindow.getPosition().longitude);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        //System.out.println("Student id for posting custom marker: " + Integer.toString(studentId));
-        String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + Integer.toString(studentId) + "/customMarkers";
-
-        Response.Listener<JSONObject> listenerResponse = new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                /* Do Nothing */
+            // Save markers to database.
+            JSONObject newCM = new JSONObject();
+            try {
+                newCM.put("name", markerShowingInfoWindow.getTitle());
+                newCM.put("desc", cmDescriptions.get(currentMarkerIndex));
+                newCM.put("cmLatit", markerShowingInfoWindow.getPosition().latitude);
+                newCM.put("cmLongit", markerShowingInfoWindow.getPosition().longitude);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        };
 
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        };
-
-        NetworkingUtils.sendPostObjectRequest(context, url, newCM, listenerResponse, listenerError);
+            queue = Volley.newRequestQueue(this);
+            System.out.println("Student id for posting custom marker: " + Integer.toString(studentId));
+            String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + Integer.toString(studentId) + "/customMarkers";
+            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newCM, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    //
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+            jsonRequest.setTag(TAG);
+            queue.add(jsonRequest);
     }
 
     /**
@@ -776,86 +860,97 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //queue = Volley.newRequestQueue(this);
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/all";
 
-        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject building = response.getJSONObject(i);
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject building = response.getJSONObject(i);
 
-                        Marker currentBuilding = mMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(building.getDouble("latit"), building.getDouble("longit")))
-                                .title(building.getString("buildingName"))
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_building_sized))
-                                .draggable(false));
-                        currentBuilding.setTag("Building");
-                        buildingMarkers.add(currentBuilding);
+                                Marker currentBuilding = mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(building.getDouble("latit"), building.getDouble("longit")))
+                                        .title(building.getString("buildingName"))
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_building_sized))
+                                        .draggable(false));
+                                currentBuilding.setTag("Building");
+                                buildingMarkers.add(currentBuilding);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                System.out.println("failed");
             }
-        };
+        });
 
-        NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
 
     /**
      * Loads USpot data from the database and places it in the uspots arrayList.
      */
-    public void loadUspots() {
+    public void loadUspots()
+    {
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/all";
 
-        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject uspot = response.getJSONObject(i);
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject uspot = response.getJSONObject(i);
 
-                        USpot uspotInfo = new USpot();
+                                USpot uspotInfo = new USpot();
 
-                        uspotInfo.setUsID(uspot.getInt("usID"));
-                        uspotInfo.setUsName(uspot.getString("usName"));
-                        uspotInfo.setUsRating(uspot.getDouble("usRating"));
-                        uspotInfo.setUsLatit(uspot.getDouble("usLatit"));
-                        uspotInfo.setUsLongit(uspot.getDouble("usLongit"));
-                        uspotInfo.setUspotCategory(uspot.getString("usCategory"));
-                        uspotInfo.setPicBytes(Base64.decode(uspot.getString("picBytes"), Base64.DEFAULT));
+                                uspotInfo.setUsID(uspot.getInt("id"));
+                                uspotInfo.setUsName(uspot.getString("usName"));
+                                uspotInfo.setUsRating(uspot.getDouble("usRating"));
+                                uspotInfo.setUsLatit(uspot.getDouble("usLatit"));
+                                uspotInfo.setUsLongit(uspot.getDouble("usLongit"));
+                                uspotInfo.setUspotCategory(uspot.getString("usCategory"));
+                                uspotInfo.setPicBytes(Base64.decode(uspot.getString("picBytes"), Base64.DEFAULT));
 
-                        if (uspot.isNull("buildingId")) {
-                            Marker currentUspot = mMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
-                                    .title(uspot.getString("usName"))
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
-                                    .draggable(false));
-                            currentUspot.setTag("USpot");
+                                if(uspot.isNull("buildingId")) {
+                                    Marker currentUspot = mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
+                                            .title(uspot.getString("usName"))
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
+                                            .draggable(false));
+                                    currentUspot.setTag("USpot");
 
-                            uspotMarkers.add(currentUspot);
-                            usObjList.add(uspotInfo);
+                                    uspotMarkers.add(currentUspot);
+                                    usObjList.add(uspotInfo);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                System.out.println("failed");
             }
-        };
+        });
 
-        NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
 
     /**
@@ -865,37 +960,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     {
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/" + Integer.toString(studentId) + "/customMarkers/all";
 
-        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject cm = response.getJSONObject(i);
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject cm = response.getJSONObject(i);
 
-                        Marker currentCM = mMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(cm.getDouble("cmLatit"), cm.getDouble("cmLongit")))
-                                .title(cm.getString("name"))
-                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_custom))
-                                .draggable(true));
-                        currentCM.setTag("Custom");
-                        customMarkers.add(currentCM);
-                        cmDescriptions.add(cm.getString("desc"));
-                        m_Text.add(cm.getString("name"));
+                                Marker currentCM = mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(cm.getDouble("cmLatit"), cm.getDouble("cmLongit")))
+                                        .title(cm.getString("name"))
+                                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_custom))
+                                        .draggable(true));
+                                currentCM.setTag("Custom");
+                                customMarkers.add(currentCM);
+                                cmDescriptions.add(cm.getString("desc"));
+                                m_Text.add(cm.getString("name"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                System.out.println("failed");
             }
-        };
+        });
 
-        NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
 
     /**
@@ -945,30 +1045,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     {
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/" + currentBuildingId + "/floorPlans/all";
 
-        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
-                        floorImages.add(Base64.decode(jsonObject.getString("fpBytes"), Base64.DEFAULT));
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {    // Reads in JSON data for the buildings from the server
+                    /**
+                     * Makes a GET Request to Backend to get all Buildings in the database and stores the
+                     * information into Building objects
+                     * @param response JSON format of information from Backend
+                     */
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
+                                floorImages.add(Base64.decode(jsonObject.getString("fpBytes"), Base64.DEFAULT));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
+            /**
+             * Prints an the error if something goes wrong
+             * @param error Type of error that occurred
+             */
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
             }
-        };
-
-        NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
+        });
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
-
     /**
      * Gets the title for a specific floor, ie B2, B1, 1, 2, 3
      */
@@ -977,31 +1086,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Get request with markerShowingInfoWindow
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/" + currentBuildingId + "/floorPlans/all";
 
-        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject building = response.getJSONObject(i);
-                        floorButtons.get(i).setText(building.getString("level"));
-                        floorButtons.get(i).setVisibility(VISIBLE);
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject building = response.getJSONObject(i);
+                                floorButtons.get(i).setText(building.getString("level"));
+                                floorButtons.get(i).setVisibility(VISIBLE);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                System.out.println("failed");
             }
-        };
+        });
 
-        NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
-
     /**
      * Hides the floorplan, returning to the standard map screen.
      * @param view
@@ -1194,50 +1307,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //currentFloorIndex
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/building?param1=" + currentBuildingId + "&param2=" + currentFloorIndex;
 
-        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject uspot = response.getJSONObject(i);
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject uspot = response.getJSONObject(i);
 
-                        if((!uspot.isNull("buildingId") && uspot.getInt("buildingId")==currentBuildingId && uspot.getInt("floor")==currentFloorIndex))
-                        {
-                            Marker currentUspot = mMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
-                                    .title(uspot.getString("usName"))
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
-                                    .draggable(false));
-                            currentUspot.setTag("USpot");
-                            tempUspotMarkers.add(currentUspot);
+                                if((!uspot.isNull("buildingId") && uspot.getInt("buildingId")==currentBuildingId && uspot.getInt("floor")==currentFloorIndex))
+                                {
+                                    Marker currentUspot = mMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(uspot.getDouble("usLatit"), uspot.getDouble("usLongit")))
+                                            .title(uspot.getString("usName"))
+                                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_uspot))
+                                            .draggable(false));
+                                    currentUspot.setTag("USpot");
+                                    tempUspotMarkers.add(currentUspot);
 
-                            USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
+                                    USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
 
-                            uspotInfo.setUsID(uspot.getInt("usID"));
-                            uspotInfo.setUsName(uspot.getString("usName"));
-                            uspotInfo.setUsRating(uspot.getDouble("usRating"));
-                            uspotInfo.setUsLatit(uspot.getDouble("usLatit"));
-                            uspotInfo.setUsLongit(uspot.getDouble("usLongit"));
-                            uspotInfo.setUspotCategory(uspot.getString("usCategory"));
-                            uspotInfo.setPicBytes(Base64.decode(uspot.getString("picBytes"), Base64.DEFAULT));
-                            tempUsObjList.add(uspotInfo);
+                                    uspotInfo.setUsID(uspot.getInt("usID"));
+                                    uspotInfo.setUsName(uspot.getString("usName"));
+                                    uspotInfo.setUsRating(uspot.getDouble("usRating"));
+                                    uspotInfo.setUsLatit(uspot.getDouble("usLatit"));
+                                    uspotInfo.setUsLongit(uspot.getDouble("usLongit"));
+                                    uspotInfo.setUspotCategory(uspot.getString("usCategory"));
+                                    uspotInfo.setPicBytes(Base64.decode(uspot.getString("picBytes"), Base64.DEFAULT));
+                                    tempUsObjList.add(uspotInfo);
+                                }
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                System.out.println("failed");
             }
-        };
+        });
 
-        NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
 
     public void clearBuildingUspots()
@@ -1263,66 +1381,75 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //queue = Volley.newRequestQueue(this);
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/id/" + currentBuildingId;
 
-        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    JSONObject building = response.getJSONObject(0);
-                    numFloors = building.getInt("floorCnt");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                                JSONObject building = response.getJSONObject(0);
+                                numFloors = building.getInt("floorCnt");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                System.out.println("failed");
             }
-        };
+        });
 
-        NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
 
 
     private void setCurrentBuildingId()
     {
+        queue = Volley.newRequestQueue(this);
         // Get request with markerShowingInfoWindow
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/name?param1=" + markerShowingInfoWindow.getTitle().replace(" ", "%20");
-        //System.out.println(markerShowingInfoWindow.getTitle().replace(" ","%20"));
+        System.out.println(markerShowingInfoWindow.getTitle().replace(" ","%20"));
         // Request a JSONObject response from the provided URL.
-
-        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    JSONObject building = response.getJSONObject(0);
-                    currentBuildingId = building.getInt("id");
-                    System.out.println(currentBuildingId);
-                    setNumFloors();
-                    System.out.println(numFloors);
-                    updateFloorButtonText();
-                    System.out.println("update text complete");
-                    for(int i = 0; i<numFloors; i++)
-                    {
-                        System.out.println("Setting " + i + " to visible.");
-                        floorButtons.get(i).setVisibility(VISIBLE);
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                            JSONObject building = response.getJSONObject(0);
+                            currentBuildingId = building.getInt("id");
+                            System.out.println(currentBuildingId);
+                            setNumFloors();
+                            System.out.println(numFloors);
+                            updateFloorButtonText();
+                            System.out.println("update text complete");
+                            for(int i = 0; i<numFloors; i++)
+                            {
+                                System.out.println("Setting " + i + " to visible.");
+                                floorButtons.get(i).setVisibility(VISIBLE);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                System.out.println("failed");
             }
-        };
+        });
 
-        NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
     }
 
     public int getCurrentFloorIndex()

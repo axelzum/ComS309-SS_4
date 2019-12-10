@@ -3,7 +3,6 @@ package com.ss4.opencampus.mapViews;
 import android.Manifest;
 import android.app.DialogFragment;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -39,7 +38,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.Marker;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.mainViews.NetworkingUtils;
 import com.ss4.opencampus.mainViews.login.LoginPreferenceUtils;
 
 import org.json.JSONArray;
@@ -51,7 +49,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Dialog appears when advancing from the CustomMarkerConvertDialog
+ * Dialog appears when advancing from the CustomMarkerDialog
  */
 public class USpotSubmissionDialog extends DialogFragment{
 
@@ -91,6 +89,16 @@ public class USpotSubmissionDialog extends DialogFragment{
     private Uri photo_uri;
 
     /**
+     * RequestQueue to be used for JSON requests.
+     */
+    private RequestQueue queue;
+
+    /**
+     * Tag to be used for JSON requests.
+     */
+    private static final String TAG = "tag";
+
+    /**
      * Permission code for requesting external storage permission.
      */
     private static final int PERMISSION_CODE = 1000;
@@ -100,13 +108,10 @@ public class USpotSubmissionDialog extends DialogFragment{
      */
     private static final int IMAGE_CAPTURE_CODE = 1001;
 
-
-    boolean cameraOpened=false;
-
     /**
-     * Building ID corresponding to the building that the USpot is in. -1 if not in a building.
+     * True when the camera was previously opened.
      */
-    private int buildingId;
+    private boolean cameraOpened=false;
 
     /**
      * Method is called when the fragment is created.
@@ -133,7 +138,6 @@ public class USpotSubmissionDialog extends DialogFragment{
         photoButton = view.findViewById(R.id.photo_button);
         imgView = view.findViewById(R.id.image_view);
         imgViewDefaultPhoto = view.findViewById(R.id.image_view_default);
-        buildingId = getBuildingId(((MapsActivity)getActivity()).getMarkerShowingInfoWindow());
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.category_array, R.layout.support_simple_spinner_dropdown_item);
         category.setAdapter(adapter);
 
@@ -219,9 +223,9 @@ public class USpotSubmissionDialog extends DialogFragment{
                     e.printStackTrace();
                 }
 
+                queue = Volley.newRequestQueue(getActivity());
                 String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/add";
-
-                Response.Listener<JSONObject> listenerResponse = new Response.Listener<JSONObject>() {
+                JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newUSpot, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
@@ -230,16 +234,21 @@ public class USpotSubmissionDialog extends DialogFragment{
                             e.printStackTrace();
                         }
                     }
-                };
-
-                Response.ErrorListener listenerError = new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
                     }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> headers = new HashMap<String, String>();
+                        headers.put("Content-Type", "application/json; charset=utf-8");
+                        return headers;
+                    }
                 };
-
-                NetworkingUtils.sendPostObjectRequest(getActivity(), url, newUSpot, listenerResponse, listenerError);
+                jsonRequest.setTag(TAG);
+                queue.add(jsonRequest);
                 getDialog().dismiss();
             }
         });
@@ -307,28 +316,33 @@ public class USpotSubmissionDialog extends DialogFragment{
 
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/search/nameStartsWith?param1=" + building.getTitle();
 
-        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    JSONObject building = response.getJSONObject(0);
-                    ((MapsActivity)getActivity()).setCurrentBuildingId(building.getInt("id"));
+        // Request a JSONObject response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        try {
+                                JSONObject building = response.getJSONObject(0);
+                            ((MapsActivity)getActivity()).setCurrentBuildingId(building.getInt("id"));
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    ((MapsActivity)getActivity()).setCurrentBuildingId(-1);
-                }
-            }
-        };
-
-        Response.ErrorListener listenerError = new Response.ErrorListener() {
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                System.out.println("failed");
+                ((MapsActivity)getActivity()).setCurrentBuildingId(-1);
             }
-        };
+        });
 
-        NetworkingUtils.sendGetArrayRequest(getActivity(), url, listenerResponse, listenerError);
+        //Set the tag on the request
+        jsonRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
 
         return ((MapsActivity)getActivity()).getCurrentBuildingId();
     }
