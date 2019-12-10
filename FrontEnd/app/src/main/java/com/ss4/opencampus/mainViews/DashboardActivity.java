@@ -177,18 +177,15 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 return true;
 
             case R.id.map_View:
-                Intent intent1 = new Intent(this, MapsActivity.class);
-                startActivity(intent1);
+                viewMapsActivity();
                 return true;
 
             case R.id.uspot_list_View:
-                Intent intent2 = new Intent(this, USpotListActivity.class);
-                startActivity(intent2);
+                viewUspotListActivity();
                 return true;
 
             case R.id.building_list_View:
-                Intent intent3 = new Intent(this, BuildingListActivity.class);
-                startActivity(intent3);
+                viewBuildingListActivity();
                 return true;
 
             default:
