@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -48,6 +49,8 @@ public class CustomMarkerDeleteDialog extends DialogFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_custom_marker_delete, container, false);
+
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionOK = view.findViewById(R.id.action_ok);
