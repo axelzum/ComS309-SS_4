@@ -914,7 +914,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 USpot uspotInfo = new USpot();
 
-                                uspotInfo.setUsID(uspot.getInt("usID"));
+                                uspotInfo.setUsID(uspot.getInt("id"));
                                 uspotInfo.setUsName(uspot.getString("usName"));
                                 uspotInfo.setUsRating(uspot.getDouble("usRating"));
                                 uspotInfo.setUsLatit(uspot.getDouble("usLatit"));
