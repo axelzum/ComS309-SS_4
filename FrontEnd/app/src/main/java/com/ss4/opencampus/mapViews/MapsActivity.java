@@ -190,19 +190,40 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * Number of floors in current building
      */
     private int numFloors;
-    private String routeName = "";
+
     /**
-     *
+     *  The name of the route being posted.
+     */
+    private String routeName = "";
+
+    /**
+     * The index of the floor being displayed.
      */
     private int currentFloorIndex = 0;
 
+    /**
+     * List for holding USpot objects.
+     */
     private ArrayList<USpot> usObjList;
+
+    /**
+     * USpot object list for USpots being shown in floorplan view.
+     */
     private ArrayList<USpot> tempUsObjList;
 
+    /**
+     * Start and endpoints for custom route.
+     */
     private Marker routeStart, routeEnd;
 
+    /**
+     * Polyline showing route.
+     */
     private Polyline currentPolyline;
 
+    /**
+     * Buttons to place start and end marker for route. 
+     */
     private Button routeStartButton, loadRouteButton;
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
