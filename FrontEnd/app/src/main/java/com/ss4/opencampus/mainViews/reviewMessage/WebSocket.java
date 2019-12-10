@@ -71,7 +71,7 @@ public class WebSocket {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                int usID = response.getInt("usID");
+                                int usID = response.getInt("id");
                                 String usName = response.getString("usName");
 
                                 ReviewMessage reviewMessage = new ReviewMessage(usID, usName, false);
