@@ -104,6 +104,44 @@ public class USpot implements OpenCampusEntity
 
   }
 
+  /**
+   * Constructor for dependency injection
+   *
+   * @param name
+   *         name for USpot
+   * @param rating
+   *         Rating for USpot
+   * @param lat
+   *         latitude of USpot
+   * @param lon
+   *         longitude of USpot
+   * @param category
+   *         category USpot is in
+   * @param bytes
+   *         byte array of image of USpot
+   * @param floor
+   *         floor level USpot is on
+   * @param buildingId
+   *         building USpot is in
+   * @param studentId
+   *         Id of student that made USpot
+   */
+  public USpot(String name, Double rating, Double lat, Double lon, String category, byte[] bytes, String floor,
+               Integer buildingId, Integer studentId)
+  {
+    this.usName = name;
+    this.usRating = rating;
+    this.usLatit = lat;
+    this.usLongit = lon;
+    this.usCategory = category;
+    this.picBytes = bytes;
+    this.floor = floor;
+    this.buildingId = buildingId;
+    this.studentId = studentId;
+    this.ratingCount = 1;
+    this.ratingTotal = usRating;
+  }
+
   public Integer getStudentId()
   {
     return studentId;

@@ -44,6 +44,31 @@ public class CustomMarker implements OpenCampusEntity
   @JsonIgnore
   private Student student;
 
+  public CustomMarker()
+  {
+
+  }
+
+  /**
+   * Constructor for Dependency Injection
+   *
+   * @param name
+   *         name of CustomMarker
+   * @param desc
+   *         Description of CustomMarker
+   * @param cmLatit
+   *         latitude of custommaker
+   * @param cmLongit
+   *         longitude of customMarker
+   */
+  public CustomMarker(String name, String desc, Double cmLatit, Double cmLongit)
+  {
+    this.name = name;
+    this.desc = desc;
+    this.cmLatit = cmLatit;
+    this.cmLongit = cmLongit;
+  }
+
   /**
    * Gets the ID of the CustomMarker
    *

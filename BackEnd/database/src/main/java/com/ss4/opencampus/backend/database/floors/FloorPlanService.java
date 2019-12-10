@@ -31,6 +31,16 @@ public class FloorPlanService
 
   private final String path = "/target/images/floorplans/";
 
+  /**
+   * Adds a floorplan to the DB
+   *
+   * @param buildingId
+   *         id of Building FloorPlan is for
+   * @param floorPlan
+   *         FloorPlan to be added
+   *
+   * @return Boolean of success or failure
+   */
   public Boolean add(Integer buildingId, FloorPlan floorPlan)
   {
     try
@@ -44,6 +54,16 @@ public class FloorPlanService
     return true;
   }
 
+  /**
+   * Adds an array of FloorPlans to the DB
+   *
+   * @param buildingId
+   *         id of Building FloorPlans are for
+   * @param floorPlans
+   *         FloorPlans to be added
+   *
+   * @return Boolean of success or failure
+   */
   public Boolean addMultiple(Integer buildingId, FloorPlan[] floorPlans)
   {
     try
@@ -60,6 +80,17 @@ public class FloorPlanService
     return true;
   }
 
+  /**
+   * Returns list of FloorPlans sorted by their levels
+   *
+   * @param buildingId
+   *         id of Building to find FloorPlans for
+   *
+   * @return Iterable List of FloorPlans
+   *
+   * @throws IOException
+   *         could throw an exception if image is not present
+   */
   public Iterable<FloorPlan> getFloorPlans(Integer buildingId) throws IOException
   {
     Iterable<FloorPlan> fpList = floorPlanRepository.findAllByBuildingId(buildingId, new Sort(Sort.Direction.ASC,
@@ -71,6 +102,19 @@ public class FloorPlanService
     return fpList;
   }
 
+  /**
+   * Finds a specific FloorPlan in DB
+   *
+   * @param buildingId
+   *         id of Building to look in
+   * @param fpId
+   *         id of FloorPlan to find
+   *
+   * @return FloorPlan obj
+   *
+   * @throws IOException
+   *         could throw an exception if image is not present
+   */
   public Optional<FloorPlan> getById(Integer buildingId, Integer fpId) throws IOException
   {
     Optional<FloorPlan> fp = floorPlanRepository.findByFpIdAndBuildingId(fpId, buildingId);
@@ -79,6 +123,18 @@ public class FloorPlanService
     return fp;
   }
 
+  /**
+   * Updates FloorPlan obj. Info not given is set to NULL
+   *
+   * @param buildingId
+   *         id of Building FloorPlan is in
+   * @param fpId
+   *         id of FloorPlan to update
+   * @param floorPlan
+   *         Info to update with
+   *
+   * @return Boolean of success or failure
+   */
   public Boolean put(Integer buildingId, Integer fpId, FloorPlan floorPlan)
   {
     try
@@ -97,6 +153,18 @@ public class FloorPlanService
     return true;
   }
 
+  /**
+   * Patches an existing FloorPlan with given info in map
+   *
+   * @param buildingId
+   *         id of Building FloorPlan is in
+   * @param fpId
+   *         id of FloorPlan to be updated
+   * @param patch
+   *         Map with Updated info
+   *
+   * @return Boolean of success or failure
+   */
   public Boolean patch(Integer buildingId, Integer fpId, Map<String, Object> patch)
   {
     try
@@ -124,6 +192,16 @@ public class FloorPlanService
     return true;
   }
 
+  /**
+   * Finds the FloorPlan tied to the given Building and removes the Route from the database
+   *
+   * @param fpId
+   *         id of FloorPlan to be deleted
+   * @param buildingId
+   *         id of Building who made the route
+   *
+   * @return Boolean of success or failure to delete
+   */
   public Boolean delete(Integer buildingId, Integer fpId)
   {
     try

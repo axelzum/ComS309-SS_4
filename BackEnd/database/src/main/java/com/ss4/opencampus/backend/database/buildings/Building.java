@@ -46,6 +46,29 @@ public class Building implements OpenCampusEntity
   }
 
   /**
+   * Constructor for Dependency Injection
+   *
+   * @param buildingName
+   *         name of Building
+   * @param abbreviation
+   *         abbreviation of Building name
+   * @param address
+   *         address of Building
+   * @param latit
+   *         latitude of Building
+   * @param longit
+   *         longitude of Building
+   */
+  public Building(String buildingName, String abbreviation, String address, Double latit, Double longit)
+  {
+    this.buildingName = buildingName;
+    this.abbreviation = abbreviation;
+    this.address = address;
+    this.latit = latit;
+    this.longit = longit;
+  }
+
+  /**
    * Gets the ID for the Building
    *
    * @return id of Building
@@ -184,7 +207,8 @@ public class Building implements OpenCampusEntity
   /**
    * Sets the Building's floor count
    *
-   * @param floorCnt new number of floors in the building
+   * @param floorCnt
+   *         new number of floors in the building
    */
   public void setFloorCnt(Integer floorCnt)
   {

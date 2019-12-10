@@ -46,6 +46,29 @@ public class Student implements OpenCampusEntity
   }
 
   /**
+   * Constructor for Dependency Injection
+   *
+   * @param firstName
+   *         firstName of Student
+   * @param lastName
+   *         lastName of Student
+   * @param userName
+   *         userName for Student
+   * @param email
+   *         Student's email
+   * @param password
+   *         Student's password
+   */
+  public Student(String firstName, String lastName, String userName, String email, String password)
+  {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.userName = userName;
+    this.email = email;
+    this.password = password;
+  }
+
+  /**
    * Get the id for the current Student
    *
    * @return id of current Student
