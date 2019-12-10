@@ -52,7 +52,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Dialog appears when advancing from the CustomMarkerConvertDialog
+ * Dialog appears when advancing from the CustomMarkerDialog
  */
 public class USpotSubmissionDialog extends DialogFragment{
 

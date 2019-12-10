@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.ss4.opencampus.R;
@@ -20,11 +19,6 @@ public class CustomMarkerSaveDialog extends DialogFragment{
      * Clickable TextViews for cancel and ok.
      */
     private TextView mActionCancel, mActionOK;
-
-    /**
-     * Checkbox for saving to device/database.
-     */
-    private CheckBox checkDevice, checkAccount;
 
     /**
      * Method is called when the fragment is created.
@@ -47,8 +41,6 @@ public class CustomMarkerSaveDialog extends DialogFragment{
 
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionOK = view.findViewById(R.id.action_ok);
-        checkDevice = view.findViewById(R.id.checkSaveDevice);
-        checkAccount = view.findViewById(R.id.checkSaveAccount);
 
         mActionCancel.setOnClickListener(new View.OnClickListener() {
             @Override

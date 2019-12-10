@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.ss4.opencampus.R;
@@ -20,18 +19,6 @@ public class CustomMarkerDeleteDialog extends DialogFragment{
      *  Clickable textviews for cancelling, or hitting ok.
      */
     private TextView mActionCancel, mActionOK;
-
-    /**
-     *  Checkboxes to delete from device or database
-     */
-    private CheckBox checkDevice, checkAccount;
-
-    /**
-     * true if this marker has been deleted. Turns true when you hit OK.
-     */
-    private boolean deleted;
-
-    private CustomMarkerDetailsDialog cmdd;
 
     /**
      * Method is called when the fragment is created.
@@ -54,8 +41,6 @@ public class CustomMarkerDeleteDialog extends DialogFragment{
 
         mActionCancel = view.findViewById(R.id.action_cancel);
         mActionOK = view.findViewById(R.id.action_ok);
-        checkDevice = view.findViewById(R.id.checkDeleteDevice);
-        checkAccount = view.findViewById(R.id.checkDeleteAccount);
 
         mActionCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +53,6 @@ public class CustomMarkerDeleteDialog extends DialogFragment{
             @Override
             public void onClick(View v) {
                 ((MapsActivity)getActivity()).deleteCustomMarkers();
-                deleted = true;
                 getDialog().dismiss();
             }
         });
@@ -76,15 +60,7 @@ public class CustomMarkerDeleteDialog extends DialogFragment{
         return view;
     }
 
-    public boolean getDeleted()
-    {
-        return deleted;
-    }
 
-    public void setParent(CustomMarkerDetailsDialog cmdd)
-    {
-        this.cmdd = cmdd;
-    }
 
 
 }

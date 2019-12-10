@@ -38,6 +38,7 @@ public class CustomMarkerDialog extends DialogFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_custom_marker, container, false);
 
+        // Hide the title bar
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         mActionCancel = view.findViewById(R.id.action_cancel);
