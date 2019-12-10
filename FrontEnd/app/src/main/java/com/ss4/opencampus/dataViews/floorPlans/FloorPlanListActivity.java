@@ -59,6 +59,9 @@ public class FloorPlanListActivity extends AppCompatActivity {
         Intent intent =  getIntent();
         buildingID = intent.getExtras().getString("BuildingID", "");
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
         RecyclerView fList;
         fList = findViewById(R.id.floor_plan_list);
 
@@ -76,9 +79,6 @@ public class FloorPlanListActivity extends AppCompatActivity {
         fList.setLayoutManager(linearLayoutManager);
         fList.addItemDecoration(dividerItemDecoration);
         fList.setAdapter(adapter);
-
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
 
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/buildings/" + buildingID + "/floorPlans/all";
 
@@ -113,6 +113,41 @@ public class FloorPlanListActivity extends AppCompatActivity {
         };
 
         NetworkingUtils.sendGetArrayRequest(this, url, listenerResponse, listenerError);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.dashboard_View:
+                Intent intent1 = new Intent(this, DashboardActivity.class);
+                startActivity(intent1);
+                return true;
+
+            case R.id.map_View:
+                Intent intent2 = new Intent(this, MapsActivity.class);
+                startActivity(intent2);
+                return true;
+
+            case R.id.uspot_list_View:
+                Intent intent3 = new Intent(this, USpotListActivity.class);
+                startActivity(intent3);
+                return true;
+
+            case R.id.building_list_View:
+                Intent intent4 = new Intent(this, BuildingListActivity.class);
+                startActivity(intent4);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
