@@ -222,9 +222,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Polyline currentPolyline;
 
     /**
-     * Buttons to place start and end marker for route. 
+     * Buttons to place start and end marker for route.
      */
     private Button routeStartButton, loadRouteButton;
+
     /**
      * Method is called whenever activity is created. Sets up layout and initializes variables.
      * @param savedInstanceState

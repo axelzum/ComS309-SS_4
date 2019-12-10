@@ -41,7 +41,7 @@
             android:layout_marginEnd="100dp"
             android:layout_marginRight="100dp"
             android:layout_marginBottom="100dp"
-            android:text="Convert"
+            android:text="Create USpot"
             android:textColor="#33bbff"
             android:textSize="18sp" />
 
@@ -68,7 +68,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="100dp"
-            android:text="CANCEL"
+            android:text="Cancel"
             android:textColor="#33bbff"
             android:textSize="18sp" />
 
