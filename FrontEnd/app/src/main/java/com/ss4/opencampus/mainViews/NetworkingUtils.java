@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Base64;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -19,6 +20,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class NetworkingUtils {
 
     public static void sendGetObjectRequest(Context context, String url, Response.Listener<JSONObject> listenerResponse, Response.ErrorListener listenerError) {
@@ -28,6 +32,19 @@ public class NetworkingUtils {
 
     public static void sendGetArrayRequest(Context context, String url, Response.Listener<JSONArray> listenerResponse, Response.ErrorListener listenerError) {
         JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null, listenerResponse, listenerError);
+        Volley.newRequestQueue(context).add(jsonRequest);
+    }
+
+    public static void sendPostObjectRequest(Context context, String url, JSONObject object, Response.Listener<JSONObject> listenerResponse, Response.ErrorListener listenerError) {
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, object, listenerResponse, listenerError)
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
         Volley.newRequestQueue(context).add(jsonRequest);
     }
 }
