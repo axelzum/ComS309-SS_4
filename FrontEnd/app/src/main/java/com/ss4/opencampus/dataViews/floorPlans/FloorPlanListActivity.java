@@ -90,7 +90,7 @@ public class FloorPlanListActivity extends AppCompatActivity {
                         JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
                         FloorPlan floorPlanInfo = new FloorPlan();                 // Makes FloorPlan object from the JSONObject
 
-                        floorPlanInfo.setFloorPlanID(jsonObject.getInt("fpId"));
+                        floorPlanInfo.setFloorPlanID(jsonObject.getInt("id"));
                         floorPlanInfo.setFloorPlanName(jsonObject.getString("name"));
                         floorPlanInfo.setFloorPlanLevel(jsonObject.getString("level"));
                         floorPlanInfo.setFloorPlanImagePath(jsonObject.getString("fpImagePath"));
