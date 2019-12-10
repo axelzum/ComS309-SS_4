@@ -36,10 +36,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.PreferenceUtils;
 
@@ -111,12 +108,10 @@ public class USpotSubmissionDialog extends DialogFragment{
      */
     private static final int IMAGE_CAPTURE_CODE = 1001;
 
-    boolean cameraOpened=false;
-
     /**
-     * Building ID corresponding to the building that the USpot is in. -1 if not in a building.
+     * True when the camera was previously opened.
      */
-    private int buildingId;
+    private boolean cameraOpened=false;
 
     /**
      * Method is called when the fragment is created.
@@ -143,7 +138,6 @@ public class USpotSubmissionDialog extends DialogFragment{
         photoButton = view.findViewById(R.id.photo_button);
         imgView = view.findViewById(R.id.image_view);
         imgViewDefaultPhoto = view.findViewById(R.id.image_view_default);
-        buildingId = getBuildingId(((MapsActivity)getActivity()).getMarkerShowingInfoWindow());
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.category_array, R.layout.support_simple_spinner_dropdown_item);
         category.setAdapter(adapter);
 
