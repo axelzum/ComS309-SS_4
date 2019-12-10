@@ -16,11 +16,16 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.DashboardActivity;
+import com.ss4.opencampus.mainViews.NetworkingUtils;
+import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessage;
+import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessagePreferenceUtils;
 import com.ss4.opencampus.mainViews.reviewMessage.WebSocket;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * @author Axel Zumwalt
@@ -29,10 +34,6 @@ import org.json.JSONObject;
  * Validates inputed email and password and login user into the app.
  */
 public class LoginActivity extends AppCompatActivity {
-
-    private static final String TAG = "tag";
-
-    private RequestQueue queue;
 
     private EditText email;
 
@@ -56,11 +57,10 @@ public class LoginActivity extends AppCompatActivity {
         signInError.setVisibility(View.INVISIBLE);
 
         /* Checks Shared Preferences to see if a user is already logged in */
-        if (LoginPreferenceUtils.getUserId(this) != -1 ){
+        if (LoginPreferenceUtils.isUserLoggedIn(this) ){
             int studentId = LoginPreferenceUtils.getUserId(this);
             WebSocket.openWebSocket(studentId, this);
-            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-            startActivity(intent);
+            viewDashboardActivity();
         }
     }
 
@@ -81,41 +81,37 @@ public class LoginActivity extends AppCompatActivity {
     public void attemptSignIn(View view) {
         signInError.setVisibility(View.INVISIBLE);
 
-        queue = Volley.newRequestQueue(this);
         String url = String.format("http://coms-309-ss-4.misc.iastate.edu:8080/students/search/email?param1=%1$s", email.getText().toString());
 
-        /* Search for a user with the given email */
-        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        /* If a student with email doesn't exist display error */
-                        if (response.isNull(0)) {
-                            signInError.setVisibility(View.VISIBLE);
-                        }
-                        /* Otherwise check if the password matches the encypted password on the database */
-                        else {
-                            try {
-                                JSONObject student = response.getJSONObject(0);
-                                validatePassword(student.getString("password"), student.getInt("id"));
-                            }
-                            catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
+        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                /* If a student with email doesn't exist display error */
+                if (response.isNull(0)) {
+                    signInError.setVisibility(View.VISIBLE);
+                }
+                /* Otherwise check if the password matches the encypted password on the database */
+                else {
+                    try {
+                        JSONObject student = response.getJSONObject(0);
+                        validatePassword(student.getString("password"), student.getInt("id"));
                     }
-                }, new Response.ErrorListener() {
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+
+        Response.ErrorListener listenerError = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
             }
-        });
+        };
 
-        /* Set the tag on the request */
-        jsonRequest.setTag(TAG);
-
-        /* Add the request to the RequestQueue. */
-        queue.add(jsonRequest);
+        /* Search for a user with the given email */
+        NetworkingUtils.sendGetArrayRequest(this, url, listenerResponse, listenerError);
     }
 
     /**
@@ -132,8 +128,7 @@ public class LoginActivity extends AppCompatActivity {
             if (Crypto.decodeAndDecrypt(password).equals(this.password.getText().toString())) {
                 LoginPreferenceUtils.LoginUserId(studentId, this);
                 WebSocket.openWebSocket(studentId, this);
-                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-                startActivity(intent);
+                viewDashboardActivity();
             }
             else {
                 signInError.setVisibility(View.VISIBLE);
@@ -144,15 +139,8 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public static void openDashboard() {
-
-    }
-
-    @Override
-    protected void onStop () {
-        super.onStop();
-        if (queue != null) {
-            queue.cancelAll(TAG);
-        }
+    private void viewDashboardActivity() {
+        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+        startActivity(intent);
     }
 }

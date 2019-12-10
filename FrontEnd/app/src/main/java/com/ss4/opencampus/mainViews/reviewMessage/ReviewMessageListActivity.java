@@ -98,7 +98,7 @@ public class ReviewMessageListActivity extends AppCompatActivity {
                     }
                 };
 
-                NetworkingUtils.sendGetRequest(ReviewMessageListActivity.this, url, listenerResponse, listenerError);
+                NetworkingUtils.sendGetObjectRequest(ReviewMessageListActivity.this, url, listenerResponse, listenerError);
             }
 
             /**

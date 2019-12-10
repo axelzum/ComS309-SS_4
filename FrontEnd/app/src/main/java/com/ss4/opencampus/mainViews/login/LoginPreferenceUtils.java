@@ -43,6 +43,15 @@ public class LoginPreferenceUtils {
         LoginUserId(-1, context);
     }
 
+    public static boolean isUserLoggedIn(Context context) {
+        if (getUserId(context) == -1) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
     public static int getUserId(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
         return prefs.getInt(KEY_USER_ID, -1);

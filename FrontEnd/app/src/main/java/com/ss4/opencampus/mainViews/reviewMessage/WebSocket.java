@@ -101,7 +101,7 @@ public class WebSocket {
                         }
                     };
 
-                    NetworkingUtils.sendGetRequest(context, url, listenerResponse, listenerError);
+                    NetworkingUtils.sendGetObjectRequest(context, url, listenerResponse, listenerError);
                 }
 
                 @Override
