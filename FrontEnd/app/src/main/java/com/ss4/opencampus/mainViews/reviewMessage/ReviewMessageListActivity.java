@@ -22,6 +22,7 @@ import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
 import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
+import com.ss4.opencampus.mainViews.NetworkingUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,11 +37,9 @@ import java.util.List;
  **/
 public class ReviewMessageListActivity extends AppCompatActivity {
 
-    public static final String TAG = "tag";
-    private RequestQueue queue;
     private List<ReviewMessage> reviewMessageList;
+
     private RecyclerView.Adapter adapter;
-    private static ReviewMessage selectedReviewMessage;
     
     /**
      * Creates the ListView page. Loads Messages saved in persistent storage.
@@ -60,63 +59,55 @@ public class ReviewMessageListActivity extends AppCompatActivity {
              * @param view view
              * @param position position of message
              */
-            @Override public void onItemClick(View view, int position) {
+            @Override
+            public void onItemClick(View view, int position) {
                 view.getId();
                 ReviewMessage selectedReviewMessage = (ReviewMessage)view.getTag();
                 int USpotId = selectedReviewMessage.getUSpotId();
-
-                queue = Volley.newRequestQueue(ReviewMessageListActivity.this);
                 String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/id/" + Integer.toString(USpotId);
 
-                JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                        new Response.Listener<JSONObject>() {    // Reads in JSON data for the uspots from the server
-                            /**
-                             * Makes a GET Request to Backend to get the USpot with the given ID in the database.
-                             * @param response JSON format of information from Backend
-                             */
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    JSONObject jsonObject = response;
-                                    USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
+                Response.Listener<JSONObject> listenerResponse = new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONObject jsonObject = response;
+                            USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
 
-                                    uspotInfo.setUsID(jsonObject.getInt("usID"));
-                                    uspotInfo.setUsName(jsonObject.getString("usName"));
-                                    uspotInfo.setUsRating(jsonObject.getDouble("usRating"));
-                                    uspotInfo.setUsLatit(jsonObject.getDouble("usLatit"));
-                                    uspotInfo.setUsLongit(jsonObject.getDouble("usLongit"));
-                                    uspotInfo.setUspotCategory(jsonObject.getString("usCategory"));
-                                    uspotInfo.setPicBytes(Base64.decode(jsonObject.getString("picBytes"), Base64.DEFAULT));
+                            uspotInfo.setUsID(jsonObject.getInt("usID"));
+                            uspotInfo.setUsName(jsonObject.getString("usName"));
+                            uspotInfo.setUsRating(jsonObject.getDouble("usRating"));
+                            uspotInfo.setUsLatit(jsonObject.getDouble("usLatit"));
+                            uspotInfo.setUsLongit(jsonObject.getDouble("usLongit"));
+                            uspotInfo.setUspotCategory(jsonObject.getString("usCategory"));
+                            uspotInfo.setPicBytes(Base64.decode(jsonObject.getString("picBytes"), Base64.DEFAULT));
 
-                                    Intent intent = new Intent(ReviewMessageListActivity.this, SingleUSpotActivity.class);
-                                    USpotListActivity.setUspotToBeShown(uspotInfo);
-                                    startActivity(intent);
+                            Intent intent = new Intent(ReviewMessageListActivity.this, SingleUSpotActivity.class);
+                            USpotListActivity.setUspotToBeShown(uspotInfo);
+                            startActivity(intent);
 
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }, new Response.ErrorListener() {
-                    /**
-                     * Prints an the error if something goes wrong
-                     * @param error Type of error that occurred
-                     */
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+
+                Response.ErrorListener listenerError = new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
                     }
-                });
-                //Set the tag on the request
-                jsonRequest.setTag(TAG);
-                // Add the request to the RequestQueue.
-                queue.add(jsonRequest);
+                };
+
+                NetworkingUtils.sendGetRequest(ReviewMessageListActivity.this, url, listenerResponse, listenerError);
             }
 
             /**
              * @param view view
              * @param position position of message
              */
-            @Override public void onLongItemClick(View view, int position) {
+            @Override
+            public void onLongItemClick(View view, int position) {
+                /* Nothing */
             }
         }));
 
@@ -147,16 +138,5 @@ public class ReviewMessageListActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
-    }
-
-    /**
-     * Cancel any http requests when the activity is closed.
-     */
-    @Override
-    protected void onStop () {
-        super.onStop();
-        if (queue != null) {
-            queue.cancelAll(TAG);
-        }
     }
 }
