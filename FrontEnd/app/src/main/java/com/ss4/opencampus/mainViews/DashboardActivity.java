@@ -134,7 +134,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
      * Sets the userId in Saved Preferences to -1 which signifies no user is logged in.
      * Open the LoginActivity
      */
-    public void logout() {
+    private void logout() {
         LoginPreferenceUtils.LogoutUserId(this);
         WebSocket.closeWebSocket();
         Intent intent = new Intent(this, LoginActivity.class);
