@@ -127,4 +127,40 @@ public class ReviewListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.dashboard_View:
+                Intent intent1 = new Intent(this, DashboardActivity.class);
+                startActivity(intent1);
+                return true;
+
+            case R.id.map_View:
+                Intent intent2 = new Intent(this, MapsActivity.class);
+                startActivity(intent2);
+                return true;
+
+            case R.id.uspot_list_View:
+                Intent intent3 = new Intent(this, USpotListActivity.class);
+                startActivity(intent3);
+                return true;
+
+            case R.id.building_list_View:
+                Intent intent4 = new Intent(this, BuildingListActivity.class);
+                startActivity(intent4);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
 }
