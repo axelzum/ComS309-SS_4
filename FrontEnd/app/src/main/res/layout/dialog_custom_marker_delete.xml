@@ -11,7 +11,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:statusBarColor="#000000"
+        android:background="@color/colorPrimaryDark">
 
         <TextView
             android:layout_width="match_parent"

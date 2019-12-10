@@ -14,6 +14,15 @@
     android:layout_height="match_parent"
     tools:context=".mapViews.MapsActivity" />
 
+    <ImageView
+        android:id="@+id/image_view_default"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:scaleType="centerCrop"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:alpha="0.5"
+        android:src="@drawable/ic_crosshair_black_24dp" />
 
     <Button
         android:id="@+id/customMarkerButton"
