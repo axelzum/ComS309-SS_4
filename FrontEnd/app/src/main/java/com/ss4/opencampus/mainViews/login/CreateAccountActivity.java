@@ -1,4 +1,4 @@
-package com.ss4.opencampus.mainViews;
+package com.ss4.opencampus.mainViews.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,12 +19,11 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.dataViews.buildings.Building;
+import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -243,7 +242,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                     public void onResponse(JSONArray response) {
                         try {
                             JSONObject student = response.getJSONObject(0);
-                            PreferenceUtils.saveUserId(student.getInt("id"), context);
+                            LoginPreferenceUtils.LoginUserId(student.getInt("id"), context);
                             Intent intent = new Intent(context, DashboardActivity.class);
                             startActivity(intent);
                         }

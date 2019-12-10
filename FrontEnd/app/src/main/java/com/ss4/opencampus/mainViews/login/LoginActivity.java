@@ -1,4 +1,4 @@
-package com.ss4.opencampus.mainViews;
+package com.ss4.opencampus.mainViews.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.mainViews.DashboardActivity;
 import com.ss4.opencampus.mainViews.reviewMessage.WebSocket;
 
 import org.json.JSONArray;
@@ -55,8 +56,8 @@ public class LoginActivity extends AppCompatActivity {
         signInError.setVisibility(View.INVISIBLE);
 
         /* Checks Shared Preferences to see if a user is already logged in */
-        if (PreferenceUtils.getUserId(this) != -1 ){
-            int studentId = PreferenceUtils.getUserId(this);
+        if (LoginPreferenceUtils.getUserId(this) != -1 ){
+            int studentId = LoginPreferenceUtils.getUserId(this);
             WebSocket.openWebSocket(studentId, this);
             Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
             startActivity(intent);
@@ -129,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
     private void validatePassword(String password, int studentId) {
         try {
             if (Crypto.decodeAndDecrypt(password).equals(this.password.getText().toString())) {
-                PreferenceUtils.saveUserId(studentId, this);
+                LoginPreferenceUtils.LoginUserId(studentId, this);
                 WebSocket.openWebSocket(studentId, this);
                 Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                 startActivity(intent);

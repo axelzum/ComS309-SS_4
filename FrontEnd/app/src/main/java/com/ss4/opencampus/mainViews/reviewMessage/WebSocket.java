@@ -2,7 +2,6 @@ package com.ss4.opencampus.mainViews.reviewMessage;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,14 +13,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.ss4.opencampus.dataViews.reviews.Review;
-import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
-import com.ss4.opencampus.dataViews.uspots.USpot;
-import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
-import com.ss4.opencampus.mainViews.LoginActivity;
-import com.ss4.opencampus.mainViews.PreferenceUtils;
-import com.ss4.opencampus.mapViews.MapsActivity;
+import com.ss4.opencampus.mainViews.login.LoginPreferenceUtils;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
@@ -91,13 +84,13 @@ public class WebSocket {
 
                                         ReviewMessage reviewMessage = new ReviewMessage(usID, usName, false);
 
-                                        ArrayList<ReviewMessage> messageList = (ArrayList<ReviewMessage>) PreferenceUtils.getReviewMessageList(context);
+                                        ArrayList<ReviewMessage> messageList = (ArrayList<ReviewMessage>) ReviewMessagePreferenceUtils.getReviewMessageList(context);
                                         if (messageList == null) {
                                             messageList = new ArrayList<ReviewMessage>();
                                         }
                                         messageList.add(reviewMessage);
 
-                                        PreferenceUtils.addReviewMessageList(messageList, context);
+                                        ReviewMessagePreferenceUtils.addReviewMessageList(messageList, context);
 
                                         Intent intent = new Intent(context, DashboardActivity.class);
                                         context.startActivity(intent);

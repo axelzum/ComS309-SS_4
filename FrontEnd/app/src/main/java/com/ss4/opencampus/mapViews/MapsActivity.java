@@ -1,13 +1,11 @@
 package com.ss4.opencampus.mapViews;
 
-import com.android.volley.toolbox.JsonRequest;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.dataViews.floorPlans.FloorPlan;
 import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.mainViews.DashboardActivity;
-import com.ss4.opencampus.mainViews.PreferenceUtils;
+import com.ss4.opencampus.mainViews.login.LoginPreferenceUtils;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -229,7 +227,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             floorButtons.add(btnToAdd);
         }
 
-        studentId = PreferenceUtils.getUserId(this);
+        studentId = LoginPreferenceUtils.getUserId(this);
 
         // Sets up button in the top right for placing markers onto the map.
         final Button placeMarkerButton = findViewById(R.id.customMarkerButton);

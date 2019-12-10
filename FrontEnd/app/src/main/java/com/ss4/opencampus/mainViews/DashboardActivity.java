@@ -4,19 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
+import com.ss4.opencampus.mainViews.login.LoginActivity;
+import com.ss4.opencampus.mainViews.login.LoginPreferenceUtils;
 import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessage;
 import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessageListActivity;
+import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessagePreferenceUtils;
 import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.reviewMessage.WebSocket;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -86,7 +87,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 viewReviewMessageListActivity();
                 break;
             case R.id.button_delete_messages:
-                PreferenceUtils.deleteMessageList(this);
+                ReviewMessagePreferenceUtils.deleteMessageList(this);
                 refresh();
                 break;
             case R.id.button_logout:
@@ -134,7 +135,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
      * Open the LoginActivity
      */
     public void logout() {
-        PreferenceUtils.saveUserId(-1, this);
+        LoginPreferenceUtils.LogoutUserId(this);
         WebSocket.closeWebSocket();
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
@@ -143,7 +144,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     public void refresh() {
         btnMessages.setEnabled(true);
         btnMessages.setVisibility(View.VISIBLE);
-        ArrayList<ReviewMessage> messageArrayList = (ArrayList<ReviewMessage>)PreferenceUtils.getReviewMessageList(this);
+        ArrayList<ReviewMessage> messageArrayList = (ArrayList<ReviewMessage>) ReviewMessagePreferenceUtils.getReviewMessageList(this);
         if (messageArrayList != null) {
             btnMessages.setText(getResources().getQuantityString(R.plurals.btn_messages, messageArrayList.size(), messageArrayList.size()));
         }

@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.DashboardActivity;
-import com.ss4.opencampus.mainViews.PreferenceUtils;
+import com.ss4.opencampus.mainViews.login.LoginPreferenceUtils;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft;
@@ -49,7 +49,7 @@ public class SocketTestActivity extends AppCompatActivity {
         editMsg = (EditText)findViewById(R.id.editText_SocketMsg);
 
         Draft[] draft = {new Draft_6455()};
-        String url = "ws://coms-309-ss-4.misc.iastate.edu:8080/websocket/"+ Integer.toString(PreferenceUtils.getUserId(this));
+        String url = "ws://coms-309-ss-4.misc.iastate.edu:8080/websocket/"+ Integer.toString(LoginPreferenceUtils.getUserId(this));
 
         try {
             cc = new WebSocketClient(new URI(url), (Draft) draft[0]) {

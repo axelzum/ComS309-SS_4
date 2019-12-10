@@ -14,22 +14,15 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.dataViews.buildings.Building;
-import com.ss4.opencampus.dataViews.buildings.BuildingAdapter;
 import com.ss4.opencampus.dataViews.buildings.RecyclerItemClickListener;
-import com.ss4.opencampus.dataViews.buildings.SingleBuildingActivity;
 import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
 import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
-import com.ss4.opencampus.mainViews.PreferenceUtils;
-import com.ss4.opencampus.mapViews.FilterDialog;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -127,7 +120,7 @@ public class ReviewMessageListActivity extends AppCompatActivity {
             }
         }));
 
-        reviewMessageList = (ArrayList<ReviewMessage>) PreferenceUtils.getReviewMessageList(this);
+        reviewMessageList = (ArrayList<ReviewMessage>) ReviewMessagePreferenceUtils.getReviewMessageList(this);
         if (reviewMessageList == null) {
             reviewMessageList = new ArrayList<ReviewMessage>();
         }
