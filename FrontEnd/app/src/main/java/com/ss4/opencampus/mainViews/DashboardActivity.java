@@ -62,7 +62,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         btnMessages.setOnClickListener(this);
         btnDeleteMessages.setOnClickListener(this);
 
-        refresh();
+        refreshMessagesButton();
     }
 
     /**
@@ -88,7 +88,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.button_delete_messages:
                 ReviewMessagePreferenceUtils.deleteMessageList(this);
-                refresh();
+                refreshMessagesButton();
                 break;
             case R.id.button_logout:
                 logout();
@@ -141,7 +141,10 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         startActivity(intent);
     }
 
-    public void refresh() {
+    /**
+     * Refreshes the text on the Messages Button to match the current number of messages.
+     */
+    private void refreshMessagesButton() {
         btnMessages.setEnabled(true);
         btnMessages.setVisibility(View.VISIBLE);
         ArrayList<ReviewMessage> messageArrayList = (ArrayList<ReviewMessage>) ReviewMessagePreferenceUtils.getReviewMessageList(this);
