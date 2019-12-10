@@ -49,6 +49,23 @@ public class FloorPlan implements OpenCampusEntity
   }
 
   /**
+   * Constructor for Dependency Injection
+   *
+   * @param name
+   *         name of floorplan
+   * @param level
+   *         level floorplan is on
+   * @param fpBytes
+   *         byte[] of floorplan image
+   */
+  public FloorPlan(String name, String level, byte[] fpBytes)
+  {
+    this.name = name;
+    this.level = level;
+    this.fpBytes = fpBytes;
+  }
+
+  /**
    * Gets the ID for the Floor Plan
    *
    * @return The Floor Plan's ID

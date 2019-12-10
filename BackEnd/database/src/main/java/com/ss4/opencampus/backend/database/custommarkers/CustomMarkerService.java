@@ -23,6 +23,16 @@ public class CustomMarkerService
   @Autowired
   private StudentRepository studentRepository;
 
+  /**
+   * Adds a CM to the DB
+   *
+   * @param studentId
+   *         id of Student the CM is for
+   * @param customMarker
+   *         CM object to be added
+   *
+   * @return Boolean of success or failure
+   */
   public Boolean add(Integer studentId, CustomMarker customMarker)
   {
     try
@@ -38,6 +48,18 @@ public class CustomMarkerService
     return true;
   }
 
+  /**
+   * Method that searches DB in different ways depending on params to find lists of CMs
+   *
+   * @param studentId
+   *         id of Student to look at for CMs
+   * @param searchType
+   *         way to find CMs
+   * @param param
+   *         optional param to help search
+   *
+   * @return Iterable list of CMs
+   */
   public Iterable<CustomMarker> getCustomMarkers(Integer studentId, String searchType, String param)
   {
     switch (searchType)
@@ -51,11 +73,33 @@ public class CustomMarkerService
     }
   }
 
+  /**
+   * Searches DB for a specific CM
+   *
+   * @param studentId
+   *         id of Student who made CM
+   * @param cmId
+   *         id of CM to find
+   *
+   * @return CM obj
+   */
   public Optional<CustomMarker> getById(Integer studentId, Integer cmId)
   {
     return customMarkerRepository.findByCmIdAndStudentId(cmId, studentId);
   }
 
+  /**
+   * Updates an existing CM with given info. Info not given is set to NULL
+   *
+   * @param customMarker
+   *         Info that CM will be updated with
+   * @param studentId
+   *         id of Student who made CM
+   * @param cmId
+   *         id of CM to be updated
+   *
+   * @return Boolean of success or failure
+   */
   public Boolean put(CustomMarker customMarker, Integer studentId, Integer cmId)
   {
     try
@@ -74,6 +118,18 @@ public class CustomMarkerService
     return true;
   }
 
+  /**
+   * Updates CM with info given in map
+   *
+   * @param patch
+   *         Map with info that CM will be updated with
+   * @param studentId
+   *         id of Student who made the CM
+   * @param cmId
+   *         id of the CM to be updated
+   *
+   * @return Boolean of success or failure
+   */
   public Boolean patch(Map<String, Object> patch, Integer studentId, Integer cmId)
   {
     try
@@ -104,6 +160,16 @@ public class CustomMarkerService
     return true;
   }
 
+  /**
+   * Finds the CustomMarker tied to the given Student and removes the CM from the database
+   *
+   * @param cmId
+   *         id of CM to be deleted
+   * @param studentId
+   *         id of Student who made the route
+   *
+   * @return Boolean of success or failure to delete
+   */
   public Boolean delete(Integer studentId, Integer cmId)
   {
     try

@@ -31,6 +31,16 @@ public class USpotService implements OpenCampusService
    */
   private final String path = "/target/images/uspots/";
 
+  /**
+   * Adds a USpot to the DB
+   *
+   * @param t
+   *         USpot to be added
+   * @param <T>
+   *         Generic = USpot
+   *
+   * @return Boolean of success or failure
+   */
   @Override
   public <T> Boolean add(T t)
   {
@@ -59,6 +69,21 @@ public class USpotService implements OpenCampusService
     return true;
   }
 
+  /**
+   * Method used to search DB and return lists of USpots depending on given params
+   *
+   * @param searchType
+   *         way to search DB
+   * @param param1
+   *         optional param
+   * @param param2
+   *         optional param
+   *
+   * @return Iterable list of USpot objs
+   *
+   * @throws IOException
+   *         could throw an exception if image is not present
+   */
   public Iterable<USpot> getUSpots(String searchType, Object param1, Object param2) throws IOException
   {
     Iterable<USpot> uList;
@@ -106,6 +131,15 @@ public class USpotService implements OpenCampusService
     }
   }
 
+  /**
+   * Searches DB for USpot with given ID
+   *
+   * @param id
+   *         id of USpot to find
+   *
+   * @return USpot object
+   */
+  @SuppressWarnings("unchecked")
   @Override
   public Optional<USpot> getById(Integer id)
   {
@@ -124,6 +158,18 @@ public class USpotService implements OpenCampusService
     return u;
   }
 
+  /**
+   * Updates a USpot with given info. Info not given is set to NULL.
+   *
+   * @param t
+   *         Updated USpot information
+   * @param id
+   *         id of USpot to be updated
+   * @param <T>
+   *         Generic = USpot
+   *
+   * @return Boolean of success or failure
+   */
   @Override
   public <T> Boolean put(T t, Integer id)
   {
@@ -150,6 +196,16 @@ public class USpotService implements OpenCampusService
     return true;
   }
 
+  /**
+   * Updates a USpot with given info. Info not given remains the same
+   *
+   * @param patch
+   *         Map with updated information
+   * @param id
+   *         id of USpot to be updated
+   *
+   * @return Boolean of success or failure
+   */
   @Override
   public Boolean patch(Map<String, Object> patch, Integer id)
   {
@@ -202,6 +258,14 @@ public class USpotService implements OpenCampusService
     return true;
   }
 
+  /**
+   * Finds the USpot with the given ID and deletes it from the database
+   *
+   * @param id
+   *         id of USpot to be deleted
+   *
+   * @return Boolean of success or failure
+   */
   @Override
   public Boolean delete(Integer id)
   {

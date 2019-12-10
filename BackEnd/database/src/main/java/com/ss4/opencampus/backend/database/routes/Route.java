@@ -35,8 +35,8 @@ public class Route implements OpenCampusEntity
   private Double destLng;
 
   /**
-   * Foreign key to the Student Table. Links the Student_ID to this Route. If the Student is deleted, so will
-   * this Route.
+   * Foreign key to the Student Table. Links the Student_ID to this Route. If the Student is deleted, so will this
+   * Route.
    */
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "route_student_id", nullable = false)
@@ -44,9 +44,35 @@ public class Route implements OpenCampusEntity
   @JsonIgnore
   private Student student;
 
+  /**
+   * Default Constructor for Route
+   */
   public Route()
   {
 
+  }
+
+  /**
+   * Constructor for Dependency Injection
+   *
+   * @param rtName
+   *         name of Route
+   * @param originLat
+   *         origin latitude
+   * @param originLng
+   *         origin longitude
+   * @param destLat
+   *         destination latitude
+   * @param destLng
+   *         destination longitude
+   */
+  public Route(String rtName, Double originLat, Double originLng, Double destLat, Double destLng)
+  {
+    this.rtName = rtName;
+    this.originLat = originLat;
+    this.originLng = originLng;
+    this.destLat = destLat;
+    this.destLng = destLng;
   }
 
   public Integer getId()

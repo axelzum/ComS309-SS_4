@@ -33,6 +33,25 @@ public class Review implements OpenCampusEntity
   private USpot uSpot;
 
   /**
+   * Default Constructor
+   */
+  public Review()
+  {
+
+  }
+
+  /**
+   * Constuctor for Dependency Injection
+   *
+   * @param text
+   *         text that review will get
+   */
+  public Review(String text)
+  {
+    this.text = text;
+  }
+
+  /**
    * Gets the ID of the Review
    *
    * @return Review's ID
