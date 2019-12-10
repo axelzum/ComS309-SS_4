@@ -7,6 +7,15 @@
     android:orientation="vertical"
     android:padding="10dp">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        tools:layout_editor_absoluteX="1dp"></androidx.appcompat.widget.Toolbar>
+
     <TextView
         android:id="@+id/uspot_single_name"
         android:layout_width="match_parent"
@@ -44,36 +53,5 @@
         android:layout_height="wrap_content"
         android:contentDescription="@+id/uspot_list_image"
         />
-    <Button
-        android:id="@+id/button_Dashboard"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:onClick="viewDashboard"
-        android:text="Dashboard" />
-
-    <Button
-        android:id="@+id/button_USpotList"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:onClick="viewUSpotListActivity"
-        android:text="@string/show_uspot_list" />
-
-    <Button
-        android:id="@+id/button_ReviewList"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:onClick="viewReviewListActivity"
-        android:text="Show Reviews" />
-
-    <Button
-        android:id="@+id/button_createReview"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:onClick="createReview"
-        android:text="Create Review" />
 
 </LinearLayout>
