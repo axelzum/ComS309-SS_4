@@ -1,17 +1,22 @@
 package com.ss4.opencampus.dataViews.buildings;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.ss4.opencampus.dataViews.floorPlans.FloorPlanListActivity;
+import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.mapViews.MapsActivity;
 
 /**
  * @author Morgan Smith
@@ -52,6 +57,9 @@ public class SingleBuildingActivity extends AppCompatActivity {
         buildingAddress.setText(buildingItem.getAddress());
         buildingLongit.setText(buildingItem.getLongString());
         buildingLatit.setText(buildingItem.getLatString());
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
     }
 
     /**
@@ -84,5 +92,41 @@ public class SingleBuildingActivity extends AppCompatActivity {
         buildingItem = BuildingListActivity.getBuildingToBeShown();
         intent.putExtra("BuildingID", buildingItem.getBuildingID());
         startActivity(intent);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.dashboard_View:
+                Intent intent1 = new Intent(this, DashboardActivity.class);
+                startActivity(intent1);
+                return true;
+
+            case R.id.map_View:
+                Intent intent2 = new Intent(this, MapsActivity.class);
+                startActivity(intent2);
+                return true;
+
+            case R.id.uspot_list_View:
+                Intent intent3 = new Intent(this, USpotListActivity.class);
+                startActivity(intent3);
+                return true;
+
+            case R.id.building_list_View:
+                Intent intent4 = new Intent(this, BuildingListActivity.class);
+                startActivity(intent4);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

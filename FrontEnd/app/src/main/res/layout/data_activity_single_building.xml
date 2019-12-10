@@ -7,6 +7,15 @@
     android:orientation="vertical"
     android:padding="10dp">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        tools:layout_editor_absoluteX="1dp"></androidx.appcompat.widget.Toolbar>
+
     <TextView
         android:id="@+id/building_single_name"
         android:layout_width="match_parent"
@@ -37,29 +46,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:text="Longitude" />
-
-    <Button
-        android:id="@+id/button_Dashboard"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:onClick="viewDashboard"
-        android:text="Dashboard" />
-
-    <Button
-        android:id="@+id/button_BuildingList"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:onClick="viewBuildingListActivity"
-        android:text="Show Building List" />
-
-    <Button
-        android:id="@+id/button_FloorPlanList"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:onClick="viewFloorPlanListActivity"
-        android:text="Show Floor Plans" />
 
 </LinearLayout>

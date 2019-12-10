@@ -1,9 +1,13 @@
 package com.ss4.opencampus.mainViews;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -63,6 +67,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         btnDeleteMessages.setOnClickListener(this);
 
         refreshMessagesButton();
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
     }
 
     /**
@@ -153,6 +159,40 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         }
         else {
             btnMessages.setText(getResources().getQuantityString(R.plurals.btn_messages, 0, 0));
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.dashboard_View:
+                return true;
+
+            case R.id.map_View:
+                Intent intent1 = new Intent(this, MapsActivity.class);
+                startActivity(intent1);
+                return true;
+
+            case R.id.uspot_list_View:
+                Intent intent2 = new Intent(this, USpotListActivity.class);
+                startActivity(intent2);
+                return true;
+
+            case R.id.building_list_View:
+                Intent intent3 = new Intent(this, BuildingListActivity.class);
+                startActivity(intent3);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

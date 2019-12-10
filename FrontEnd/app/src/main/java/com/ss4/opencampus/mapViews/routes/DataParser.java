@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class DataParser {
     public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
 
@@ -51,7 +52,6 @@ public class DataParser {
         }
         return routes;
     }
-
 
     /**
      * Method to decode polyline points

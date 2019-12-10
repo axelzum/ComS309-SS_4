@@ -1,12 +1,15 @@
 package com.ss4.opencampus.dataViews.reviews;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.android.volley.Request;
@@ -15,6 +18,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
+import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
 
 import org.json.JSONArray;
@@ -23,6 +28,7 @@ import org.json.JSONObject;
 
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.NetworkingUtils;
+import com.ss4.opencampus.mapViews.MapsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +75,9 @@ public class ReviewListActivity extends AppCompatActivity {
         rList.setLayoutManager(linearLayoutManager);
         rList.addItemDecoration(dividerItemDecoration);
         rList.setAdapter(adapter);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/" + usID + "/reviews/all";
 
