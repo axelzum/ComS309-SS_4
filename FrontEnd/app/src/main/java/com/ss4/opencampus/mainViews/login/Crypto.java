@@ -1,4 +1,4 @@
-package com.ss4.opencampus.mainViews;
+package com.ss4.opencampus.mainViews.login;
 
 import android.util.Base64;
 

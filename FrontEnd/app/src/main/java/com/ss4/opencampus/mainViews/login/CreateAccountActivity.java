@@ -1,4 +1,4 @@
-package com.ss4.opencampus.mainViews;
+package com.ss4.opencampus.mainViews.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,12 +19,12 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.dataViews.buildings.Building;
+import com.ss4.opencampus.mainViews.DashboardActivity;
+import com.ss4.opencampus.mainViews.NetworkingUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,8 +40,6 @@ import java.util.Map;
  */
 public class CreateAccountActivity extends AppCompatActivity {
 
-    private static final String TAG = "tag";
-
     private EditText firstName;
 
     private EditText lastName;
@@ -51,8 +49,6 @@ public class CreateAccountActivity extends AppCompatActivity {
     private EditText email;
 
     private EditText password;
-
-    private RequestQueue queue;
 
     private TextView userNameError;
 
@@ -110,11 +106,10 @@ public class CreateAccountActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            queue = Volley.newRequestQueue(this);
+
             String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/add";
 
-            /* Request a JSON response from the provided URL. If response is true the student was added to the database */
-            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newStudent, new Response.Listener<JSONObject>() {
+            Response.Listener<JSONObject> listenerResponse = new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
@@ -125,25 +120,16 @@ public class CreateAccountActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-            }, new Response.ErrorListener() {
+            };
+
+            Response.ErrorListener listenerError = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     error.printStackTrace();
                 }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json; charset=utf-8");
-                    return headers;
-                }
             };
 
-            /* Set the tag on the request */
-            jsonRequest.setTag(TAG);
-
-            /* Add the request to the RequestQueue. */
-            queue.add(jsonRequest);
+            NetworkingUtils.sendPostObjectRequest(context, url, newStudent, listenerResponse, listenerError);
         }
     }
 
@@ -165,7 +151,7 @@ public class CreateAccountActivity extends AppCompatActivity {
             return false;
         }
         else {
-            /* Shows repective error messages for invalid email and password too short */
+            /* Shows respective error messages for invalid email and password too short */
             if (!Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches()) {
                 emailError.setText(R.string.txt_view_invalid_email_error);
                 emailError.setVisibility(View.VISIBLE);
@@ -174,12 +160,9 @@ public class CreateAccountActivity extends AppCompatActivity {
                 passwordError.setVisibility(View.VISIBLE);
             }
 
-
-            queue = Volley.newRequestQueue(this);
             String url = "http://coms-309-ss-4.misc.iastate.edu:8080/students/search/all";
 
-            /* Requests a list of all students in the database to check if there is a duplicate email or username */
-            JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray response) {
                     try {
@@ -204,18 +187,16 @@ public class CreateAccountActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-            }, new Response.ErrorListener() {
+            };
+
+            Response.ErrorListener listenerError = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     error.printStackTrace();
                 }
-            });
+            };
 
-            /* Set the tag on the request */
-            jsonRequest.setTag(TAG);
-
-            /* Add the request to the RequestQueue. */
-            queue.add(jsonRequest);
+            NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
 
             /* If there is any error, at least of of the error txtView boxes will be visible */
             if (userNameError.getVisibility() == View.VISIBLE || emailError.getVisibility() == View.VISIBLE || passwordError.getVisibility() == View.VISIBLE) {
@@ -233,44 +214,32 @@ public class CreateAccountActivity extends AppCompatActivity {
      */
     private void viewDashboardActivity()
     {
-        queue = Volley.newRequestQueue(this);
         String url = String.format("http://coms-309-ss-4.misc.iastate.edu:8080/students/search/email?param1=%1$s", email.getText().toString());
 
-        // Request a JSONObject response from the provided URL.
-        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            JSONObject student = response.getJSONObject(0);
-                            PreferenceUtils.saveUserId(student.getInt("id"), context);
-                            Intent intent = new Intent(context, DashboardActivity.class);
-                            startActivity(intent);
-                        }
-                        catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
+        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    JSONObject student = response.getJSONObject(0);
+                    LoginPreferenceUtils.LoginUserId(student.getInt("id"), context);
+                    Intent intent = new Intent(context, DashboardActivity.class);
+                    startActivity(intent);
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener listenerError = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
             }
-        });
+        };
 
-        /* Set the tag on the request */
-        jsonRequest.setTag(TAG);
-
-        /* Add the request to the RequestQueue. */
-        queue.add(jsonRequest);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (queue != null) {
-            queue.cancelAll(TAG);
-        }
+        /* Search for a user with the given email */
+        NetworkingUtils.sendGetArrayRequest(context, url, listenerResponse, listenerError);
     }
 }
 

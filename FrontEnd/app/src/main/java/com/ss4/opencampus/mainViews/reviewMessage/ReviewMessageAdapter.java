@@ -68,17 +68,17 @@ public class ReviewMessageAdapter extends RecyclerView.Adapter<ReviewMessageAdap
      * @return number of messages in the list
      */
     @Override
-        public int getItemCount() {
+    public int getItemCount() {
             return list.size();
-        }
+    }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textName;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        TextView textName;
 
-            ViewHolder(View itemView) {
-                super(itemView);
+        ViewHolder(View itemView) {
+            super(itemView);
 
-                textName = itemView.findViewById(R.id.review_message_name);
-            }
+            textName = itemView.findViewById(R.id.review_message_name);
         }
     }
+}

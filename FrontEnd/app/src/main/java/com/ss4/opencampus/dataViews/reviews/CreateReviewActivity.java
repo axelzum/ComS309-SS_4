@@ -27,6 +27,10 @@ import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
 import com.ss4.opencampus.dataViews.uspots.SingleUSpotActivity;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
 import com.ss4.opencampus.mainViews.DashboardActivity;
+import com.ss4.opencampus.mainViews.DashboardActivity;
+import com.ss4.opencampus.mainViews.NetworkingUtils;
+import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessage;
+import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessagePreferenceUtils;
 import com.ss4.opencampus.mapViews.MapsActivity;
 
 import org.json.JSONArray;
@@ -34,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,8 +50,6 @@ import java.util.Map;
  */
 public class CreateReviewActivity extends AppCompatActivity {
 
-    private static final String TAG = "tag";
-
     private EditText reviewDetails;
 
     private TextView emptyError;
@@ -54,8 +57,6 @@ public class CreateReviewActivity extends AppCompatActivity {
     private TextView success;
 
     private Context context;
-
-    private RequestQueue queue;
 
     int usID;
 
@@ -100,11 +101,10 @@ public class CreateReviewActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            queue = Volley.newRequestQueue(this);
+
             String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/" + usID + "/reviews";
 
-            /* Request a JSON response from the provided URL. If response is true the review was added to the database */
-            JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, newReview, new Response.Listener<JSONObject>() {
+            Response.Listener<JSONObject> listenerResponse = new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
@@ -115,18 +115,16 @@ public class CreateReviewActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-            }, new Response.ErrorListener() {
+            };
+
+            Response.ErrorListener listenerError = new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     error.printStackTrace();
                 }
-            });
+            };
 
-            /* Set the tag on the request */
-            jsonRequest.setTag(TAG);
-
-            /* Add the request to the RequestQueue. */
-            queue.add(jsonRequest);
+            NetworkingUtils.sendPostObjectRequest(context, url, newReview, listenerResponse, listenerError);
         }
     }
 
@@ -162,15 +160,6 @@ public class CreateReviewActivity extends AppCompatActivity {
         intent.putExtra("USpotID", usID);
         startActivity(intent);
     }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (queue != null) {
-            queue.cancelAll(TAG);
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

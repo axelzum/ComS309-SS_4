@@ -76,7 +76,6 @@ public class ReviewMessageDialog extends DialogFragment{
                         checkUSpots.isChecked(),
                         checkCustom.isChecked()});
                 getDialog().dismiss();
-
  */
             }
         });

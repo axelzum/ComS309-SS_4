@@ -5,21 +5,23 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import com.ss4.opencampus.dataViews.buildings.BuildingListActivity;
 import com.ss4.opencampus.dataViews.uspots.USpotListActivity;
+import com.ss4.opencampus.mainViews.login.LoginActivity;
+import com.ss4.opencampus.mainViews.login.LoginPreferenceUtils;
 import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessage;
 import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessageListActivity;
+import com.ss4.opencampus.mainViews.reviewMessage.ReviewMessagePreferenceUtils;
 import com.ss4.opencampus.mapViews.MapsActivity;
 import com.ss4.opencampus.R;
 import com.ss4.opencampus.mainViews.reviewMessage.WebSocket;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -64,8 +66,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         btnMessages.setOnClickListener(this);
         btnDeleteMessages.setOnClickListener(this);
 
-        refresh();
-
+        refreshMessagesButton();
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
     }
@@ -92,8 +93,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 viewReviewMessageListActivity();
                 break;
             case R.id.button_delete_messages:
-                PreferenceUtils.deleteMessageList(this);
-                refresh();
+                ReviewMessagePreferenceUtils.deleteMessageList(this);
+                refreshMessagesButton();
                 break;
             case R.id.button_logout:
                 logout();
@@ -139,17 +140,20 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
      * Sets the userId in Saved Preferences to -1 which signifies no user is logged in.
      * Open the LoginActivity
      */
-    public void logout() {
-        PreferenceUtils.saveUserId(-1, this);
+    private void logout() {
+        LoginPreferenceUtils.LogoutUserId(this);
         WebSocket.closeWebSocket();
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
-    public void refresh() {
+    /**
+     * Refreshes the text on the Messages Button to match the current number of messages.
+     */
+    private void refreshMessagesButton() {
         btnMessages.setEnabled(true);
         btnMessages.setVisibility(View.VISIBLE);
-        ArrayList<ReviewMessage> messageArrayList = (ArrayList<ReviewMessage>)PreferenceUtils.getReviewMessageList(this);
+        ArrayList<ReviewMessage> messageArrayList = (ArrayList<ReviewMessage>) ReviewMessagePreferenceUtils.getReviewMessageList(this);
         if (messageArrayList != null) {
             btnMessages.setText(getResources().getQuantityString(R.plurals.btn_messages, messageArrayList.size(), messageArrayList.size()));
         }

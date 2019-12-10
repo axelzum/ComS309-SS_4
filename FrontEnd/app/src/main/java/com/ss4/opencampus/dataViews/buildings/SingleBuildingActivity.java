@@ -26,7 +26,6 @@ import com.ss4.opencampus.mapViews.MapsActivity;
 
 public class SingleBuildingActivity extends AppCompatActivity {
 
-    public static final String TAG = "tag";
     private Building buildingItem;
 
     public TextView buildingName;

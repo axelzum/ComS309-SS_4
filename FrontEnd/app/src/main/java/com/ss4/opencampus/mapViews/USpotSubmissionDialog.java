@@ -38,7 +38,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.model.Marker;
 import com.ss4.opencampus.R;
-import com.ss4.opencampus.mainViews.PreferenceUtils;
+import com.ss4.opencampus.mainViews.login.LoginPreferenceUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -209,9 +209,9 @@ public class USpotSubmissionDialog extends DialogFragment{
                     newUSpot.put("usLatit", lat);
                     newUSpot.put("usLongit", lng);
                     newUSpot.put("usCategory", category.getSelectedItem().toString());
-                    newUSpot.put("studentId", PreferenceUtils.getUserId(getActivity()));
+                    newUSpot.put("studentId", LoginPreferenceUtils.getUserId(getActivity()));
                     newUSpot.put("picBytes", byteString);
-                    newUSpot.put("studentId", PreferenceUtils.getUserId(getActivity()));
+                    newUSpot.put("studentId", LoginPreferenceUtils.getUserId(getActivity()));
 
                     boolean floorplan = ((MapsActivity)getActivity()).getFloorplanVisible();
                     if(floorplan)

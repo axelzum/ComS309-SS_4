@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ss4.opencampus.R;
+import com.ss4.opencampus.mainViews.NetworkingUtils;
 import com.ss4.opencampus.mapViews.MapsActivity;
 
 import java.util.ArrayList;
@@ -40,8 +41,6 @@ import java.util.List;
 
 public class USpotListActivity extends AppCompatActivity {
 
-    public static final String TAG = "tag";
-    private RequestQueue queue;
     private List<USpot> uspotList;
     private RecyclerView.Adapter adapter;
     private static USpot uspotToBeShown;
@@ -67,24 +66,24 @@ public class USpotListActivity extends AppCompatActivity {
              * @param view view
              * @param position position of USpot
              */
-                    @Override public void onItemClick(View view, int position) {
-                        view.getId();
-                        USpot singleUSpot = (USpot)view.getTag();
-                        System.out.println(singleUSpot.toString());
-                        Intent intent = new Intent(view.getContext(), SingleUSpotActivity.class);
-                        USpotListActivity.setUspotToBeShown(singleUSpot);
-                        startActivity(intent);
-                    }
+            @Override public void onItemClick(View view, int position) {
+                view.getId();
+                USpot singleUSpot = (USpot)view.getTag();
+                System.out.println(singleUSpot.toString());
+                Intent intent = new Intent(view.getContext(), SingleUSpotActivity.class);
+                USpotListActivity.setUspotToBeShown(singleUSpot);
+                startActivity(intent);
+            }
     
             /**
              * Left over code that is not used anymore. Switched to .selectedItem() for next sprint
              * @param view view
              * @param position position of USpot
              */
-                    @Override public void onLongItemClick(View view, int position) {
-                        // do whatever
-                    }
-                }));
+            @Override public void onLongItemClick(View view, int position) {
+                // do whatever
+            }
+        }));
 
         uspotList = new ArrayList<>();
         adapter = new USpotAdapter(getApplicationContext(),uspotList);
@@ -101,52 +100,41 @@ public class USpotListActivity extends AppCompatActivity {
         uList.addItemDecoration(dividerItemDecoration);
         uList.setAdapter(adapter);
 
-        queue = Volley.newRequestQueue(this);
         String url = "http://coms-309-ss-4.misc.iastate.edu:8080/uspots/search/all";
 
-        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONArray>() {    // Reads in JSON data for the uspots from the server
-                    /**
-                     * Makes a GET Request to Backend to get all USpots in the database and stores the
-                     * information into USpot objects
-                     * @param response JSON format of information from Backend
-                     */
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
-                                USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
+        Response.Listener<JSONArray> listenerResponse = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);  // Makes JSONObject
+                        USpot uspotInfo = new USpot();                 // Makes USpot object from the JSONObject
 
-                                uspotInfo.setUsID(jsonObject.getInt("usID"));
-                                uspotInfo.setUsName(jsonObject.getString("usName"));
-                                uspotInfo.setUsRating(jsonObject.getDouble("usRating"));
-                                uspotInfo.setUsLatit(jsonObject.getDouble("usLatit"));
-                                uspotInfo.setUsLongit(jsonObject.getDouble("usLongit"));
-                                uspotInfo.setUspotCategory(jsonObject.getString("usCategory"));
-                                uspotInfo.setPicBytes(Base64.decode(jsonObject.getString("picBytes"), Base64.DEFAULT));
+                        uspotInfo.setUsID(jsonObject.getInt("id"));
+                        uspotInfo.setUsName(jsonObject.getString("usName"));
+                        uspotInfo.setUsRating(jsonObject.getDouble("usRating"));
+                        uspotInfo.setUsLatit(jsonObject.getDouble("usLatit"));
+                        uspotInfo.setUsLongit(jsonObject.getDouble("usLongit"));
+                        uspotInfo.setUspotCategory(jsonObject.getString("usCategory"));
+                        uspotInfo.setPicBytes(Base64.decode(jsonObject.getString("picBytes"), Base64.DEFAULT));
 
-                                uspotList.add(uspotInfo);
-                            }
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        uspotList.add(uspotInfo);
                     }
-                }, new Response.ErrorListener() {
-            /**
-             * Prints an the error if something goes wrong
-             * @param error Type of error that occurred
-             */
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Response.ErrorListener listenerError = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
             }
-        });
-        //Set the tag on the request
-        jsonRequest.setTag(TAG);
-        // Add the request to the RequestQueue.
-        queue.add(jsonRequest);
+        };
+
+        NetworkingUtils.sendGetArrayRequest(this, url, listenerResponse, listenerError);
     }
     
     /**
@@ -158,17 +146,7 @@ public class USpotListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DashboardActivity.class);
         startActivity(intent);
     }
-    
-    /**
-     * Stops displaying the ListView page
-     */
-    @Override
-    protected void onStop () {
-        super.onStop();
-        if (queue != null) {
-            queue.cancelAll(TAG);
-        }
-    }
+
     
     /**
      * not used code. switching to .selectedItem() needs to be deleted

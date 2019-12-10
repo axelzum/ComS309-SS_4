@@ -7,7 +7,7 @@ import com.ss4.opencampus.R;
 import com.ss4.opencampus.dataViews.floorPlans.FloorPlan;
 import com.ss4.opencampus.dataViews.uspots.USpot;
 import com.ss4.opencampus.mainViews.DashboardActivity;
-import com.ss4.opencampus.mainViews.PreferenceUtils;
+import com.ss4.opencampus.mainViews.login.LoginPreferenceUtils;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -256,7 +256,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             floorButtons.add(btnToAdd);
         }
 
-        studentId = PreferenceUtils.getUserId(this);
+        studentId = LoginPreferenceUtils.getUserId(this);
 
         // Sets up button in the top right for placing markers onto the map.
         final Button placeMarkerButton = findViewById(R.id.customMarkerButton);
@@ -914,7 +914,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                                 USpot uspotInfo = new USpot();
 
-                                uspotInfo.setUsID(uspot.getInt("usID"));
+                                uspotInfo.setUsID(uspot.getInt("id"));
                                 uspotInfo.setUsName(uspot.getString("usName"));
                                 uspotInfo.setUsRating(uspot.getDouble("usRating"));
                                 uspotInfo.setUsLatit(uspot.getDouble("usLatit"));

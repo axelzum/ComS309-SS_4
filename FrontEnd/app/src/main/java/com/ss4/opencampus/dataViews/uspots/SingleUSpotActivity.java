@@ -28,7 +28,6 @@ import com.ss4.opencampus.mapViews.MapsActivity;
 
 public class SingleUSpotActivity extends AppCompatActivity {
 
-    public static final String TAG = "tag";
     private USpot uspotItem;
 
     private TextView usName;
